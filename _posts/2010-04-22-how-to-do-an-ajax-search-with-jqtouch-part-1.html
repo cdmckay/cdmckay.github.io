@@ -139,7 +139,7 @@ comments:
 ---
 <p><a href="http://www.jqtouch.com/">jQTouch</a> is a pretty nifty little <a href="http://jquery.com">jQuery</a> plugin for making websites look like native iPhone apps.  Unfortunately, beyond a bunch of examples included with the distribution, there's not a whole lot of online documentation written for jQTouch.  Having started to use jQTouch for a professional project, I thought I'd help remedy this deficiency by posting what I learned along the way.</p>
 <p>We'll start with something fairly straightforward by making a jQTouch app that makes an AJAX call to a PHP script to search a database.  It then displays the results of that search in the jQTouch app.  This article is split up into two parts.  The first part deals with the jQTouch UI and the second part deals with the PHP script and the supporting JavaScript.</p>
-<p>This is part 1 <a href="http://cdmckay.org/blog/2010/07/31/how-to-do-an-ajax-search-with-jqtouch-part-2/">of a two part series</a>.</p>
+<p>This is part 1 <a href="{{ '/how-to-do-an-ajax-search-with-jqtouch-part-2' | relative_url }}">of a two part series</a>.</p>
 <p><!--more--></p>
 <h3>jQTouch UI</h3>
 <p>Let's start with our jQTouch UI code.  First, <a href="http://jqtouch.googlecode.com/files/jqtouch-1.0-beta-2-r109.zip">we'll need to grab the jQTouch distribution</a>.  Use your favourite archiver to extract two folders: <code>jqtouch</code> and <code>themes</code> and put them in our document root.</p>
@@ -226,6 +226,6 @@ comments:
 </ul>
 <p>However this is only scratching the surface of jQTouch.  If you want to learn more I highly recommend your check out the <code>demos</code> directory in the jQTouch distribution.  There is also <a href="http://code.google.com/p/jqtouch/">a Google Code page</a> that has a Wiki and links to other tutorials.</p>
 <h3>What Now?</h3>
-<p>With respect to the UI, we're done.  All that remains to be done now is to write a PHP script that we'll query with an jQuery AJAX call.  <a href="http://cdmckay.org/blog/2010/07/31/how-to-do-an-ajax-search-with-jqtouch-part-2/">This is covered in part 2 of this tutorial</a>.</p>
+<p>With respect to the UI, we're done.  All that remains to be done now is to write a PHP script that we'll query with an jQuery AJAX call.  <a href="{{ '/how-to-do-an-ajax-search-with-jqtouch-part-2' | relative_url }}">This is covered in part 2 of this tutorial</a>.</p>
 <h3>Source</h3>
 <p>The source code I have written in this article is public domain, and you are free to do what you will with it.  Here is <a href="http://cdmckay.org/files/jqtouch-ajax-search.zip">a zip of the source, along with the required jQTouch source</a>.  It should work pretty much right out of the box.</p>

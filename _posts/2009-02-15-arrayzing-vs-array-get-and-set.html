@@ -45,7 +45,7 @@ var a = _(1, 2, 3);
 a.set$(-1, 4); // a = [1, 2, 4];
 alert(a.get(-1)); // shows 4
 </pre>
-<p><em>(Aside: If you're not familiar with the $ after set$(), check out this <a href="http://cdmckay.org/blog/2009/02/15/arrayzing-design-choices/">article</a>.  It means that the function is a mutator).</em></p>
+<p><em>(Aside: If you're not familiar with the $ after set$(), check out this <a href="{{ '/arrayzing-design-choices' | relative_url }}">article</a>.  It means that the function is a mutator).</em></p>
 <p>What's more, all Arrayzing commands that take an index as an argument allow right-indexing.  What convenience!</p>
 <p>There is one further advantage of using set(): we can change an element in your zing (a zing is an Arrayzing array) without modifying the original array.  For example, if we wanted to replace an element in our zing but didn't want to modify the original array, we would do this:</p>
 <pre lang="javascript">

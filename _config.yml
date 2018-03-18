@@ -23,14 +23,16 @@ twitter_username: cdmckay
 github_username: cdmckay
 show_excerpts: true
 excerpt_separator: <!--more-->
-
 permalink: /:title
+paginate: 10
 
 # Build settings
 markdown: kramdown
 theme: minima
 plugins:
   - jekyll-feed
+  - jekyll-redirect-from
+  - jekyll-paginate
 
 # Minima settings
 header_pages:

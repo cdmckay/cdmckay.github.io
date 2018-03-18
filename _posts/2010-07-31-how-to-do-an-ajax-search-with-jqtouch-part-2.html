@@ -265,8 +265,8 @@ comments:
 
     I used NetBeans to develop it and used my iPod Touch to run it over my local network.  The page was served using Apache via XAMPP on Windows.  You are right, iOS does not natively run PHP.  The PHP is run on the server side.
 ---
-<p>In the last installment of <a href="http://cdmckay.org/blog/2010/04/22/how-to-do-an-ajax-search-with-jqtouch-part-1/">How to do an AJAX search with jQTouch</a> we looked at how to setup a jQTouch interface with the goal of performing an AJAX search. In this article, we will write the necessary JavaScript to perform that AJAX search, as well as a PHP script to respond to those calls.</p>
-<p>This article assumes you have read <a href="http://cdmckay.org/blog/2010/04/22/how-to-do-an-ajax-search-with-jqtouch-part-1/">the first part of this series</a>.</p>
+<p>In the last installment of <a href="{{ '/how-to-do-an-ajax-search-with-jqtouch-part-1' | relative_url }}">How to do an AJAX search with jQTouch</a> we looked at how to setup a jQTouch interface with the goal of performing an AJAX search. In this article, we will write the necessary JavaScript to perform that AJAX search, as well as a PHP script to respond to those calls.</p>
+<p>This article assumes you have read <a href="{{ '/how-to-do-an-ajax-search-with-jqtouch-part-1' | relative_url }}">the first part of this series</a>.</p>
 <p><!--more--></p>
 <p>Before we start, we should take a step back and consider what we're about to do.  Our Searcher app has three parts:</p>
 <ul>
@@ -460,7 +460,7 @@ $(function(){
 &lt;script src="search.js" type="application/x-javascript" charset="utf-8"&gt;&lt;/script&gt;
 </pre>
 <h3>Conclusion</h3>
-<p>In this, the final installment of <em>How to do an AJAX search with jQTouch</em>, we finished off the example application we started in <a href="http://cdmckay.org/blog/2010/04/22/how-to-do-an-ajax-search-with-jqtouch-part-1/">the first part of this series</a>.  </p>
+<p>In this, the final installment of <em>How to do an AJAX search with jQTouch</em>, we finished off the example application we started in <a href="{{ '/how-to-do-an-ajax-search-with-jqtouch-part-1' | relative_url }}">the first part of this series</a>.  </p>
 <p>In part 1, we covered building a UI using jQTouch.  In part 2, we helped visualize our problem by pretending that we were writing a front-end UI to a server-side music player.  To do that, we jumped into server side programming with PHP to write a script to serve us JSON-encoded Song objects.  Once we had that setup, we moved back into JavaScript.  In order to make use of the PHP script, we wrote a jQuery handler to respond to a jQTouch form submission.  The handler, once triggered, issued an AJAX call to the PHP script to pull down the appropriate Song objects for display in our UI.</p>
 <h3>What Now?</h3>
 <p>With respect to the goals of this tutorial, nothing.  However, if you want to pimp up the application a bit more, some things you could do are: </p>

@@ -32,17 +32,17 @@ comments: []
 <p>To get JSS, head over to the <a href="http://code.google.com/p/javascript-stylesheets/">Google Code</a> page grab "jquery.jss.js" (grab a stable release if it's available, otherwise use the development one from source control).</p>
 <p>Now, add these two JavaScript files to your HTML file (example.html):</p>
 <pre lang="html4strict" escaped="true">
-<html>
-  <head>
-    <title>Example</title>    
-    <script type="text/javascript" src="jquery.js"></script>
-    <script type="text/javascript" src="jquery.jss.js"></script>
-  </head>
-  <body>
-    <div class="Click me" id="click-me" />
-    <div class="I will be hidden!" id="hide-me" />
-  </body>
-</html>
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;title&gt;Example&lt;/title&gt;    
+    &lt;script type="text/javascript" src="jquery.js"&gt;&lt;/script&gt;
+    &lt;script type="text/javascript" src="jquery.jss.js"&gt;&lt;/script&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;div class="Click me" id="click-me" /&gt;
+    &lt;div class="I will be hidden!" id="hide-me" /&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
 </pre>
 <h3>JSS boilerplate</h3>
 <p>All JSS stylesheets must be declared with the following boilerplate:</p>
@@ -79,17 +79,17 @@ $.jss.declare({
 <h3>How to Include a JSS Stylesheet</h3>
 <p>Now that we have a stylesheet <em>jss.styles.js</em>, let's go ahead and include it in the <em>example.html</em> file:</p>
 <pre lang="html4strict" escaped="true">
-<html>
-  <head>
-    <title>Example</title>    
-    <script type="text/javascript" src="jquery.js"></script>
-    <script type="text/javascript" src="jquery.jss.js"></script>
-    <script type="text/javascript" src="jss.styles.js"></script>
-  </head>
-  <body>
-    <div class="Click me" id="click-me" />
-    <div class="I will be hidden!" id="hide-me" />
-  </body>
-</html>
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;title&gt;Example&lt;/title&gt;    
+    &lt;script type="text/javascript" src="jquery.js"&gt;&lt;/script&gt;
+    &lt;script type="text/javascript" src="jquery.jss.js"&gt;&lt;/script&gt;
+    &lt;script type="text/javascript" src="jss.styles.js"&gt;&lt;/script&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;div class="Click me" id="click-me" /&gt;
+    &lt;div class="I will be hidden!" id="hide-me" /&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
 </pre>
 <p>You can include as many JSS stylesheets as you'd like.  Just keep adding more <em>script</em> tags.  Keep in mind that they are run in order of appearance.</p>

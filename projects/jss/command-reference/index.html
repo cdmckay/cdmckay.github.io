@@ -28,18 +28,4 @@ comments:
     partially completed but can still be helpful. Check out the JSS homepage for other
     [...]"
 ---
-<div style="display: none;"><script src="/data/jss/js/jquery.jss.js" type="text/javascript"></script></div>
-<p><?php<br />
-$start_time = microtime(true);</p>
-<p>$root = "../data/jss/xml";<br />
-$xslDoc = new DOMDocument();<br />
-$xslDoc->load($root . "/commands.xsl");</p>
-<p>$xmlDoc = new DOMDocument();<br />
-$xmlDoc->load($root . "/commands.xml");</p>
-<p>$proc = new XSLTProcessor();<br />
-$proc->importStylesheet($xslDoc);</p>
-<p>echo $proc->transformToXML($xmlDoc);</p>
-<p>$end_time = microtime(true);</p>
-<p>$total_time = $end_time - $start_time;</p>
-<p>//echo "<!-- XSL transform completed in $total_time seconds. -->\n";<br />
-?></p>
+This page doesn't work anymore.
