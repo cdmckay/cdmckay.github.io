@@ -1,3 +1,37 @@
 ---
 ---
 
+.gist table td {
+  border: 0;
+}
+
+.post-content {
+
+  img {
+
+    border-radius: 4px;
+    border: 1px #333 solid;
+
+    &.alignleft {
+      float: left;
+      margin-right: 20px;
+    }
+
+    &.aligncenter {
+      display: block;
+      margin: 0 auto;
+    }
+
+  }
+
+}
+
+.post-read-more-link {
+
+  color: #ccc;
+
+  &:visited {
+    color: #bbb;
+  }
+
+}
