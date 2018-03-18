@@ -1,0 +1,90 @@
+---
+layout: post
+status: publish
+published: true
+title: PHP interfaces and optional parameters
+author:
+  display_name: cdmckay
+  login: cdmckay
+  email: me@cdmckay.org
+  url: ''
+author_login: cdmckay
+author_email: me@cdmckay.org
+wordpress_id: 1480
+wordpress_url: http://cdmckay.org/blog/?p=1480
+date: '2010-04-24 23:03:32 +0200'
+date_gmt: '2010-04-25 03:03:32 +0200'
+categories:
+- Programming
+- PHP
+tags: []
+comments:
+- id: 425
+  author: Tweets that mention PHP interfaces and optional parameters &raquo; Cameron
+    McKay -- Topsy.com
+  author_email: ''
+  author_url: http://topsy.com/trackback?utm_source=pingback&amp;utm_campaign=L2&amp;url=http://cdmckay.org/blog/2010/04/24/php-interfaces-and-optional-parameters/
+  date: '2010-04-24 23:51:46 +0200'
+  date_gmt: '2010-04-25 04:51:46 +0200'
+  content: "[...] This post was mentioned on Twitter by Peter Wooley, Thomas Buck,
+    Hacker News, hkrnws, Technojobz and others. Technojobz said: PHP interfaces and
+    optional parameters http://dlvr.it/cTMr [...]"
+- id: 426
+  author: uberVU - social comments
+  author_email: ''
+  author_url: http://www.ubervu.com/conversations/cdmckay.org/blog/2010/04/24/php-interfaces-and-optional-parameters/
+  date: '2010-04-24 23:54:50 +0200'
+  date_gmt: '2010-04-25 04:54:50 +0200'
+  content: |-
+    <strong>Social comments and analytics for this post...</strong>
+
+    This post was mentioned on Twitter by Technojobz: PHP interfaces and optional parameters http://dlvr.it/cTMr...
+- id: 427
+  author: Max Win
+  author_email: ads@gmail.com
+  author_url: http://asf
+  date: '2010-04-25 11:29:00 +0200'
+  date_gmt: '2010-04-25 16:29:00 +0200'
+  content: |-
+    What a surprise. I certainly appreciate the flexibility the optional parameters brings. But one big advantage of interface is that it allows you to change the code without affecting those that call the methods. Imagine I first implemented a function with an optional parameter and other parts of my program call the method with the optional parameter. Later i decided to change my code so that the code no longer deals with the optional parameter. Previous method calls with the optional parameter will still work but not in a way you would expect it.
+
+    eg.  compareTo(object, true) will be no different from compareTo(object,false) since the optional parameter will just be ignored. This can be confusing for a different programmer reading the code. He needs to read the implementation to figure out what is really going on. And this totally beats the purpose of encapsulation.
+- id: 428
+  author: cdmckay
+  author_email: me@cdmckay.org
+  author_url: ''
+  date: '2010-04-25 23:16:53 +0200'
+  date_gmt: '2010-04-26 04:16:53 +0200'
+  content: |-
+    @Max Win:
+
+    If I understand you correctly, you are saying that you have an issue with the fact that one can include an optional parameter in their implementation of compareTo($object).
+
+    Encapsulation is not violated here.  This is because the interface is still fully implemented.  The interface only demands that the implementer respond to the call compareTo($object).  Thus, people should only expect that call to work.
+---
+<p>Interfaces in object-oriented languages like <a href="http://java.sun.com/docs/books/tutorial/java/IandI/createinterface.html">Java</a>, <a href="http://msdn.microsoft.com/en-us/library/ms173156.aspx">C#</a> and <a href="http://php.net/manual/en/language.oop5.interfaces.php">PHP</a> are useful language constructs for ensuring that objects will respond to certain methods.  However, unlike Java and C# (<a href="http://msdn.microsoft.com/en-us/library/dd264739.aspx">until recently</a>), <a href="http://php.net/manual/en/functions.arguments.php">PHP has optional parameters</a>.  As it turns out, this feature has an interesting (and a little bit unexpected) effect on how we can implement interfaces in PHP.</p>
+<p><!--more--></p>
+<p>Consider a simple interface for making objects comparable:</p>
+<pre lang="php">
+interface IComparable {
+     public function compareTo($object);
+}
+</pre>
+<p>Normally, in Java and C# (before 4.0) the only way to implement this interface would be to make a carbon copy of the method signature (save for the name of the parameter) and then fill in the method body.</p>
+<pre lang="php">
+class NetString implements IComparable {
+     public function compareTo($object) {
+          ...
+     }
+}
+</pre>
+<p>This satisfies the interface requirements because we need to have a method that responds to a method named <code>compareTo</code> with a single argument.  However, things get interesting when we introduce optional parameters.  That's because we can write a method signature that is different from that found in the interface but still satisfies the requirement that the method have the correct name and accept only 1 parameter.</p>
+<p>How is that possible?  Well, imagine we wanted our NetString class to optionally ignore case when comparing:</p>
+<pre lang="php">
+class NetString implements IComparable {
+     public function compareTo($object, $ignoreCase = false) {
+          ...
+     }
+}
+</pre>
+<p>Notice how we slipped in another (optional) argument <code>$ignoreCase</code>? Does this code still satisfy the IComparable interface?  Absolutely.  Why?  Because we can still call <code>compareTo($object)</code> in a meaningful way, and that's all the matters.</p>

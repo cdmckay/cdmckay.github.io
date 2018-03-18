@@ -1,0 +1,275 @@
+---
+layout: post
+status: publish
+published: true
+title: Eager boolean operators in JavaScript
+author:
+  display_name: cdmckay
+  login: cdmckay
+  email: me@cdmckay.org
+  url: ''
+author_login: cdmckay
+author_email: me@cdmckay.org
+wordpress_id: 1741
+wordpress_url: http://cdmckay.org/blog/?p=1741
+date: '2010-09-09 01:22:11 +0200'
+date_gmt: '2010-09-09 06:22:11 +0200'
+categories:
+- Web Development
+- Programming
+- JavaScript
+tags: []
+comments:
+- id: 550
+  author: Zecc
+  author_email: jecc@myself.com
+  author_url: ''
+  date: '2010-09-10 07:47:04 +0200'
+  date_gmt: '2010-09-10 12:47:04 +0200'
+  content: "I know this is hardly the point of your article, but this is how you would
+    do it without compromising readability:\n<pre lang=\"javascript\">\nform.submit(function()
+    {\n\tvar valid = true;\n\tvalid = validate(name) && valid;\n\tvalid = validate(email)
+    && valid;\n\tvalid = validate(comments) && valid;\n    return valid;\n});\n</pre>"
+- id: 551
+  author: Peter da Silva
+  author_email: resuna@gmail.com
+  author_url: ''
+  date: '2010-09-10 08:08:35 +0200'
+  date_gmt: '2010-09-10 13:08:35 +0200'
+  content: Is there some technical reason you used !!(a+b) and !!(a*b) instead of
+    the more obvious !!(a|b) and !!(a&b)?
+- id: 552
+  author: Joshua
+  author_email: timoahm@yahoo.com
+  author_url: ''
+  date: '2010-09-10 08:15:44 +0200'
+  date_gmt: '2010-09-10 13:15:44 +0200'
+  content: "I understand your reason for this but it seems like a bad solution to
+    a simple problem.\r\n\r\nIf you want to change the state of things then performing
+    them in a compound if statement in a language that doesn't natively support it
+    seems wrong, and it makes the code less readable.\r\n\r\nWhy not just perform
+    the operations and check the returned values seperately. It would be more readable
+    and would not require double negating a mathematical function."
+- id: 553
+  author: mbielski
+  author_email: michael_bielski@yahoo.com
+  author_url: http://www.noinksoftware.com
+  date: '2010-09-10 09:16:19 +0200'
+  date_gmt: '2010-09-10 14:16:19 +0200'
+  content: Very interesting article. Think I'll share this one around my web developers
+    group.
+- id: 554
+  author: Concerned
+  author_email: me@me.com
+  author_url: ''
+  date: '2010-09-10 09:18:01 +0200'
+  date_gmt: '2010-09-10 14:18:01 +0200'
+  content: "This is ridiculous.\r\n\r\nThe only reason you want eager evaluation is
+    to cause side effects. \r\n\r\nBad programmer!"
+- id: 555
+  author: Gene Pharr
+  author_email: alcore@uurth.com
+  author_url: http://uurth.com
+  date: '2010-09-10 10:24:40 +0200'
+  date_gmt: '2010-09-10 15:24:40 +0200'
+  content: "OR you can just exectute each term of your expression and assign it to
+    a temporary \"accumulator\" boolean variable prior to the final use of the accumulated
+    truth value.\r\n\r\n\"return A &amp;&amp; B &amp;&amp; C;\" Becomes:\r\n\r\n\"D
+    = A;\"\r\n\"D &amp;= B;\"\r\n\"D &amp;= C;\"\r\n\"return D;\"\r\n\r\nThis is a
+    lot more readable, and SHOULD BE COMMENTED to note the need for the guaranteed
+    evaluation of all three terms so that some future maintainer of the application
+    won't thoughtfully combine them into a single line of unreadable gibberish."
+- id: 556
+  author: nick
+  author_email: nickhannum@gmail.com
+  author_url: ''
+  date: '2010-09-10 11:21:29 +0200'
+  date_gmt: '2010-09-10 16:21:29 +0200'
+  content: |-
+    good article. stuff like this in javascript is constantly surprising me.
+
+    I would however argue that using the arithmetic ops make it less clear when reading the code. and it seems like javascript programmers are always trying to make things as terse as possible, hence the 'return validate(name) &amp;&amp; validate(email) &amp;&amp; validate(comments);', which might clearer if each validate statement were executed separately and then the results &amp;&amp;ed together -  which would also remove the need for eager eval.
+
+    But it's good to know that this is an option.
+- id: 557
+  author: Ygor
+  author_email: ygorsperanza@gmail.com
+  author_url: ''
+  date: '2010-09-10 11:59:00 +0200'
+  date_gmt: '2010-09-10 16:59:00 +0200'
+  content: "Cool!\r\n\r\nSince I don't know about how javascript performs coercion,
+    I have one question: relatively speaking, will be slower to do things this way?"
+- id: 558
+  author: cdmckay
+  author_email: me@cdmckay.org
+  author_url: ''
+  date: '2010-09-10 12:54:00 +0200'
+  date_gmt: '2010-09-10 17:54:00 +0200'
+  content: |-
+    @Peter da Silva: I used   and * just to show that the arithmetic operators could be used.  You are correct that the bitwise | and & operators could easily be used in their place.
+
+    @Joshua: I agree that side effects make code confusing to follow.  I was using a contrived example to demonstrate a case when you might want to use an eager boolean operator.
+
+    @Concerned: I think you misunderstood the point of the article.  I was not advocating that you should program with side effects.  I was merely presenting a contrived situation where you might be want eager boolean operators.
+
+    @Ygor: I'm not sure of how much of a penalty type coercion incurs, but I have a feeling it's pretty low as it happens quite a bit in JavaScript.
+- id: 569
+  author: Tweets that mention Eager boolean operators in JavaScript &raquo; Cameron
+    McKay -- Topsy.com
+  author_email: ''
+  author_url: http://topsy.com/cdmckay.org/blog/2010/09/09/eager-boolean-operators-in-javascript/?utm_source=pingback&amp;utm_campaign=L2
+  date: '2010-09-12 06:39:17 +0200'
+  date_gmt: '2010-09-12 11:39:17 +0200'
+  content: "[...] This post was mentioned on Twitter by Manish Deo, iofit. iofit said:
+    Eager boolean operators in JavaScript &raquo; Cameron McKay http://bit.ly/bJiRAx
+    [...]"
+- id: 572
+  author: SeanJA
+  author_email: sean.sandy@gmail.com
+  author_url: http://blog.seanja.com
+  date: '2010-09-12 22:03:31 +0200'
+  date_gmt: '2010-09-13 03:03:31 +0200'
+  content: Shouldn't the code for the "What if we don&rsquo;t want to short the circuit?"
+    validation function return false when it is invalid instead of true? That way
+    the form won't be submitted when the values are empty.
+- id: 576
+  author: cdmckay
+  author_email: me@cdmckay.org
+  author_url: ''
+  date: '2010-09-13 12:08:57 +0200'
+  date_gmt: '2010-09-13 17:08:57 +0200'
+  content: "@SeanJA: Whoops.  You're correct, that function should return opposite
+    truth values.  I'll fix it now."
+---
+<p>In most programming languages like Java, JavaScript, C and C#, the boolean operators <code>&&</code> and <code>||</code> perform <a href="http://en.wikipedia.org/wiki/Short-circuit_evaluation">short-circuited evaluation</a>. Essentially, this means that a program, when evaluating boolean operators, will only evaluate as many arguments as is necessary to determine the value of a boolean expression.  Sometimes, however, this is not the behaviour we want.</p>
+<p>In this article we will look at how to implement non-short-circuited or "eager" versions of the JavaScript boolean operators <code>&&</code> and <code>||</code>.</p>
+<p><!--more--></p>
+<p>As mentioned earlier, most programming languages have short-circuited boolean operators. Short-circuited operators are possible due to certain properties of conjunctions and disjunctions in Boolean logic.  In Boolean logic, for a conjunction <code>x1 && x2</code>, if the first argument evaluates to false, the whole expression will be false, regardless of what the other argument evaluates to.  Similarly, for a disjunction <code>x1 || x2</code>, if the first argument evaluates to true, the whole expression will be true, regardless of what the other argument evaluates to.</p>
+<p>For a more concrete example, consider this snippet of JavaScript:</p>
+<pre lang="javascript">
+var str = null;
+if (str !== null && str.length > 0) {
+    alert("String is not null or empty");
+} else {
+    alert("String is null or empty");
+}
+</pre>
+<p>If executed by a browser, this snippet will alert <code>String is null or empty</code>.  It does not throw a <code>TypeError</code> when it hits <code>str.length</code> because <code>str.length</code> is never evaluated.  The JavaScript interpreter skips it once it sees <code>str !== null</code> evaluates to false.  This is an advantage of short-circuiting.</p>
+<h3>What if we don't want to short the circuit?</h3>
+<p>Although short-circuiting is almost always what we want, there are rare instances where we may want to have non-short-circuited or <strong>eager</strong> evaluation.  Consider this example using jQuery:</p>
+<pre lang="javascript">
+var validate = function(element) {
+    if (element.val() === "") {
+        element.addClass("invalid");
+        return false;
+    } else {
+        element.removeClass("highlight");
+        return true;
+    }
+};
+
+var form = $("#comments-form");
+var name = form.find("#name");
+var email = form.find("#email");
+var comments = form.find("#comments");
+
+form.submit(function() {
+    return validate(name) && validate(email) && validate(comments);
+});
+</pre>
+<p>In this example, we are validating a comments form for a website.  In order to do that, we use a <code>validate</code> function to verify that an HTML input is not empty.  If it is empty, then we add a CSS class to highlight it and then return false to indicate validation failed.  Conversely, if it's not empty, we remove the highlight CSS class and then return true to indicate validation succeeded.</p>
+<p>Unfortunately, this code will only highlight the first field that fails validation.  Why?  Because the <code>&&</code> short-circuits the first time it evaluates an argument to false and thus the rest of the validations will not be executed.</p>
+<p>So how do we force them run?  Well, if we were using a language like Java or C#, we would simply use the <code>&</code> and <code>|</code> operators, which are eager versions of the short-circuited <code>&&</code> and <code>||</code> operators.  Unfortunately, although JavaScript does provide the <code>&</code> and <code>|</code> operators, they return numeric (0 or 1) instead of boolean (true or false) results.</p>
+<h3>Eager boolean operators in JavaScript</h3>
+<p><em>(Aside: In the following section I use the arithmetic operators <code>*</code> and <code>+</code> to emulate eager boolean operators.  You can just as easily use the bitwise operators <code>&</code> and <code>|</code> in their place.  The only reason I used the arithmetic operators was because I thought they would make for a more interesting article).</em></p>
+<p>So we've established that JavaScript has no eager boolean operators.  JavaScript does, however, offer us two arithmetic operators that can almost accomplish our goal: <code>*</code> and <code>+</code>.  These operators, in conjunction with JavaScript's type coercion semantics, produce the following truth tables when fed all combinations of true and false (<code>&&</code> and <code>||</code> are shown for comparison):</p>
+<table>
+<tr>
+<th>a</th>
+<th>b</th>
+<th>a && b</th>
+<th>a * b</th>
+<th>a || b</th>
+<th>a + b</th>
+</tr>
+<tr>
+<td>false</td>
+<td>false</td>
+<td>false</td>
+<td>0</td>
+<td>false</td>
+<td>0</td>
+</tr>
+<tr>
+<td>false</td>
+<td>true</td>
+<td>false</td>
+<td>0</td>
+<td>true</td>
+<td>1</td>
+</tr>
+<tr>
+<td>true</td>
+<td>false</td>
+<td>false</td>
+<td>0</td>
+<td>true</td>
+<td>1</td>
+</tr>
+<tr>
+<td>true</td>
+<td>true</td>
+<td>true</td>
+<td>1</td>
+<td>true</td>
+<td>2</td>
+</tr>
+</table>
+<p>In the table you'll notice that <code>*</code> and <code>+</code> operators yield almost identical truth tables to the <code>&&</code> and <code>||</code> operators, with the exception being that the short-circuited operators produce boolean values (true and false) while the arithmetic operators produce integer values (0, 1 or 2).  Moreover, unlike the boolean operators, the arithmetic operators are eager.</p>
+<p>That means that, in order to use the arithmetic operators to implement eager boolean operators that produce the exact same results as the built-in boolean operators, we need to map 0 to false and map any non-0 values to true.  Fortunately, this is exactly what JavaScript's type coercion does when forced to coerce a number into a boolean, which can be accomplished by prefixing the number with two <code>!</code> operators.</p>
+<table>
+<tr>
+<th>a</th>
+<th>b</th>
+<th>a && b</th>
+<th>!!(a * b)</th>
+<th>a || b</th>
+<th>!!(a + b)</th>
+</tr>
+<tr>
+<td>false</td>
+<td>false</td>
+<td>false</td>
+<td>false</td>
+<td>false</td>
+<td>false</td>
+</tr>
+<tr>
+<td>false</td>
+<td>true</td>
+<td>false</td>
+<td>false</td>
+<td>true</td>
+<td>true</td>
+</tr>
+<tr>
+<td>true</td>
+<td>false</td>
+<td>false</td>
+<td>false</td>
+<td>true</td>
+<td>true</td>
+</tr>
+<tr>
+<td>true</td>
+<td>true</td>
+<td>true</td>
+<td>true</td>
+<td>true</td>
+<td>true</td>
+</tr>
+</table>
+<p>And there we have it.  We've implemented eager boolean operators using JavaScript's type coercion, the arithmetic operators <code>*</code> and <code>+</code> and the logical not operator <code>!</code>.</p>
+<h3>Conclusion</h3>
+<p>Boolean operators in most programming languages are short-circuited: they evaluate their terms left to right and stop (i.e. short-circuit) once they can definitively determine the truth value of expression. This behaviour is usually what we want.  However, in some rare cases, we want to evaluate all terms in a boolean expression.  Such an operator is called an eager boolean operator.</p>
+<p>Although JavaScript does not provide eager boolean operators, they can be emulated by using a combination of JavaScript's type coercion semantics and arithmetic and logical operators.</p>

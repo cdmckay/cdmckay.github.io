@@ -1,0 +1,893 @@
+---
+layout: post
+status: publish
+published: true
+title: Things I miss from Java while programming in C#
+author:
+  display_name: cdmckay
+  login: cdmckay
+  email: me@cdmckay.org
+  url: ''
+author_login: cdmckay
+author_email: me@cdmckay.org
+wordpress_id: 1841
+wordpress_url: http://cdmckay.org/blog/?p=1841
+date: '2011-05-02 18:19:17 +0200'
+date_gmt: '2011-05-02 22:19:17 +0200'
+categories:
+- Programming
+- Programming Languages
+- Java
+- ".NET"
+tags: []
+comments:
+- id: 607
+  author: kgrad
+  author_email: kev@couchware.ca
+  author_url: ''
+  date: '2011-05-03 08:14:01 +0200'
+  date_gmt: '2011-05-03 13:14:01 +0200'
+  content: "In my opinion, the biggest feature C# has over Java is LINQ although you
+    can get some of the functionality from other libraries. A lot of the other features
+    of C# you can get with libraries like LambdaJ. \r\n\r\nThe biggest drawback of
+    Java is its verbosity. That being said, I still prefer Java over C#. Whenever
+    I program in C# I find myself really missing a bunch of features from Java, most
+    especially anonymous inner classes and covariance. It's probably due to me trying
+    to program in an overly Java style however. If and when Java gets type inference/clojures
+    i think it will kill my desire for C# completely. Until then Scala is actually
+    a really nice language."
+- id: 608
+  author: Phil
+  author_email: paf31@cantab.net
+  author_url: http://typesandotherdistractions.com/
+  date: '2011-05-03 12:04:33 +0200'
+  date_gmt: '2011-05-03 17:04:33 +0200'
+  content: |-
+    I would add wildcard types to your list.
+
+    Also, delegate types in C# cannot take generic method parameters, unlike an anonymous interface implementation.
+- id: 609
+  author: Jeff Eberlin
+  author_email: Jeff@Eberlin.net
+  author_url: ''
+  date: '2011-05-03 13:31:26 +0200'
+  date_gmt: '2011-05-03 18:31:26 +0200'
+  content: |-
+    Don't forget you can use Extension methods to do some of the things you want to do.. The enum stuff comes to mind.
+
+    http://msdn.microsoft.com/en-us/library/bb383977.aspx
+
+    I agree though, every language has SOMETHING you'd miss if you had to switch to another.
+- id: 610
+  author: Mohamed Elsherif
+  author_email: bashmohandes@live.com
+  author_url: http://www.bashmohandes.com
+  date: '2011-05-03 15:09:02 +0200'
+  date_gmt: '2011-05-03 20:09:02 +0200'
+  content: |-
+    @Phil what do you mean delegates cannot take generic parameters? delegates in C# CAN take generic method parameters.
+
+    Enum in C# are very efficient compared to Java, because they are at the end of the day just numeric value not a whole object so you can use them all over the place with no perf hit, compared with Java, what I see mostly in Java that the perf hit is really bad that people end up using constants similar to old C way
+- id: 611
+  author: cdmckay
+  author_email: me@cdmckay.org
+  author_url: ''
+  date: '2011-05-03 15:45:51 +0200'
+  date_gmt: '2011-05-03 20:45:51 +0200'
+  content: |-
+    @Mohamed Elsherif:
+
+    Do you have any profiling data to back that up?  In Effective Java (2nd Edition) on page 157, Joshua Bloch says: "Enums are, generally speaking, comparable in performance to int constants.  A minor performance disadvantage of enums over int constants is that there is a space and time cost to load and initialize enum types.  Except on resource-constrained devices, such as cell phones and toasters, this is unlikely to be noticeable in practice".
+- id: 613
+  author: Phil
+  author_email: paf31@cantab.net
+  author_url: http://typesandotherdistractions.com/
+  date: '2011-05-03 17:03:26 +0200'
+  date_gmt: '2011-05-03 22:03:26 +0200'
+  content: "@Mohammed Elsherif: \r\n\r\nI was referring to the case where the interface
+    method has a generic parameter, such as:\r\n\r\n<pre lang=\"csharp\">\r\ninterface
+    Foo \r\n{\r\n    void FooMethod<T>(T t);\r\n}\r\n</pre>\r\n\r\nThe type parameter
+    T here belongs to the method FooMethod. The nearest we can get with a delegate
+    is the equivalent of\r\n\r\n<pre lang=\"csharp\">\r\ninterface Foo<T>\r\n{\r\n
+    \   void FooMethod(T t);\r\n}\r\n</pre>\r\n\r\nwhere the generic parameter belongs
+    to the type. The delegate would be:\r\n\r\n<pre lang=\"csharp\">\r\ndelegate void
+    FooMethod<T>(T t);\r\n</pre>\r\n\r\nThe delegate type can be instantiated for
+    a particular T, but an interface implementation of Foo requires the method to
+    accept any T.\r\n\r\n<em>(cdmckay: I tried to re-add the generics as I understood
+    them.)</em>\r\n"
+- id: 614
+  author: Phil
+  author_email: paf31@cantab.net
+  author_url: http://typesandotherdistractions.com/
+  date: '2011-05-03 17:04:38 +0200'
+  date_gmt: '2011-05-03 22:04:38 +0200'
+  content: Erm... all of the generics got removed as HTML above.
+- id: 615
+  author: WayneB
+  author_email: wb.stow@gmail.com
+  author_url: ''
+  date: '2011-05-03 17:26:36 +0200'
+  date_gmt: '2011-05-03 22:26:36 +0200'
+  content: "You can do Method Return Type Covariance with the \"new\" operator:\r\n\r\n<pre
+    lang=\"csharp\">\r\nclass Foo { }\r\nclass SubFoo : Foo { }\r\nclass Bar\r\n{\r\n
+    \   private Foo _foo = new Foo();\r\n    public Foo GetFoo() { return _foo: }\r\n}\r\nclass
+    SubBar : Bar\r\n{\r\n    new public SubFoo GetFoo()\r\n    {\r\n        return
+    (SubFoo)base.GetFoo();\r\n    }\r\n}\r\n</pre>"
+- id: 616
+  author: artsrc
+  author_email: artsrc@gmail.com
+  author_url: ''
+  date: '2011-05-03 22:35:27 +0200'
+  date_gmt: '2011-05-04 03:35:27 +0200'
+  content: "@Wayne : new has different semantics than the Covariant Java functions.\r\n\r\nMost
+    names are final in my code.  \"final\" everwhere is a pointless distraction."
+- id: 617
+  author: Stilgar
+  author_email: StilgarAD@yahoo.com
+  author_url: http://sietch.net
+  date: '2011-05-04 02:13:40 +0200'
+  date_gmt: '2011-05-04 07:13:40 +0200'
+  content: "WayneB this would not work in polymorphic scenarios which is the whole
+    point of method overriding.\n\nI fully agree with the first point (covariant method
+    overrides). \n\n2 (enums) is an overkill in Java in my opinion. It can be useful
+    in some situations but in these you can just go for class in C#. While you will
+    need to write a bit more code to declare it I find it strange that a language
+    that resisted adding lambdas for so long \"because they were too complex\" has
+    so complicated concept of something as simple as enum. BTW how does Java handle
+    the case when you use bitwise operations with Flags enums?\n\n3 is good but it
+    would be really poor language design to add both features in a language. Also
+    your reason to like anonymous types is dubious. I actually want my events to be
+    open to having multiple subscribers. I sometimes want to pass an object that has
+    more than 1 method (IEqualityComparer comes to mind) and I can't do it with lambdas.
+    Anonymous types would work here but if you need to do it often you create a generic
+    class with a constructor that takes 2 lambdas.\n\nI see 4 (local final) as totally
+    useless feature. How long should a method be to benefit from declaring local variables
+    as final. If you can see the code on 1-2 screens then you don't need the compiler
+    to do the checks. Let alone that if you want to mutate a variable you can always
+    remove the final => local final guarantees nothing."
+- id: 618
+  author: Andrew
+  author_email: who@care.com
+  author_url: ''
+  date: '2011-05-04 02:26:34 +0200'
+  date_gmt: '2011-05-04 07:26:34 +0200'
+  content: "How about checked exception?\r\n\r\nI missed that - there is no way for
+    me to declare an enforcable exception contract."
+- id: 619
+  author: rei
+  author_email: ragingrei@hotmail.com
+  author_url: ''
+  date: '2011-05-04 03:04:31 +0200'
+  date_gmt: '2011-05-04 08:04:31 +0200'
+  content: |-
+    That's it? These are the things you miss from Java?
+
+    To cite these admittedly situational points as reasons that C# isn't necessarily better than Java is seriously grasping at straws.
+- id: 620
+  author: Marc Borgers
+  author_email: marc.borgers.prive@gmail.com
+  author_url: ''
+  date: '2011-05-04 03:06:08 +0200'
+  date_gmt: '2011-05-04 08:06:08 +0200'
+  content: For me the biggest shortcome of java is the fact that Generics are lost
+    in byte code. In C# is taken down to the runtime. So you have access to it in
+    meta-data. For C# the Generics is to static to me.
+- id: 621
+  author: Thaina
+  author_email: thaina_greenwolf@hotmail.com
+  author_url: ''
+  date: '2011-05-04 03:25:18 +0200'
+  date_gmt: '2011-05-04 08:25:18 +0200'
+  content: |-
+    I'm C# user and like C# more than Java but I agree with you too
+
+    but for Anonymous inner classes
+    I'm not sure about anonymous class feature of C# 4.0, maybe you can look at
+
+    Still, I think C# is a "better language" than Java
+    Yes C# lack "some things" from Java
+    But Java lacks "some other things" more than that
+    10   -9 equal to 1
+    -10   9 equal to -1
+    That's the meaning of "better"
+
+    For me I'm craving for unsigned and struct
+    Also it's little annoyed for get/set without properties and indexer
+    I'm fine with delegate, but many other things was lack "equivalence" ones
+
+    At least, all yours request is support by CLR and I'm guess it already there in J#
+
+    Actually I prefer Java man to use J#, I like to think that we can write our best language under the same framework
+    And at the very least, You can try to make your own Java language under CLR. All your request feature is support
+
+    Unlike JVM, lack support of struct and unsigned is the core
+    No way for me get it instead of beg for the one who compile JVM to add it
+    And even they just add it right now, It's takes long long time to make it be a full support everywhere
+    That's all sucks
+- id: 622
+  author: Thaina
+  author_email: thaina_greenwolf@hotmail.com
+  author_url: ''
+  date: '2011-05-04 03:40:51 +0200'
+  date_gmt: '2011-05-04 08:40:51 +0200'
+  content: |-
+    To tell you thruth
+
+    Only things that I like Java more than C# is, It's not have crazy delegate everywhere
+
+    Yes, delegate is very good feature, But I don't think we should use it this much in C#
+    I prefer Java way to make
+
+    But, In contrast, Java interface is a little bit lower than C#
+    In 1 class, It cannot implement 2 interfaces extend from same interface, even with generic
+    Unlike C#, we can reuse 1 function for 2 interface, or event make it explicitly implement
+    Sometimes I just want make 1 listener class, which can listen many asynchronous callback and manage many things at the same times
+    But because it "Asynchronous<I>" so I only able to make many class
+
+    And you know, new object, new footprint
+    Sucks performance
+
+    I haven't seen things in Java that better than C# much enough to be able to call Java is better than C#
+- id: 623
+  author: c#coder
+  author_email: csharisAwesome@ramJavaupYour.com
+  author_url: ''
+  date: '2011-05-04 04:25:40 +0200'
+  date_gmt: '2011-05-04 09:25:40 +0200'
+  content: "Doesnt seem like you have properly researched your comments. With respect
+    to the final keyword in java, the c# equivalent is sealed. Also I dont quite see
+    what your point behind the Anonymous inner classes is. If I wanted to guarantee
+    that something needs an event handler attached, I can just as easily guarantee
+    this by something along the lines of (even though I would never do this since
+    in most cases I am aware of events that can be caught/exposed in c# &amp; since
+    I know that the concept of events to intercept states of interest exist in the
+    first place):\r\n\r\n<pre lang=\"csharp\">\r\nabstract void OnInteraction(Action
+    evtHandlerAction)\r\n</pre>\r\n\r\nthat way any inheriting class member is always
+    ensured to do what you intended. Oh and dont forget that in c# you can add generics
+    to your captchas by doing something along the lines of:\r\n\r\n<pre lang=\"csharp\">\r\nabstract
+    void OnInteraction(Action evtHandlerAction) where E:SomeBaseType\r\n</pre>"
+- id: 624
+  author: schlingel
+  author_email: der-schlingel@gmx.at
+  author_url: http://schlingel.soup.io
+  date: '2011-05-04 04:35:50 +0200'
+  date_gmt: '2011-05-04 09:35:50 +0200'
+  content: |-
+    It's pretty funny to read this points because I recently switched from C# to Java and I never thought of the new possibilities.
+
+    Sure, anonymouses classes are nice but if you started with C# I think you rather miss delegates and events integrated in the langauge then just appreciate the feature at the cost to implement many things with interfaces where a simple delegate would do the same job.
+
+    To be honest the point 1 I truly didn't know that that is even possible. And I just don't know where I could need it. But a feature nonethelesess.
+
+    One point which I often read is that people miss checked exceptions. I'm on the other hand find them more annoying.
+- id: 626
+  author: Bill
+  author_email: bill.seddon@lyquidity.com
+  author_url: http://www.lyquidity.com/devblog
+  date: '2011-05-04 05:45:03 +0200'
+  date_gmt: '2011-05-04 10:45:03 +0200'
+  content: "I don't want to be in a war Java vs C# as I program in both.  But I think
+    you are looking at things too much from a Java perspective.  You'd do things differently
+    in C#.  Take your getSession example.  Make it virtual and have the method return
+    an ISession (or some) interface.  It's better code anyway\r\n\r\nOr your enum
+    example.  Using classes like that will consume loads of memory unnecessarily.
+    Meanwhile you can do even better in C# using it's language features - in this
+    case an extension method.  With the extension method below and taking your example
+    you can write:\r\n\r\n<pre lang=\"csharp\">\r\nConsole.Writeline(type.ToDescription());\r\n</pre>\r\n\r\nNow
+    that's pretty clean.  To do this I've used your exact code but turned it into
+    an extension method which will work for any enum so add it to your bag of tools
+    and you can attribute all your enums.  In practice it would benefit from handling
+    the condition there's no DescriptionAttribute so it returns the enum's value name.
+    \ I've added that as a second extension method.\r\n\r\n<pre lang=\"csharp\">\r\npublic
+    static string ToDescription(this System.Enum enumType)\r\n{\r\n  return enumType.GetType()\r\n
+    \   .GetField(enumType.ToString())\r\n    .GetCustomAttributes(typeof(DescriptionAttribute),
+    false)\r\n    .Cast()\r\n    .First()\r\n    .Description;\r\n}\r\n</pre>\r\n\r\nThis
+    is an alternative implementation of the extension method which handles non-attributed
+    enum members:\r\n\r\n<pre lang=\"csharp\">\r\npublic static string ToDescription(this
+    System.Enum enumType)\r\n{\r\n  var f = enumType.GetType().GetField(enumType.ToString());\r\n
+    \ var d = (DescriptionAttribute)f\r\n    .GetCustomAttributes(typeof(DescriptionAttribute),
+    false)\r\n    .FirstOrDefault();\r\n  if (d == null) return enumType.ToString();\r\n
+    \ return d.Description;\r\n}\r\n</pre>"
+- id: 628
+  author: Martin R-L
+  author_email: martin.rosenlidholm@gmail.com
+  author_url: http://martinsaspects.blogspot.com/
+  date: '2011-05-04 06:19:47 +0200'
+  date_gmt: '2011-05-04 11:19:47 +0200'
+  content: |-
+    "[...] in the previous Java example, we can guarantee that there is only one listener"
+
+    That's easily accomplished with C#'s event accessors and = (assignment operator) instead of  = (add assignment operator).
+- id: 631
+  author: Tim English
+  author_email: tim_fake@hotmail.com
+  author_url: ''
+  date: '2011-05-04 07:57:29 +0200'
+  date_gmt: '2011-05-04 12:57:29 +0200'
+  content: "What I miss in C# is the \"for-free\" binding that java gives with anonymous
+    inner classes. In C# you have to declare a full constructor and perform the inialization
+    yourself.\r\n\r\n<pre lang=\"java\">\r\nvoid someJavaMethod() {\r\n   final int
+    x = 3;\r\n   final int y = 4;\r\n   SomeInterface quickImpl = new SomeInterface()
+    {\r\n      public int interfaceMethod1() {\r\n         return x   y;\r\n      }\r\n
+    \     public int interfaceMethod2() {\r\n         return x - y;\r\n      }\r\n
+    \  }\r\n   doSomeWork(quickImpl);\r\n}\r\n</pre>\r\n\r\nJava implicitly creates
+    2 fields x and y within the implementation class and creates a constructor to
+    initialize the fields and calls this constructor for you. You can always create
+    a new local variable to meet the \"final\" requirement of the declaring scope.
+    I think this Java language construct lets you jump directly to the code you need
+    to write without as much boiler plate and \"noise\".\r\n\r\nC# equivalent (I am
+    a little rusty here, so apologies)\r\n\r\n<pre lang=\"csharp\">\r\nvoid someCSharpMethod()
+    {\r\n   int x = 3;\r\n   int y = 4;\r\n   class QuickImpl : SomeInterface {\r\n
+    \     int m_x;\r\n      int m_y;\r\n      public QuickImpl(int pX, int pY) {\r\n
+    \        m_x = pX;\r\n         m_y = pY;\r\n      }\r\n      public int interfaceMethod1()
+    {\r\n         return m_x   m_y;\r\n      }\r\n      public int interfaceMethod2()
+    {\r\n         return m_x - m_y;\r\n      }\r\n   }\r\n   QuickImpl quickImpl =
+    new QuickImpl(x, y);\r\n\r\n   doSomeWork(quickImpl);\r\n}\r\n</pre>\r\n\r\nA
+    lot of the java I work on lends itself to small anonymous types. I did some algorithm
+    prototyping in C# for a problem I was trying to solve in Java. I found it laborious
+    having to declare all of the fields and constructors."
+- id: 632
+  author: Things I miss from Java while programming in C# &raquo; Cameron McKay |
+    Guide 2 Serv Online
+  author_email: ''
+  author_url: http://guide2serv.cz.cc/archives/things-i-miss-from-java-while-programming-in-c-%c2%bb-cameron-mckay/
+  date: '2011-05-04 08:05:14 +0200'
+  date_gmt: '2011-05-04 13:05:14 +0200'
+  content: "[...] more: Things I miss from Java while programming in C# &raquo; Cameron
+    McKay   Categories: Programming 0 Comments  Tags: because, because-the-client,
+    client, [...]"
+- id: 633
+  author: Anders
+  author_email: anders.lund@cicero.no
+  author_url: http://none
+  date: '2011-05-04 08:08:54 +0200'
+  date_gmt: '2011-05-04 13:08:54 +0200'
+  content: |-
+    @Mohamed Elsherif
+
+    Constants similiar to C? Plain old C has enums too. I've never programmed in C# but C# enums sound a lot more like the C version.
+- id: 634
+  author: ncloud
+  author_email: me@nicholascloud.com
+  author_url: http://www.nicholascloud.com
+  date: '2011-05-04 08:13:58 +0200'
+  date_gmt: '2011-05-04 13:13:58 +0200'
+  content: Great article.  I'm a C# dev, and I did a little Java in school, but not
+    enough to get exposure to some of these sweet Java features.  Like @WayneB mentioned,
+    the new keyword can be used to achieve a similar effect.  I have used this myself
+    when implementing a parameterized subclass with a fluent interface (where the
+    base class had methods that always returned instances of itself, but the subclass
+    returned itself as a parameterized instance).
+- id: 635
+  author: Jay
+  author_email: jay@frenchfryz.com
+  author_url: ''
+  date: '2011-05-04 08:22:47 +0200'
+  date_gmt: '2011-05-04 13:22:47 +0200'
+  content: As a C# developer in a mixed java/.net shop, I was interested to see what
+    points this article would make.  I have to say, I think they're all pretty minor,
+    and the only one I've actually run into personally is the enum one.  I've wished
+    before that I could constrain my generic extension method to work only on an enum
+    type.
+- id: 636
+  author: "@lex"
+  author_email: alexzaga@yahoo.com
+  author_url: ''
+  date: '2011-05-04 08:45:24 +0200'
+  date_gmt: '2011-05-04 13:45:24 +0200'
+  content: I think that Java and CSharp are languages so pretty funny. However, if
+    you going to do something with CSharp, you MUST, use its own way to make programs
+    with it and forget another languages. If you going to do something wiht Java is
+    the same thing. But both languages so very powerful in its respectives fields.
+    I prefer CSharp over Java always. But, I don't mind if i use Java to program something
+    that someone asks me. I' m not cry for that and a will not ripping my clothes
+    for this fact, i would be very silly.
+- id: 637
+  author: Cade Bryant
+  author_email: cadehbryant@gmail.com
+  author_url: ''
+  date: '2011-05-04 10:44:57 +0200'
+  date_gmt: '2011-05-04 15:44:57 +0200'
+  content: "As one who has been using both C# and Java extensively for the past several
+    years, I agree with most of your points - and I am surprised that you didn't also
+    mention multi-platform support.\r\n\r\nI do indeed enjoy the increased flexibility
+    of Java's enum types versus C#......however, one thing I miss is being able to
+    use enums as bitwise flags.  In C#, it's as simple as setting the [Flags] attribute;
+    the Java equivalent involves lots of boilerplate code.\r\n\r\nAs far as interfaces
+    are concerned: Java is a little confusing because it misuses the OO concept of
+    interfaces, often conflating interfaces for attributes.  An example is ISerializable.\r\n\r\nIn
+    Java, implementing the ISerializable interface enables an object to be serialized.
+    \ However, a true interface (in OO parlance) does not \"enable\" anything!  The
+    purpose of an interface is to enforce a contract; i.e., to guarantee that anything
+    implementing it will contain certain fields and/or methods.  But a true OO interface
+    does not itself provide any functional implementation of these fields/methods.\r\n\r\nJava,
+    however, by its used of so-called \"marker interfaces\", blurs this distinction
+    and uses interfaces as a methodology *both* for enforcing contracts *and* for
+    providing certain functionalities.  Technically, some Java \"interfaces\" (such
+    as ISerializable) should be called \"attributes\"........and in fact that is exactly
+    what C# does - to make an object serializable in C#, you set the [Serializable]
+    attribute.\r\n\r\nSeparation of concerns - i.e., a clear syntactical and semantical
+    distinction between interfaces and attributes - would be an ideal addition to
+    Java.\r\n\r\nSomething that I like about C# (although this is arguably a mixed
+    blessing) is ref parameters (and, for that matter, out parameters).  To achieve
+    the same effect in Java, I need to either (1) create custom classes which encapsulate
+    the fields that I would need to modify and code my methods to output these objects
+    as return values; or (2) store all the variables whose values I need to modify
+    as global variables.\r\n\r\nPerformance is another issue.  On the Windows platform
+    at least, a C# app will typically run much faster and with less resource utilization
+    than a comparable Java app.  (I haven't used Mono or any other technology for
+    porting .NET to other platforms, so I can't speak for its performance on non-Windows
+    platforms).  And, for an additional performance edge when you need it, C# allows
+    you to use pointers.\r\n\r\nOne thing that I *do* like about Java (over C#) is
+    the ability to create applets that run inside web browsers.  (Silverlight allows
+    a similar functionality, but only on Windows machines).\r\n\r\nA few nitpicky
+    points, which perhaps are more related to programming style than to the limitations
+    of the language: \r\n\r\n(1) Java developers have a tendency to write code that
+    is harder to read than comparable C# code.  First of all, Java developers are
+    big fans of string concatenation - so their code is often littered with ugliness
+    such as: \"The values of \" + myField + \" are \" +  myVar1 + \", \" + myVar2
+    + ........  In contrast to the easier-to-read C# implementation: \"The values
+    of {0} are {1}, {2}, .......\"\r\n\r\nTruth be told, Java does indeed allow string
+    formatting (\"%s, %s......\") - but I rarely see Java developers using it.\r\n\r\n(2)
+    Bracketing.  In C#, one typically lines up the brackets in the vertical plane,
+    which makes it easier to read code that contains multiple nested blocks.  The
+    Java style of having the opening bracket on the same line of code as the block
+    header (e.g., \"if (condition) {\") is harder on my eyes and my brain.\r\n\r\nGranted,
+    you can employ in Java the symmetrical bracketing approach that C# developers
+    use.......but most Java IDEs have a formatting function which will convert this
+    to the classic style."
+- id: 638
+  author: Dan Sutton
+  author_email: dan@opwernby.com
+  author_url: http://www.opwernby.com
+  date: '2011-05-04 11:09:26 +0200'
+  date_gmt: '2011-05-04 16:09:26 +0200'
+  content: 'I think the only Java thing I miss in C# is the "throws" descriptor, stating
+    which exceptions a method throws. But going the other way, there''s a ton of stuff,
+    a really big one being the fact that Java has no property getter and setter declarations
+    in it: this is a massive omission which makes the code unreasonably wordy. Granted,
+    you can replace these with get and set functions for local variables, but code-wise,
+    it''s a nightmare. By the way, you can do the anonymous inner classes thing if
+    you really want to (I''ve never found a use for it, and it''s something of a debugging
+    nightmare): there''s a way in C# (which eludes me at the moment) to late-bind
+    everything so that it can be as error-prone as you want... there''s an article
+    in one of the last three MSDN magazines about it, if anyone is interested. I''m
+    not. I read it and thought, "Wow - that''s really clever and incredibly stupid.
+    I''m never going to do that. Ever."'
+- id: 639
+  author: Niall Sweeny
+  author_email: junk@sweeny.ca
+  author_url: ''
+  date: '2011-05-04 14:10:49 +0200'
+  date_gmt: '2011-05-04 19:10:49 +0200'
+  content: I have to agree with the section about enums - having enums as an integral
+    type in C# is limiting.  More than once I've wanted to create an Enum class hierarchy,
+    deriving one or more enums from a base class enum which isn't possible in C#.
+- id: 640
+  author: J
+  author_email: toplegocreator@hotmail.com
+  author_url: ''
+  date: '2011-05-04 14:18:47 +0200'
+  date_gmt: '2011-05-04 19:18:47 +0200'
+  content: |-
+    The absolute biggest thing I miss is the superb documentation of Java's API. I have needed an additional source of information on the Java API perhaps once or twice in several years of using it. I rarely consult examples; I find just reading the API actually easier. It has all the limitations and special cases you'll need to handle, lots of performance information when relevant, and often times, even a useful sample is included right in the documentation. I really hope that doesn't go down the tubes with Oracle in charge now.
+
+    On the other hand, C#'s documentation is bad enough that I almost always need additional information. The samples very, very rarely reveal any details about the usage. I could have guessed most of the information I can glean from them. Information about special cases and limitations is almost completely absent, aside from a bare bones list of possible exceptions. Usually to find out the limitations, I have to do a rather extensive Google search or resort to trial and error. (Thank God for Stack Overflow.)
+- id: 641
+  author: metator
+  author_email: metator.pt@gmail.com
+  author_url: ''
+  date: '2011-05-04 16:31:48 +0200'
+  date_gmt: '2011-05-04 21:31:48 +0200'
+  content: |-
+    @Cade
+
+    Regarding ISerializable, i think you are half true. Though i agree with you that an interface defines a contract, .NET's ISerializable contract is *not entirely* defined by itself. It requires the implementor to define a constructor with some particular parameters and, as you know, a constructor cannot be defined by an interface. That part of the contract was established through the documentation, otherwise one would have to look through the framework's code to find out how it works...
+    You should also take into consideration that we're talking about core stuff that exists from its early beginnings. Java Annotations (the equivalent of Custom Attributes in .NET) only showed up in version Java 1.5.
+
+    Regarding covariant return types, there's in fact some limit support for that in .NET if you *explicit implement* an interface, but it requires more code than it should (in comparison to Java).
+- id: 642
+  author: cdmckay
+  author_email: me@cdmckay.org
+  author_url: ''
+  date: '2011-05-04 16:50:44 +0200'
+  date_gmt: '2011-05-04 20:50:44 +0200'
+  content: "@c#coder:\r\n\r\nThanks for the suggestion, but <code>sealed</code> is
+    actually not the equivalent of <code>final</code> in a local scope.  The <code>final</code>
+    keyword in Java means different things, depending on where it is used.\r\n\r\nAs
+    a class modifier (i.e. <code>final class</code>) or as a method modifier (i.e.
+    <code>final void Foo()</code>) the C# equivalent is <code>sealed</code>.\r\n\r\nAs
+    a field modifier (i.e. <code>private final int foo</code>), the C# equivalent
+    is <code>readonly</code>.\r\n\r\nAs a local variable modifier (i.e. <code>final
+    int foo</code>) there is no C# equivalent."
+- id: 643
+  author: c#coder
+  author_email: dotNetisAwesome@msdn.com
+  author_url: ''
+  date: '2011-05-04 17:40:03 +0200'
+  date_gmt: '2011-05-04 22:40:03 +0200'
+  content: |-
+    @cdmckay
+
+    Again, please research your comments. The equivalent of final for a field modifier/local variable in c# is const
+    http://msdn.microsoft.com/en-us/library/e6w8fe1b(v=vs.80).aspx
+- id: 644
+  author: cdmckay
+  author_email: me@cdmckay.org
+  author_url: ''
+  date: '2011-05-04 17:54:02 +0200'
+  date_gmt: '2011-05-04 22:54:02 +0200'
+  content: "@c#coder:\r\n\r\nAs mentioned in the article, <code>const</code> is only
+    suitable for compile-time constants.\r\n\r\nSo while this is valid in Java:\r\n\r\n<pre
+    lang=\"java\">\r\nfinal String hello = getHelloString();\r\n</pre>\r\n\r\nIt will
+    not work in C# with the <code>const</code> keyword:\r\n\r\n<pre lang=\"csharp\">\r\n//
+    compiler error\r\nconst string hello = GetHelloString();\r\n</pre>"
+- id: 645
+  author: Kelly French
+  author_email: kfrench581@yahoo.com
+  author_url: http://codewright.blogspot.com
+  date: '2011-05-04 19:25:03 +0200'
+  date_gmt: '2011-05-05 00:25:03 +0200'
+  content: What I miss from Java is the platform independence.  When something goes
+    wrong I don't have to wonder if there is some obscure setting buried in the registry
+    that is throwing a monkeywrench into the works.
+- id: 646
+  author: J
+  author_email: toplegocreator@hotmail.com
+  author_url: ''
+  date: '2011-05-04 19:50:19 +0200'
+  date_gmt: '2011-05-05 00:50:19 +0200'
+  content: |-
+    "&ldquo;The values of &rdquo;   myField   &rdquo; are &rdquo;   myVar1   &ldquo;, &rdquo;   myVar2   &hellip;&hellip;.. In contrast to the easier-to-read C# implementation: &ldquo;The values of {0} are {1}, {2}, &hellip;&hellip;.&rdquo;"
+
+    Please explain to me how having to mentally map arbitrary indicies to values in a list is easier to understand than the variable names or values appearing where they will show up. "{0}" tells me absolutely nothing about what value will go there. I have to go find the 0th element in the list that follows. Not a big deal if there are 2 values, but if there are 10, how error prone is finding the value at index 5? A lot more than seeing a variable name in the middle of the string. Sure, it looks a more cluttered, but it's much easier to interpret.
+
+
+
+    How did this post become a thread about why C# is better than Java? Isn't it supposed to be the other way around, talking about Java's advantages?
+
+    How about some more things I miss from Java?
+
+    1) Meaningful toString() methods and exception messages. The vast majority of C#'s ToString() methods just output the class name and nothing else. Java's by contrast almost always put out some useful information about the values of variables in the instances. A decent portion of the Exceptions I get in C# just have the exception type name as the message. Java usually has meaningful error messages.
+    2) Java outputs the string "null" when you try to print a null reference. This forces us to handle this case when we might convert a null reference to a string. C# automatically converts it to the empty string. This "reasonable default" always leaves me wondering what the heck the value of my variable was. And it gets worse when you start throwing DBNull into the mix. Was it null, DBNull.Value, or the empty string? Only way to tell is to get into the code with a debugger or to print out a bunch of tests.
+    3) The Collections hierarchy. My gosh. Does .NET's even have a rhyme or reason to it? What is the difference between an ICollection and an IList, anyway? In Java, it's clear why each interface exists. Each interface actually indicates functionality.
+    4) The inheritance syntax. "extends" and "implements" beats ":" and starting all interface names with "I" any day.
+
+
+    If we're going to talk about .NET's advantages, how about some things from .NET that I'm glad Java doesn't have?
+
+    1) Explicit interface implementations. Utterly confusing.
+    2) The in-line SQL feature, whatever it was called.
+- id: 649
+  author: Thaina
+  author_email: thaina_greenwolf@hotmail.com
+  author_url: ''
+  date: '2011-05-05 05:02:00 +0200'
+  date_gmt: '2011-05-05 09:02:00 +0200'
+  content: |-
+    OK. Please let's me debate you. @J
+
+    - 1 Meaningful ToString
+    ToString in .NET do that way for "up to you implementation" auto generate information is such a mess
+    If you want, just override and it done
+
+    - 2 It's the same shit if you have string "null"
+    And this just about how System.out.println act difference from Console.WriteLine
+    Not about Java or C#
+
+    - 3 Collection interface in .NET is there just if you have a reason to use
+    It just interface. Use it as interface. Never use it if you want something more than that
+    interface in Java is just something try to be more than interface should be
+
+    - 4 How you can tell in Java what is class and what is interface?
+    C# Interface don't need to put I in front, it just coding style that make something obvious
+    You just think somethings beats something by your own
+    For me ":" is very very very easier than "extend" then "implement", It also a rules to to put class inherit only 1 and at first then any number of interface after
+
+    Then talk about what you glad
+    - 1 You don't know what useful for explicit implement interface can did. You just don't used to use it
+    So have some familiar and judge again
+
+    - 2 I never use that too
+    But it's about people who like it will use it and, people who don't, just not "using" and you will never seen that shit
+
+    Not like Java that try not to give any chance for people to try some new things. They always act like bureaucrat that judge what people should want at the very core VM
+- id: 650
+  author: Thaina
+  author_email: thaina_greenwolf@hotmail.com
+  author_url: ''
+  date: '2011-05-05 05:10:48 +0200'
+  date_gmt: '2011-05-05 09:10:48 +0200'
+  content: |-
+    For me
+    C# and Java don't have a bad things
+
+    It's just "Lack" too many things
+
+    And C# is better because it offer things more than Java did
+
+    I just think we should have a language that can do everything
+    You just need to enable it and you can use
+
+    Like LINQ, I never use LINQ so I just not using it
+    Then I never see it in my code
+    And like JSNI in Java, I use it and I like it
+    but people who don't like just not import and everything fine
+
+    The main difference is JVM more like bureaucrat than .NET, I can hope for C# to fulfill the task "Language for everything" easier than Java
+- id: 651
+  author: Henry C
+  author_email: henry.chilvers@rovicorp.com
+  author_url: ''
+  date: '2011-05-05 17:36:50 +0200'
+  date_gmt: '2011-05-05 21:36:50 +0200'
+  content: |-
+    These 4 points seem very trivial in the grand scheme of things (covarience, enums, anonymous inner methods, and final vs. const?!?) We are "migrating" from C# to Java and in just the few weeks that we've been starting, here's some of my assessment of the 2 languages...
+    1. C# does have covarience and contravarience. We use/used both.
+    2. C# enums are simple (like C), but not as powerful as Java.
+    3. Why is guaranteeing "that there is only one listener" all that good/useful? Doesn't seem like a worthy benefit to me?!?
+    4. Java and generics is a joke. I'm sorry, but C#'s generices are SO much better and we can do some awesomely powerful stuff with generics and reflection in C# that there will be no way to accomplish the same thing in Java (at least not without some additional libraries, if they exist).
+    5. C#'s ability to declare anonymous method and types. Very useful, and shortens your code a bit.
+    6. And finally, Functional Programming! Java has nothing (built in); C# has A LOT OF IT! This has allowed us to build some very powerful, reusable components of our system, and I will definitely have to look into Scala or FunctionalJ or some other addon to try to make Java a bit more like C#.
+- id: 652
+  author: Terje
+  author_email: terjeb@yahoo.com
+  author_url: ''
+  date: '2011-05-06 00:52:38 +0200'
+  date_gmt: '2011-05-06 04:52:38 +0200'
+  content: |-
+    I think Henry C has some very valid points, and points that are more important than the ones mentioned in the article. Functional programming and C# Generics are a particular relief to me when moving from Java to C#.
+
+    Another aspect that was only slightly covered was the way Sun decided to do a few things in the Java compiler, and NOT support them in the byte-code. Again, Generics is an example, but there is another more egregious one. Autoboxing.
+
+    Sorry to say this, but this is dangerously badly done in Java. It simply sucks. Whoever decided to make Autoboxing an automatic COMPILE time issue should have their head examined. In dynamic environments where classes and libraries are loaded at run-time, using reflection etc, making something like autoboxing a compile-time issue is absurd. I have been working on some JBoss solutions where external libraries (in our case Smooks) automatically creates objects with types determined at run-time (while parsing XML). Java autoboxing lead to extremely hard to find errors in our solution since exceptions were thrown in utterly odd places with little or no information in the exception.
+
+    A language is as useful as the level of productivity it adds to my work-day. If I'm spending all of that day tracking bugs that only show up as odd exceptions, ones that have been caught and re-thrown as new ones with no useful info in them, the language is not going to be a favorite.
+
+    In Java, particularly with JBoss, I some times spend hours trying to find out whats wrong, not really getting anywhere, and end up coding around it. I can't actually remember such a situation occurring when doing C# programming.
+- id: 653
+  author: Lautaro
+  author_email: lbrasseur@yahoo.com
+  author_url: http://www.oxen.com.ar/
+  date: '2011-05-06 12:16:29 +0200'
+  date_gmt: '2011-05-06 16:16:29 +0200'
+  content: |-
+    I'm in a similar situation, but with things of Java that I miss when programming Objective-C (iPhone). Some of them include:
+
+    - Constructors
+    - Packages or some kind of namespace
+    - Access levels (everything is public in ObjC)
+    - Strong typing
+    - Garbage collector (autorelease pools really suck)
+    - Inner/anonymous classes
+    - JARs (you must distribute .h files)
+    - Null pointer checking
+    - Exceptions (they are available, but
+    - Good Open Source libraries (hehe)
+    - Tools (Eclipse, Maven, etc.)
+    - Good design (Cocoa collections, XML parsers, et. suck. Date handling classes has a "setBehavior" method!)
+    - Backward compatiblity
+- id: 665
+  author: "[ICR]"
+  author_email: andrewjanuary@gmail.com
+  author_url: http://www.morethannothing.co.uk
+  date: '2011-07-04 03:58:04 +0200'
+  date_gmt: '2011-07-04 07:58:04 +0200'
+  content: |-
+    @J
+    ICollection is for collections whose order is important, that you can add and remove from, but you can't access items directly by index.
+    IList is for collectons whose order is important, that you can add and remove from, and you can access items directly by index.
+
+    I agree that the names may be a little vague if you aren't previously aware of the terms, but the purposes are quite clearly defined through the methods on the interface.
+- id: 849
+  author: Michael
+  author_email: dev@michaelfarmer.com
+  author_url: http://www.mwfsoftware.com
+  date: '2013-01-27 12:23:46 +0100'
+  date_gmt: '2013-01-27 17:23:46 +0100'
+  content: 'You left out my favorite: Java''s requirement that exceptions are either
+    dealt with or thrown, specifically stated in the method declaration. If I use
+    something in a third-party library, I want to know what exceptions it can possibly
+    throw and I want to be forced to deal with them, or throw them myself. All this
+    activity happens at compile-time (Java). Without that, I''m forced to wait till
+    run-time. And I''m not going to write unit-tests for another library to attempt
+    to find the exceptions they may throw (too busy). So Java is far better than C#
+    on this point IMO.'
+- id: 2283
+  author: David Piepgrass
+  author_email: qwertie256@gmail.com
+  author_url: http://loyc-etc.blogspot.com
+  date: '2013-12-24 17:37:51 +0100'
+  date_gmt: '2013-12-24 22:37:51 +0100'
+  content: "As a C# developer, I definitely miss Return Type Covariance and Anonymous
+    Inner Classes in C#, and I wouldn't mind having readonly locals, either. But features
+    like reified generics and value types have big benefits (first and foremost, performance
+    / lower RAM usage) that I wouldn't be willing to give up by moving to Java. Obviously
+    things like Lambdas used to be an enormous advantage of C#, but not so much now
+    that Java got sugar for it (although C# lambdas are still more capable, e.g. supporting
+    mutable locals).\r\n\r\nClass-like enums can be simulated using Typesafe Symbols
+    which are described in this article:\r\n\r\nhttp://www.codeproject.com/Articles/34753/Symbols-as-extensible-enums\r\n\r\nUnlike
+    Java enums, the set of Symbols in such a \"simulated\" enum can be extended by
+    derived classes.\r\n\r\nIn response to other comments: Java's mandatory \"throws\"
+    clauses are a firm Do Not Want on my list. C#'s XML doc comments are \"objectively\"
+    the worst documentation system I know of, but not so bad when the IDE is helping
+    you write the XML. \"Henry C\" seems unaware of the difference between generics
+    variance and return-type variance.\r\n\r\nNote that in C# you could ensure that
+    an event has at most one listener, if you want (custom add {...} and remove {...}
+    blocks can enforce this), but a delegate property would be better for that. I
+    don't see how the \"onInteraction\" example is any better in Java than C#.\r\n\r\nC#'s
+    lack of \"where T : enum\" is strange but as you noted, there's a workaround...
+    I'd rather be stuck with a limited language and a powerful runtime VM, rather
+    than a limited runtime VM and a powerful language filled with workarounds for
+    the limited runtime VM."
+- id: 2320
+  author: willy
+  author_email: dejavumaster@gmail.com
+  author_url: ''
+  date: '2014-02-05 20:26:28 +0100'
+  date_gmt: '2014-02-06 01:26:28 +0100'
+  content: |-
+    you can jump the gap of java anonimous clases using impromptu interfaces, is not the same but helps
+
+    https://github.com/ekonbenefits/impromptu-interface/wiki/UsageBasic
+- id: 11408
+  author: Phil
+  author_email: purdude@gmail.com
+  author_url: ''
+  date: '2015-08-20 11:01:34 +0200'
+  date_gmt: '2015-08-20 15:01:34 +0200'
+  content: I could not DISAGREE more about Java enums being better than C#. C# provides
+    an efficient and CONSISTENT way of dealing with enums. A Java enum is little more
+    than a class with constant static members and a private constructor (which can
+    be easily created in C#). Because you can define methods, the interface to enums
+    are not consistent. Because it's not an integral, it's not as efficient. Typical
+    enum uses (like a bitmask) require extra code. I personally find Java enums almost
+    completely pointless, their one redeeming feature being support for switch statements.
+---
+<p>One of the perks of being a freelance programmer is that I get to program in a lot of different languages, either because the client has dictated a certain language, has left the choice up to me, or limited me by what is supported by a host (Hi PHP!).</p>
+<p>As fate would have it, I have had the good fortune to have extensive experience with both C# and Java.  While many articles will list things a programmer misses from C# while coding in Java (properties, LINQ, reified generics, type inference, named and optional parameters, closures, continuations), this post intends to look at things a Java programmer might miss while coding in C#.</p>
+<p><!--more--></p>
+<h3>1. Method return type covariance</h3>
+<p>Covariant method return types are one of the lesser known Java features (see <a href="http://java.sun.com/docs/books/jls/third_edition/html/classes.html#8.4.5">Section 8.4.5 in the JLS</a>).  Basically, Java allows you to narrow the return type of a method when overriding it in a sub-class.  For example:</p>
+<pre lang="java">
+public class Foo {
+}
+
+public class SubFoo extends Foo {
+}
+
+public class Bar {
+    final Foo foo = new Foo();
+    public Foo getFoo() {
+        return foo;
+    }
+}
+
+public class SubBar extends Bar {
+    final SubFoo subFoo = new SubFoo();
+
+    @Override
+    public SubFoo getFoo() {
+        return subFoo;
+    }
+}
+</pre>
+<p>Although situations where this is needed are seldom, it is a nice feature to have when you need it.  An good example of its usage is in the <a href="http://wicket.apache.org">Apache Wicket framework</a>.  All pages in Wicket typically derive from the <a href="http://wicket.apache.org/apidocs/1.4/org/apache/wicket/markup/html/WebPage.html">WebPage</a> class.  Thus, when you want to access information from a custom Wicket session you need to do something like this:</p>
+<pre lang="java">
+public class UserInfoPage extends WebPage {
+    public UserInfoPage() {
+        FooSession session = (FooSession) getSession();
+        String userName = session.getUserName();
+        ...
+    }
+}
+</pre>
+<p>However, if you add a class above <code>UserInfoPage</code> called <code>FooPage</code>, you can use a covariant return type to eliminate the unsightly cast:</p>
+<pre lang="java">
+public class FooPage extends WebPage {
+    @Override
+    public FooSession getSession() {
+        return (FooSession) super.getSession();
+    }
+}
+
+public class UserInfoPage extends FooPage {
+    public UserInfoPage() {
+        FooSession session = getSession();
+        String userName = session.getUserName();
+        ...
+    }
+}
+</pre>
+<p>To me this is preferable to adding another method called <code>getFooSession()</code>.  Having two methods can be confusing to a future maintainer (do I want <code>getFooSession()</code> or <code>getSession()</code>? What's the difference?) and needlessly clutters your IDE's code completion.</p>
+<p>There is no equivalent in C#, short of adding a method.  Will C# ever support such a feature?   It's hard to say, but probably not anytime soon.  There has been <a href="http://connect.microsoft.com/VisualStudio/feedback/details/90909/need-covariant-return-types-in-c-all-net-langage">a request for covariant method return types since 2004</a>.  Microsoft response then was:</p>
+<blockquote><p>We hear this request a lot. We'll consider it for the next release.</p></blockquote>
+<p>After seven years and three major C# releases, it looks like they're still considering it.</p>
+<h3>2. Class-like enums</h3>
+<p>This one is not a big surprise, as it is typically mentioned as one of the few things that Java has done better that C#.  In C#, enums are basically glorified integral types.  As such, they can't contain any extra data without using attributes.  While attributes are nice, accessing them requires quite a bit of boilerplate.</p>
+<pre lang="csharp">
+public enum MotionType {
+    Stationary,
+    Walking,
+    Running,
+    [Description("Time Travelling")],
+    TimeTravelling
+}
+
+...
+
+MotionType type = MotionType.TimeTravelling;
+var description = type
+    .GetType()
+    .GetField(type.ToString())
+    .GetCustomAttributes(typeof(DescriptionAttribute), false)
+    .Cast<DescriptionAttribute>()
+    .First()
+    .Description;
+Console.WriteLine(description);
+</pre>
+<p>A further restriction of C# enums if that they can't be used as a generic constraint.  For example, the following code would not compile:</p>
+<pre lang="csharp">
+public class Monster<TMotionType> where TMotionType : enum {
+}
+</pre>
+<p><a href="https://msmvps.com/blogs/jon_skeet/archive/2009/09/10/generic-constraints-for-enums-and-delegates.aspx">According to C# MVP Jon Skeet</a>, this is not a restriction of the CLR, but is actually a restriction of the Microsoft C# compiler.  The best you can do to work around this is to use the broader constraint <code>where : struct</code>, or the <a href="http://code.google.com/p/unconstrained-melody/">Unconstrained Melody library</a>.</p>
+<p>Java enums, on the other hand, are specialized classes.  Like C# enums, Java enums can be used with <code>switch</code> statements and be converted to integral types.  However, Java enums go far beyond these simple uses.  Java enums can have instance fields, instance methods and even per-constant methods.    Java generics can also be constrained to take only enums.  </p>
+<p>Here's how the <code>MotionType</code> enum could be written in Java (notice how easy it is to get the description in this case):</p>
+<pre lang="java">
+public enum MotionType {
+    STATIONARY("Stationary"),
+    WALKING("Walking"),
+    RUNNING("Running"),
+    TIME_TRAVELLING("Time Travelling");
+    
+    public final String description;
+    MotionType(String description) {
+        this.description = description;
+    }
+}
+
+...
+
+MotionType type = MotionType.TIME_TRAVELLING;
+System.out.println(type.description);
+</pre>
+<p>This is just scratching the surface of Java enum capabilities.  I highly recommend reading Chapter 6 of Effective Java or <a href="http://download.oracle.com/javase/1.5.0/docs/guide/language/enums.html">the Oracle enum documentation</a>.</p>
+<h3>3. Anonymous inner classes</h3>
+<p>This is another it's-useful-when-you-need-it feature of Java that C# mostly addresses with events and delegates.  The most common situation for anonymous inner classes in Java is for listeners:</p>
+<pre lang="java">
+Widget widget = new Widget() {
+    public void onInteraction(WidgetState state) {
+        ...
+    }
+};
+</pre>
+<p>In C#, this is handled using events and delegates:</p>
+<pre lang="csharp">
+Widget widget = new Widget();
+widget.Interaction += state => {
+    ...
+};
+</pre>
+<p>The C# approach is superior in most cases.  There's far less clutter and it's a lot easier to add listener support to a class in C#.  Furthermore, since it's a language feature, you can count on it being more or less the same everywhere.  However, it's not without drawbacks.  You'll notice in the previous Java example, we can guarantee that there is only one listener.  Furthermore, if we declare <code>onInteraction</code> as abstract, we can also ensure that all concrete implementations of <code>Widget</code> have an <code>onInteraction</code> handler.  The event/delegate approach as written cannot make the same guarantees.</p>
+<p>Since C# does not support anonymous inner classes, the best we can do to emulate them is something like this:</p>
+<pre lang="csharp">
+Widget widget = new Widget(state => {
+    ...
+});
+</pre>
+<p>...or, if we wanted to make it a little more clear, we could use named parameters:</p>
+<pre lang="csharp">
+Widget widget = new Widget(onInteraction: state => {
+    ...
+});
+</pre>
+<h3>Locally scoped final/readonly variables</h3>
+<p><a href="http://www.cc2e.com/">In the book Code Complete 2</a>, Steve McConnell recommends that you use final keyword whenever possible.  The justification for this being that less mutable code is easier to keep track of mentally and less likely to be accidentally modified.  Although the practice of making everything final can be weird at first, you eventually become so used to using final that you start to feel a little bit exposed whenever a variable isn't marked final.</p>
+<p>C# has a nearly equivalent keyword to <code>final</code>: <code>readonly</code>.  However, for some reason, readonly is only usable on the field level.  In the local scope, there is no direct equivalent to final in C#.  The best you can do is use <code>const</code>, but this only works with compile-time constants, so </p>
+<pre lang="csharp">
+const string foo = Foo.getString();
+</pre>
+<p>...won't work.</p>
+<h3>Conclusion</h3>
+<p>In this article we looked at four features of Java that lack direct C# equivalents: covariant method return types, class-like enums, anonymous inner classes and locally-scoped final/readonly keywords.  C# is often thought of as a "better Java".  However, as this article has shown, this is not true.  Java may not have as many bells and whistles as its newer cousin, but it still offers some compelling features that may never find their way into C#.</p>

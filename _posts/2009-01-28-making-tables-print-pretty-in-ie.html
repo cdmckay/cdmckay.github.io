@@ -1,0 +1,51 @@
+---
+layout: post
+status: publish
+published: true
+title: Making tables print pretty in IE, part 1
+author:
+  display_name: cdmckay
+  login: cdmckay
+  email: me@cdmckay.org
+  url: ''
+author_login: cdmckay
+author_email: me@cdmckay.org
+wordpress_id: 17
+wordpress_url: http://couchware.ca/blogs/cam/?p=17
+date: '2009-01-28 17:03:54 +0100'
+date_gmt: '2009-01-28 22:03:54 +0100'
+categories:
+- Web Development
+tags:
+- html
+- css
+- tables
+- printing
+- ie
+comments:
+- id: 2
+  author: Cameron McKay &raquo; Making tables print pretty in IE, part 2
+  author_email: ''
+  author_url: http://couchware.ca/blogs/cam/2009/01/29/making-tables-print-pretty-in-ie-part-2/
+  date: '2009-01-29 18:00:54 +0100'
+  date_gmt: '2009-01-29 23:00:54 +0100'
+  content: "[...] my last post, I mentioned that I had come up with a way to prevent
+    tables in Internet Explorer 6 and 7 from [...]"
+---
+<p>So I'm currently doing a side job developing a web application to help pay for Wezzle and, y'know, food and shelter.</p>
+<p>Basically, I'm making a system that displays tables grabbed from an Oracle database using elaborate queries.&nbsp; That's the easy part.&nbsp; These tables need to be printed out.&nbsp; That's the hard part.  We'll talk about that here, specifically in relation to IE7 (the hacks here might not work for Firefox or Chrome).</p>
+<p><strong>(Disclaimer: This method has been found to break if the a cell has a line break in it or is wrapped to a second line).</strong></p>
+<p><!--more--></p>
+<p>CSS has a mechanism for handling printing.&nbsp; When we link in a stylesheet with the <code>
+<link></code> tag, we have the option to set an attribute for its media type.</p>
+<p>For example, here's an HTML snippet that would define two stylesheets:</p>
+<pre lang="html4strict" escaped='true'><link media="screen" href="styles/style.css" type="text/css" rel="stylesheet" />
+<link media="print" href="styles/style.print.css" type="text/css" rel="stylesheet" /></pre>
+<p>The main thing to notice here is that <code>media='screen'</code> is the stylesheet for the browser, and <code>media='print'</code> is the stylesheet for the printer.</p>
+<p>Why is this useful? Well, typically there are many things we want to show in a browser window but we don't want to print on a page.  If we're going to print a table (and only a table) we'll need to hide our navigation bar, buttons, and rotating skull <code>.gifs</code>. To do that, we need to go through our print stylesheet and add in <code>display='none'</code> for all the elements that we don't want shown.</p>
+<p>Once we've hidden all the non-table elements, it's time to see how our page would look printed.  So we load up print preview and <a href="http://www.xefteri.com/articles/content/26/images/base_table.gif">take a look</a>.&nbsp; Ugh, the table headers show only on the first page, but not on the ensuing pages (example ), even though we're using the <code>
+<thead></code> tag.&nbsp; Fortunately for us, this is easily corrected with the following CSS:</p>
+<pre lang="css">thead { display: table-header-group; }</pre>
+<p>With the heading problem fixed, we look again at the print preview.  Everything looks a lot nicer, except for&nbsp; this really <a href="http://www.xefteri.com/articles/content/26/images/table_footer_issue.gif">ugly looking graphical problem</a> with multi-page tables.&nbsp; One solution, suggested by <a href="http://www.xefteri.com/articles/show.cfm?id=26">Xefteri</a>, is to do away with the vertical lines in your table.</p>
+<p>I don't think that's good enough.&nbsp; So I came up with a better (albeit slower) solution using <code>
+<div></code> tags within each of the cells and using them to put the vertical lines into the table.&nbsp; This will be explained in further detail in a future post.</p>

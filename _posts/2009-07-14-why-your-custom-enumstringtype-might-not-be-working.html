@@ -1,0 +1,61 @@
+---
+layout: post
+status: publish
+published: true
+title: Why your custom EnumStringType might not be working
+author:
+  display_name: cdmckay
+  login: cdmckay
+  email: me@cdmckay.org
+  url: ''
+author_login: cdmckay
+author_email: me@cdmckay.org
+wordpress_id: 805
+wordpress_url: http://couchware.ca/blogs/cam/?p=805
+date: '2009-07-14 20:02:20 +0200'
+date_gmt: '2009-07-15 00:02:20 +0200'
+categories:
+- Programming
+- ".NET"
+tags: []
+comments:
+- id: 379
+  author: Alex
+  author_email: luetjen@nospam.com
+  author_url: ''
+  date: '2009-07-25 19:01:20 +0200'
+  date_gmt: '2009-07-26 00:01:20 +0200'
+  content: You saved another sucker's life ;-)
+---
+<p>I recently spent a couple hours yesterday to fix a problem I was having with my custom <code>EnumStringType</code> (see <a href="http://cdmckay.org/blog/2009/07/12/how-to-put-spaces-in-your-nhibernate-enums/">this post</a>).</p>
+<p>Basically, what was happening was when my repository was making a call to <code>ICriteria<FooType>.List()</code>, which in turn called the <code>Set</code> method of <code>EnumStringType</code>, it was always passing in a lowercase string instead of an enum instance.  </p>
+<p><!--more--></p>
+<p>For example, when I used a debugger to see what the <code>object value</code> argument was in this method:</p>
+<pre lang="csharp">
+/// &lt;summary&gt;
+/// 
+/// &lt;/summary&gt;
+/// &lt;param name="cmd"&gt;&lt;/param&gt;
+/// &lt;param name="value"&gt;&lt;/param&gt;
+/// &lt;param name="index"&gt;&lt;/param&gt;
+public override void Set(IDbCommand cmd, object value, int index)
+{
+  var par = (IDataParameter) cmd.Parameters[index];
+  if (value == null)
+  {
+    par.Value = DBNull.Value;
+  }
+  else
+  {
+    par.Value = Enum.Format(ReturnedClass, value, "G");
+  }
+}
+</pre>
+<p>... it would show up as an "foo" string instead of a <code>FooEnum.Foo</code> enum object.</p>
+<p>What was the problem?  It turns out in my repository I was setting on of my criteria like this:</p>
+<pre lang="csharp">
+var criteria = Session.CreateCriteria<FooType>
+  .Add( Expression.Eq("EnumField", FooEnum.Foo).IgnoreCase() );
+</pre>
+<p>Looks innocuous, does it not?  Take a closer look: notice the <code>IgnoreCase()</code> call?  That's what was causing it.  It was there because previously I had not been using an enum and I had forgotten to remove it.  That little sucker cost me 3 hours of my life.  </p>
+<p>Hopefully I saved you that time :)</p>

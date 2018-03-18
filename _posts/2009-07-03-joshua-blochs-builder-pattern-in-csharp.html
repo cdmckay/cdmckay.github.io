@@ -1,0 +1,238 @@
+---
+layout: post
+status: publish
+published: true
+title: Joshua Bloch's Builder Pattern in C#
+author:
+  display_name: cdmckay
+  login: cdmckay
+  email: me@cdmckay.org
+  url: ''
+author_login: cdmckay
+author_email: me@cdmckay.org
+wordpress_id: 610
+wordpress_url: http://couchware.ca/blogs/cam/?p=610
+date: '2009-07-03 17:02:49 +0200'
+date_gmt: '2009-07-03 21:02:49 +0200'
+categories:
+- Programming
+- ".NET"
+tags:
+- java
+- c#
+- design-patterns
+- builder
+- api
+comments:
+- id: 373
+  author: Vili
+  author_email: virallinen@gmail.com
+  author_url: ''
+  date: '2009-07-04 02:46:18 +0200'
+  date_gmt: '2009-07-04 07:46:18 +0200'
+  content: |-
+    Hi,
+
+    I think you could write your public properties with just set; and you would have a write-only property
+- id: 374
+  author: DotNetShoutout
+  author_email: ''
+  author_url: http://dotnetshoutout.com/Cameron-McKay-Joshua-Blochs-Builder-Pattern-in-C
+  date: '2009-07-04 07:36:51 +0200'
+  date_gmt: '2009-07-04 12:36:51 +0200'
+  content: |-
+    <strong>Cameron McKay &raquo; Joshua Bloch&rsquo;s Builder Pattern in C#...</strong>
+
+    Thank you for submitting this cool story - Trackback from DotNetShoutout...
+- id: 375
+  author: cam
+  author_email: cam@couchware.ca
+  author_url: http://
+  date: '2009-07-04 11:15:58 +0200'
+  date_gmt: '2009-07-04 16:15:58 +0200'
+  content: "@Vili: Which approach are you talking about?"
+- id: 376
+  author: Casper Bang
+  author_email: casper.bang@gmail.com
+  author_url: ''
+  date: '2009-07-05 14:54:24 +0200'
+  date_gmt: '2009-07-05 19:54:24 +0200'
+  content: |-
+    1) Bloch did not invent that pattern. It's part of a whole arcade of patterns classified as "creational" and immortalized in the seminal book by the GoF in 87'.
+
+    2) C# has property initializers, making the builder pattern somewhat unnecessary.
+
+    3) The builder pattern is defined by method chaining, surely nothing stands in the way of using setCalories(...).build() in C#?
+- id: 377
+  author: cam
+  author_email: cam@couchware.ca
+  author_url: http://
+  date: '2009-07-05 15:32:54 +0200'
+  date_gmt: '2009-07-05 20:32:54 +0200'
+  content: |-
+    @Casper Bang:
+
+    1) I never said Bloch invented the pattern.  The reason I refer to it as Bloch's Builder pattern is because his pattern isn't exactly the same as the GoF pattern, and thus needs to be distinguished.
+
+    2) I disagree with this point.  Although property initializers make unnecessary some types of Builders, there are still things they can't do.  For example, you cannot create immutable objects with property initializers, but you can with a Builder.
+
+    3) The Builder patterns in this article, as well as Bloch's Java Builder, support chaining.
+---
+<p>Having spent a lot of time programming in Java over the last two years, I've made heavy use of <a href="http://en.wikipedia.org/wiki/Joshua_Bloch">Joshua Bloch</a>'s Java <a href="http://developers.sun.com/learning/javaoneonline/2007/pdf/TS-2689.pdf">Builder pattern</a> (also <a href="http://java.sun.com/docs/books/effective/">Effective Java</a> Item&nbsp;2).</p>
+<p>Recently, I've started a fairly large project in C# 3.0.  As it happens, there came a point where I wanted to use a pattern similar to Bloch's Builder.  However, as anyone who tries to use this pattern in C# will quickly find out, Bloch's Builder doesn't translate perfectly to C#.  </p>
+<p><!--more--></p>
+<p>Here is how Bloch's Builder looks in C# (with changes made only for syntax):</p>
+<pre lang="csharp">
+public class NutritionFacts
+{
+  public int ServingSize { get; private set; }
+  public int Servings { get; private set; }
+  public int Calories { get; private set; }
+  ...
+
+  public class Builder
+  {
+    private int ServingSize { get; set; }
+    private int Servings { get; set; }
+    private int Calories { get; set; }
+   
+    public Builder(int servingSize, int servings)
+    {
+      ServingSize = servingSize;
+      Servings = servings;
+    }
+
+    public Builder Calories(int calories)
+    { Calories = calories; return this; }
+    ...
+
+    public NutritionFacts Build()
+    {
+      return new NutritionFacts(this);
+    }
+  }
+
+  private NuitritionFacts(Builder builder)
+  {
+    ServingSize = builder.ServingSize;
+    Servings = builder.Servings;
+    Calories = builder.Calories;
+    ...
+  }
+}
+</pre>
+<p>If you try to compile that code, the C# compiler will complain, saying that it does not have permission to access the private members of the Builder class.</p>
+<p>Then how come <a href="http://stackoverflow.com/questions/1080383/why-doesnt-blochs-builder-pattern-work-in-c">it worked in Java</a>?  The answer is that Java has a special rule that allows Java outer classes to access the private members of their inner classes.  In C#, this rule does not exist, and thus C# outer classes cannot access the private members of C# inner classes.</p>
+<p>Since Bloch's Builder pattern doesn't work in C#, the natural next question is: <a href="http://stackoverflow.com/questions/313729/how-to-implement-and-extend-joshuas-builder-pattern-in-net">how do we make it work</a>?</p>
+<h3>Approach 1: Make Builder Properties Public</h3>
+<p>The C# compiler tells us that it can't compile because it doesn't have permission to access private members of the nested Builder class.  Thus, the most obvious solution to this is to make them public:</p>
+<pre lang="csharp">
+public class NutritionFacts
+{ 
+  ...
+  public class Builder
+  {
+    public int ServingSize { get; set; }
+    public int Servings { get; set; }
+    public int Calories { get; set; }      
+    ...
+  }
+  ...
+}
+</pre>
+<p>This allows the code to compile, and we can use the Builder just as we used it in Java.</p>
+<p>However there is one niggling concern: the C# Builder exposes getters in the Builder object.  In the Java Builder, when we were constructing an object, we were only able to use methods that contributed to building the object.  That is, the Java Builder doesn't expose any getters.  However, in the C# version, our API is polluted by unneeded getters.  Let's see if we can do better.</p>
+<h3>Approach 2: Build the object in the Builder</h3>
+<p>As we've already seen, C# does not permit outer classes to access the private members of inner classes.  However, C# <em>does</em> let us access outer classes from inner classes.  Since that's the case, why don't we invert the building procedure.  That is, let's build the object in the Builder, instead of in the class being built:</p>
+<pre lang="csharp">
+public class NutritionFacts
+{
+  public int ServingSize { get; private set; }
+  public int Servings { get; private set; }
+  public int Calories { get; private set; }
+  ...
+
+  public class Builder
+  {    
+    private int ServingSize { get; set; }
+    private int Servings { get; set; }
+    private int Calories { get; set; }
+   
+    public Builder(int servingSize, int servings)
+    {
+      ServingSize = servingSize;
+      Servings = servings;
+    }
+
+    public Builder Calories(int calories)
+    { Calories = calories; return this; }
+    ...    
+
+    public NutritionFacts Build()
+    {
+      return new NutritionFacts
+      {
+        ServingSize = ServingSize,
+        Servings = Servings,
+        Calories = Calories,
+        ...       
+      };
+    }
+  }
+
+  private NuitritionFacts()
+  { 
+    // Intentionally empty.
+  }
+}
+</pre>
+<p>That, to me, is the closest you can get to the Java pattern.  From an API consumer's point of view, it'll look identical to a Java Builder.</p>
+<h3>Alternative Form</h3>
+<p>There is another alternative to the two C# Builders mentioned earlier in this article.  As it stands, Bloch's Builder can be used as a sort of prototype factory.  You can configure the builder and then pump out instances of the class that have that configuration.  However, if you're using the Builder to make a single, immutable instance, a more efficient way would be to avoid copying the data first to the Builder and then to the new instance.</p>
+<p>Here's a <a href="http://stackoverflow.com/questions/313729/how-to-implement-and-extend-joshuas-builder-pattern-in-net/313747#313747">version of the Builder</a> (by Jon Skeet) that can be used only once, but avoids unnecessary data copying.</p>
+<pre lang="csharp">
+public class NutritionFacts
+{
+  public int ServingSize { get; private set; }
+  public int Servings { get; private set; }
+  public int Calories { get; private set; }
+  ...
+
+  public class Builder
+  {       
+    private NutritionFacts _facts = new NutritionFacts();
+
+    public Builder(int servingSize, int servings)
+    {
+      _facts.ServingSize = servingSize;
+      _facts.Servings = servings;
+    }
+
+    public Builder Calories(int calories)
+    { _facts.Calories = calories; return this; }
+    ...    
+
+    public NutritionFacts Build()
+    {
+      var ret = facts;
+
+      // Invalidates builder to maintain mutability.
+      facts = null;
+
+      return ret;
+    }
+  }
+
+  private NuitritionFacts()
+  { 
+    // Intentionally empty.
+  }
+}
+</pre>
+<p>Some of the advantages of this pattern are:</p>
+<ul>
+<li>No data copying is required at build time. In other words, while you're setting the properties, you're doing so on the real object - you just can't see it yet. This is similar to what StringBuilder does.</li>
+<li>The builder becomes invalid after calling Build() to guarantee immutability. This unfortunately means it can't be used as a sort of "prototype" in the way that Bloch's version can.</li>
+</ul>
+<h3>Conclusion</h3>
+<p>In this article we've looked at 3 different working C# implementations of Bloch's Builder pattern.  The first approach was a quick and dirty fix that got the job done.  The second approach applied a bit more finesse and managed to keep the same API as the Java Builder.  The final approach was more of a variation on the second approach, offering a more efficient implementation of the pattern if you're not using the Builder as an object prototype factory.</p>

@@ -1,0 +1,95 @@
+---
+layout: page
+status: publish
+published: true
+title: Quick Reference
+author:
+  display_name: cdmckay
+  login: cdmckay
+  email: me@cdmckay.org
+  url: ''
+author_login: cdmckay
+author_email: me@cdmckay.org
+wordpress_id: 368
+wordpress_url: http://couchware.ca/blogs/cam/?page_id=368
+date: '2009-03-29 23:36:56 +0200'
+date_gmt: '2009-03-30 04:36:56 +0200'
+categories:
+- Meta
+tags: []
+comments: []
+---
+<p>This page serves as quick reference about how to use JSS.  It contains information about how to include JSS in your project, the boilerplate for creating a stylesheet, and a reference for the custom properties that JSS enables.</p>
+<h3>How to Include JSS</h3>
+<p>In order to use JSS in your project, you need 3 things:</p>
+<ol>
+<li><a href="http://jquery.com">jQuery</a> 1.2+,</li>
+<li>JSS,</li>
+<li>a JSS stylesheet</li>
+</ol>
+<p>The first two steps will be dealt with in this section.  The last step will be dealt with in the next section.</p>
+<p>To get jQuery, head over the www.jquery.com and download the latest version (minified/gzipped or uncompressed).  Save it as "jquery.js".</p>
+<p>To get JSS, head over to the <a href="http://code.google.com/p/javascript-stylesheets/">Google Code</a> page grab "jquery.jss.js" (grab a stable release if it's available, otherwise use the development one from source control).</p>
+<p>Now, add these two JavaScript files to your HTML file (example.html):</p>
+<pre lang="html4strict" escaped="true">
+<html>
+  <head>
+    <title>Example</title>    
+    <script type="text/javascript" src="jquery.js"></script>
+    <script type="text/javascript" src="jquery.jss.js"></script>
+  </head>
+  <body>
+    <div class="Click me" id="click-me" />
+    <div class="I will be hidden!" id="hide-me" />
+  </body>
+</html>
+</pre>
+<h3>JSS boilerplate</h3>
+<p>All JSS stylesheets must be declared with the following boilerplate:</p>
+<pre lang="javascript">
+$.jss.declare({
+
+  // Add JSS declaration blocks here.
+
+});
+</pre>
+<p>By convention, all JSS files are saved with the prefix "jss", i.e. "jss.styles.js" or "jss.theme.js".</p>
+<p>To demonstrate, let's create a JSS stylesheet that hides the div "hide-me" when the user presses the div "click-me" in the above <em>example.html</em>.  Let's also style them to make it look nice.</p>
+<pre lang="javascript">
+$.jss.declare({
+
+  "div":
+  {
+    padding: "5px",
+    margin: "10px",
+    border: "1px red solid",
+    background: "maroon",
+    color: "white",
+    font_family: "sans-serif"
+  },
+
+  "#click-me":
+  {
+    click: "toggle (#hide-me) slow"
+  }
+
+});
+</pre>
+<p>Same the above file as "jss.styles.js" and read on.</p>
+<h3>How to Include a JSS Stylesheet</h3>
+<p>Now that we have a stylesheet <em>jss.styles.js</em>, let's go ahead and include it in the <em>example.html</em> file:</p>
+<pre lang="html4strict" escaped="true">
+<html>
+  <head>
+    <title>Example</title>    
+    <script type="text/javascript" src="jquery.js"></script>
+    <script type="text/javascript" src="jquery.jss.js"></script>
+    <script type="text/javascript" src="jss.styles.js"></script>
+  </head>
+  <body>
+    <div class="Click me" id="click-me" />
+    <div class="I will be hidden!" id="hide-me" />
+  </body>
+</html>
+</pre>
+<p>You can include as many JSS stylesheets as you'd like.  Just keep adding more <em>script</em> tags.  Keep in mind that they are run in order of appearance.</p>

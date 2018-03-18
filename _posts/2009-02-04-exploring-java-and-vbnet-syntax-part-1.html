@@ -1,0 +1,119 @@
+---
+layout: post
+status: publish
+published: true
+title: Exploring Java and VB.Net Syntax, Part 1
+author:
+  display_name: cdmckay
+  login: cdmckay
+  email: me@cdmckay.org
+  url: ''
+author_login: cdmckay
+author_email: me@cdmckay.org
+wordpress_id: 93
+wordpress_url: http://couchware.ca/blogs/cam/?p=93
+date: '2009-02-04 02:48:10 +0100'
+date_gmt: '2009-02-04 07:48:10 +0100'
+categories:
+- Programming
+- Java
+- ".NET"
+tags:
+- ".net"
+- vb
+- vb.net
+- java
+- vb6
+- generics
+- generic programming
+- syntax
+- ".net 1.1"
+- arraylist
+comments:
+- id: 8
+  author: kev
+  author_email: kev@couchware.ca
+  author_url: http://couchware.ca
+  date: '2009-02-04 08:19:44 +0100'
+  date_gmt: '2009-02-04 13:19:44 +0100'
+  content: "Both of these languages are pretty verbose for many things. I think it
+    would be interesting to take the same examples and compare them using a dynamically
+    typed language like Ruby, Groovy or even JavaScript. \n\nAfter using them for
+    a while, im fast becoming a believer that dynamically typed languages are the
+    way to go."
+- id: 9
+  author: cam
+  author_email: cam@couchware.ca
+  author_url: http://
+  date: '2009-02-04 11:10:27 +0100'
+  date_gmt: '2009-02-04 16:10:27 +0100'
+  content: Yeah, for sure.  Like I'm not saying Java is not verbose (it's very typing
+    heavy) but VB.NET is worse (if you can believe it).
+---
+<p>The syntax of a programming language is a large part of how a programmer interacts with a language.  Being somewhat of a programming language enthusiast, I'm always curious about how different programming languages stack up syntactically.  </p>
+<p>Today, I'm going to take a look at an variety of programming tasks and show how they are done in both Java and VB.NET (the .NET 1.1 version).  Since both these languages have differing feature sets, I'll try to only use features that both the languages have, in order to compare them fairly.  I know this might misrepresent the complexity of the languages, and I'm cool with that.  The purpose of this post is merely to explore and discuss the syntax of each language.</p>
+<p><!--more--></p>
+<h3>Collections</h3>
+<p>Creating and manipulating collections is a common task in <a href="http://en.wikipedia.org/wiki/Procedural_programming">procedural programming</a> languages, so let's look at that first.  Consider arrays.  To make an array of 10 String objects in Java, I would do this:</p>
+<pre lang="java">
+final int ARRAY_LENGTH = 10;
+String[] arr = new String[ARRAY_LENGTH];
+</pre>
+<p>In VB.NET, things get a bit more complicated, but for the most part, you'd do something like this:</p>
+<pre lang="vbnet">
+Const ARRAY_LENGTH As Integer = 10
+Dim arr(ARRAY_LENGTH - 1) As String
+</pre>
+<p>Woah, what?  Why is it ARRAY_LENGTH - 1?  That's because VB.Net is an evolution of VB6, and in VB6, for reasons unknown, the value in the parenthesis is not the number of elements but instead the maximum index.  There's a second way to create arrays in VB.NET using anonymous arrays:</p>
+<pre lang="vbnet">
+Dim arr() As String = New String() { "foo", "bar" }
+</pre>
+<p>You may also create arrays using anonymous arrays in Java:</p>
+<pre lang='java'>
+String[] arr = new String[] { "foo", "bar" };
+</pre>
+<p>Now let's look at something a bit more powerful: the ArrayList.  Both Java and VB have a version of this class with more or less the same syntax.  Let's use them in a real world situation.  Consider this task: We have an ArrayList with a bunch of Strings and we want to join them together using a comma.  Here's the code to do that in VB without using generics:</p>
+<pre lang="vbnet">
+' Option Strict is On (as it should be).
+Dim list As ArrayList = New ArrayList
+list.Add("a")
+list.Add("b")
+list.Add("c")
+
+' Create the comma-joined string.
+Dim str As String = String.Join(",", _ 
+    DirectCast(list.ToArray(GetType(String)), String()))
+</pre>
+<p>That's quite a jumble at the end there.  Let's see we would do it in Java (again, without generics):</p>
+<pre lang="java">
+List list = new ArrayList();
+list.add("a");
+list.add("b");
+list.add("c");
+
+// Create the comma-joined string.  Let's assume that we've 
+// created a method called join(String str, String[] strList) 
+// that acts the same as .NET's String.Join().
+String str = join(",", (String[]) list.toArray(new String[0]));
+</pre>
+<p><em>(Aside: Anyone familiar with generics is probably beating their head against their desk.  This example is just screaming for it.  I'll include the generified version of the Java example at the end for the curious.)</em></p>
+<p>Same problem in Java.  Converting from an ArrayList (or any Collection for that matter) does not look pretty (and is somewhat complicated for a novice programmer), even though it doesn't seem like it's a lot of ask.  We have a collection of things, and we want to put them into an array, which is a very basic type of a collection.  What's the problem?</p>
+<p>Basically, it has to do with the programming language not knowing what's in the ArrayList.  If we just wanted to convert to an array of objects, that's no problem:</p>
+<pre lang="java">
+// Imagine we still have the "list" object 
+// from the previous example.
+Object[] objArray = list.toArray();
+</pre>
+<p>This works because the programming language can be sure that all of the items in the ArrayList are at least Objects.  Unfortunately, in most cases, that's not especially helpful.  Fortunately, both these languages have a solution to the problem and that's telling the programming language that the ArrayList is an ArrayList of Strings.  The technology that does that is called <a href="http://en.wikipedia.org/wiki/Generic_programming">generic programming</a>.</p>
+<p>That's it for today.  In part 2, we'll delve deeper into the wordiness of VB.NET and how it drives you nuts if you program with it on a regular basis.  Here's the generified version of the Java program for the keeners:</p>
+<pre lang="java" escaped='true'>
+List<String> list = new ArrayList<String>();
+list.add("a");
+list.add("b");
+list.add("c");
+
+// Create the comma-joined string.  Let's assume that we've 
+// created a method called join(String str, String[] strList) 
+// that acts the same as .NET's String.Join().
+String str = join(",", list.toArray());
+</pre>

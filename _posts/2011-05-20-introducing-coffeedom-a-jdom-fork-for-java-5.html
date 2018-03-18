@@ -1,0 +1,248 @@
+---
+layout: post
+status: publish
+published: true
+title: Introducing CoffeeDOM, a JDOM fork for Java 5
+author:
+  display_name: cdmckay
+  login: cdmckay
+  email: me@cdmckay.org
+  url: ''
+author_login: cdmckay
+author_email: me@cdmckay.org
+wordpress_id: 1881
+wordpress_url: http://cdmckay.org/blog/?p=1881
+date: '2011-05-20 12:44:26 +0200'
+date_gmt: '2011-05-20 16:44:26 +0200'
+categories:
+- Programming
+- Java
+- CoffeeDOM
+tags: []
+comments:
+- id: 658
+  author: kgrad
+  author_email: kev@couchware.ca
+  author_url: ''
+  date: '2011-05-20 13:09:19 +0200'
+  date_gmt: '2011-05-20 17:09:19 +0200'
+  content: Nice work! Getting rid of casts and checked exceptions will make my life
+    much less frustrating. I also like that its already up in Maven!
+- id: 659
+  author: Dmitriy
+  author_email: dlikhten@gmail.com
+  author_url: ''
+  date: '2011-05-23 12:39:27 +0200'
+  date_gmt: '2011-05-23 16:39:27 +0200'
+  content: Thanks for breaking out of the java compatibility trap.
+- id: 663
+  author: Brian
+  author_email: b1mck1@gmail.com
+  author_url: ''
+  date: '2011-06-07 15:35:17 +0200'
+  date_gmt: '2011-06-07 19:35:17 +0200'
+  content: "I love it!... except the exception softening.\n\nI hate endlessly catching
+    unnecessarily-checked exceptions as much as the next guy (looking at you, Reflection
+    API...), but when actually ingesting external data, these exceptions need to be
+    checked or else my idiot coworkers won't write any handling code until it crashes
+    in production. \n\nObviously, we should write the handlers anyway. But my 2 cents
+    are that IOException may be the _only_ exception that should be checked."
+- id: 664
+  author: cdmckay
+  author_email: me@cdmckay.org
+  author_url: ''
+  date: '2011-06-07 15:37:24 +0200'
+  date_gmt: '2011-06-07 19:37:24 +0200'
+  content: Hmmm, that's a good point.  It did feel a bit odd to be writing a wrapper
+    for IOException.  Lemme think about it.
+- id: 675
+  author: Hani Suleiman
+  author_email: hani@formicary.net
+  author_url: ''
+  date: '2011-11-28 15:16:48 +0100'
+  date_gmt: '2011-11-28 20:16:48 +0100'
+  content: This is fairly awesome. It is a bit worrying though the huge list of dependencies
+    in maven, why does it need icu4j, xalan, xerces, xom, jdom, and dom4j?
+- id: 677
+  author: cdmckay
+  author_email: me@cdmckay.org
+  author_url: ''
+  date: '2011-11-28 16:08:20 +0100'
+  date_gmt: '2011-11-28 21:08:20 +0100'
+  content: |-
+    @Hani Suleiman:
+    Unfortunately, these are the dependencies that JDOM already has.  I didn't add any new ones.
+- id: 678
+  author: Hani Suleiman
+  author_email: hani@formicary.net
+  author_url: ''
+  date: '2011-11-28 17:03:34 +0100'
+  date_gmt: '2011-11-28 22:03:34 +0100'
+  content: Yeah it'd be worth trimming it a bit and using your own pom rather than
+    relying on the jdom one (by the way, the culprit I think is jaxen, which seems
+    to depend on every xml related jar ever invented).
+- id: 679
+  author: bmanc
+  author_email: basudevc@gmail.com
+  author_url: ''
+  date: '2011-12-06 14:19:51 +0100'
+  date_gmt: '2011-12-06 19:19:51 +0100'
+  content: Excellent. I've been looking for something like this.
+- id: 686
+  author: Thomas
+  author_email: mrmenke@web.de
+  author_url: ''
+  date: '2012-01-16 18:33:42 +0100'
+  date_gmt: '2012-01-16 23:33:42 +0100'
+  content: "Hate to tell you but there were people how did this before you. Like three
+    years earlier.\r\n\r\nhttp://www.junlu.com/list/25/883674.html"
+- id: 687
+  author: cdmckay
+  author_email: me@cdmckay.org
+  author_url: ''
+  date: '2012-01-16 19:47:04 +0100'
+  date_gmt: '2012-01-17 00:47:04 +0100'
+  content: |-
+    @Thomas:
+    That's alright, there's room for two.
+- id: 21057
+  author: Should I still be using JDOM with Java 5 or 6? - QuestionFocus
+  author_email: ''
+  author_url: https://questionfocus.com/should-i-still-be-using-jdom-with-java-5-or-6.html
+  date: '2017-12-30 22:10:24 +0100'
+  date_gmt: '2017-12-31 03:10:24 +0100'
+  content: "[&#8230;] was recently a fork of JDOM for java 5 called coffeeDOM. You
+    should check it [&#8230;]"
+---
+<p>When it comes time to work with XML in Java, the first thing I usually do is go to <a href="http://jdom.org">the JDOM website</a> to check for a Java 5 update.  Unfortunately, I am always disappointed.  There has not been a major JDOM release in over 6 years and, <a href="http://www.jdom.org/pipermail/jdom-interest/2005-August/014982.html">if the JDOM mailing list is to be believed</a>, no Java 5 version is planned.  As a result, I have decided to take my own initiative and make <a href="http://coffeedom.googlecode.com">CoffeeDOM</a>, a JDOM fork with Java 5 support.</p>
+<p>CoffeeDOM is intended as a natural evolution for JDOM developers.  As such, there have been minimal changes to the API.  CoffeeDOM adds support for Java 5 features like generics, enums, and covariant method return types, and reduces the amount of boilerplate required by making previously checked exceptions (like JDOMException) unchecked.  In this article, I will briefly go over these changes.</p>
+<p><em>(If you don't want to bother with the article, you can skip right to the <a href="http://coffeedom.googlecode.com/">Google Code page</a> or <a href="http://cdmckay.org/coffeedom/apidocs/">browse the Javadoc API documentation</a>.)</em></p>
+<p><!--more--></p>
+<h3>Generic collections</h3>
+<p>JDOM makes heavy use of the <a href="http://download.oracle.com/javase/tutorial/collections/index.html">Java Collections Framework</a>, principally Lists and Iterators.  Thus, in JDOM, to get a list of all child elements of an element, we do the following:</p>
+<pre lang="java">
+Element element = ...;
+List<?> children = element.getChildren();
+for (Object childObject : children) {
+    // Cast :(
+    Element child = (Element) childObject;
+
+    // ...
+}
+</pre>
+<p>See that pesky cast?  How inconvenient.  Another approach is to cast the List:</p>
+<pre lang="java">
+Element element = ...;
+// Cast :(
+List<Element> children = (List<Element>) element.getChildren();
+for (Element child : children) {
+    // ...
+}
+</pre>
+<p>... but then we would need to either ignore a warning (not recommended) or add a <code>@SuppressWarnings("unchecked")</code> annotation.  Neither is a desirable solution.</p>
+<p>Fortuantely, CoffeeDOM comes to the rescue.  In CoffeeDOM, all JCF classes like List, Collection, Iterable, etc. have appropriate generic parameters:</p>
+<pre lang="java">
+Element element = ...;
+List<Element> children = element.getChildren();
+for (Element child : children) {
+    // ...
+}
+</pre>
+<p>Enjoy the comfort of compile time type-checking.</p>
+<h3>Covariant method return types</h3>
+<p>In JDOM, in order to copy nodes, the built-in <code>Object#clone()</code> method is used:</p>
+<pre lang="java">
+Element element = ...;
+Element clonedElement = (Element) element.clone();
+</pre>
+<p>Oh look, another silly cast.  Fortunately, thanks to covariant method return types, CoffeeDOM eliminates this unneeded cast:</p>
+<pre lang="java">
+Element element = ...;
+Element clonedElement = element.clone();
+</pre>
+<p>CoffeeDOM also removes the need for casting when using <code>detach</code>, <code>setParent</code> and <code>getParent</code> (in most cases).</p>
+<h3>Enums instead of int constants</h3>
+<p>This one is pretty straightforward.  In JDOM, when we make a new Attribute, we can set the attribute type using an int constant like <code>Attribute.CDATA_TYPE</code>, <code>Attribute.ENTITIES_TYPE</code>, etc.  Here's a (contrived) example:</p>
+<pre lang="java">
+Element element = ...;
+Attribute attribute = new Attribute("name", "value", 
+        Attribute.UNDECLARED);
+element.setAttribute(attribute);
+// ...or just element.setAttribute("name", "value")
+</pre>
+<p>Unfortunately, modern IDEs have issues with int constants (they can't tell which ones go with a particular method).  Moreover, operations like iterating through the enum or converting from a string to a constant, are more difficult and messy.</p>
+<p>CoffeeDOM remedies this by using Java 5's enum structure.  The above code turns into something rather similar:</p>
+<pre lang="java">
+Element element = ...;
+Attribute attribute = new Attribute("name", "value", 
+        Attribute.Type.UNDECLARED);
+element.setAttribute(attribute);
+</pre>
+<p>...but with the added plus that we can do things like:</p>
+<pre lang="java">
+// Cycle through the constants.
+for (Attribute.Type type : Attribute.Type.values()) {
+    ...
+}
+
+// Get a constant from a string.
+Attribute.Type type = Attribute.Type.valueOf("UNDECLARED");
+</pre>
+<h3>Improved for-each compatibility</h3>
+<p>In Java 5, Sun juiced up the for loop by enabling it to cycle through Iterable instances.  Unfortunately, since JDOM predated this enhancement, some methods return for loop unfriendly Iterator instances.  This results in a lot of unneeded boilerplate:</p>
+<pre lang="java">
+Element element = ...;
+Iterator<?> it = element.getDescendants();
+while (it.hasNext()) {
+    Content descendant = (Content) it.next();
+    // ...
+}
+</pre>
+<p>CoffeeDOM corrects this by making <code>getDescendants</code> return an Iterable instance instead, allowing it to be used with the for loop:</p>
+<pre lang="java">
+Element element = ...;
+for (Content descendant : element.getDescendants()) {
+    // ...
+}
+</pre>
+<p>This change only affects classes implementing the JDOM Parent interface.</p>
+<h3>Unchecked exceptions</h3>
+<p>Constantly having to write exception checking code in Java can obfuscate code, especially if you're just only re-throwing or logging checked exceptions to make the compiler happy.  Consider this example in JDOM:</p>
+<pre lang="java">
+try {
+    SAXBuilder builder = new SAXBuilder();
+    Document document = builder.build("path/to/file.xml");
+    XMLOutputter outputter = new XMLOutputter();
+    outputter.output(doc, System.out);
+} catch (IOException e) {
+    e.printStackTrace();
+} catch (JDOMException e) {
+    e.printStackTrace();
+}
+</pre>
+<p>To address this issue, CoffeeDOM changes CoffeeDOMException (the CoffeeDOM equivalent to JDOMException) to an unchecked exception.  This reduces some of the exception noise:</p>
+<pre lang="java">
+// Ahhh... fewer checked exceptions.
+try {
+    SAXBuilder builder = new SAXBuilder();
+    Document document = builder.build("path/to/file.xml");
+    XMLOutputter outputter = new XMLOutputter();
+    outputter.output(doc, System.out);
+}  catch (IOException e) {
+    e.printStackTrace();
+}
+</pre>
+<h3>Now with less noise</h3>
+<p>CoffeeDOM was designed to be an evolutionary step forward for JDOM.  The main design goal of CoffeeDOM was to build on the excellent JDOM API by using modern Java features like generics, enums and covariance method return types.  The result is better compile-time checking, fewer casts and less annoying exception handling.</p>
+<h3>Where do I get it? When can I use it?</h3>
+<p>CoffeeDOM is available now via Google Code as <a href="http://code.google.com/p/coffeedom/downloads/list">a downloadable JAR file</a> or <a href="http://code.google.com/p/coffeedom/source/browse/">a Mercurial repository</a>.  It is also available from Maven Central using the following dependency markup:</p>
+<pre lang="xml">
+<dependency>
+  <groupId>org.cdmckay.coffeedom</groupId>
+  <artifactId>coffeedom</artifactId>
+  <version>1.0.0</version>
+</dependency>
+</pre>
+<h3>Learn more</h3>
+<p>As CoffeeDOM is brand new, there isn't a whole lot of documentation available beyond <a href="http://cdmckay.org/coffeedom/apidocs/">the Javadoc reference</a> and this article.  However, since CoffeeDOM shares a similar API to JDOM, any JDOM tutorial can make a good starting point.  See <a href="http://www.jdom.org/downloads/docs.html">the JDOM documentation page</a> for links to several tutorials that can get you started.</p>
+<p>If code samples are your thing, the CoffeeDOM Mercurial repository has a <a href="http://code.google.com/p/coffeedom/source/browse/#hg%2FCoffeeDOM-samples">CoffeeDOM-samples</a> project that contains all the JDOM sample projects updated for CoffeeDOM.</p>

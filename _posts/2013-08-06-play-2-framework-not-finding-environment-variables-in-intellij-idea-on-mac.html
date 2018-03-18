@@ -1,0 +1,69 @@
+---
+layout: post
+status: publish
+published: true
+title: Play 2 Framework not finding environment variables in IntelliJ IDEA on Mac
+author:
+  display_name: cdmckay
+  login: cdmckay
+  email: me@cdmckay.org
+  url: ''
+author_login: cdmckay
+author_email: me@cdmckay.org
+wordpress_id: 2260
+wordpress_url: http://cdmckay.org/blog/?p=2260
+date: '2013-08-06 18:45:21 +0200'
+date_gmt: '2013-08-06 22:45:21 +0200'
+categories:
+- Web Development
+- Programming
+- Java
+- Process Street
+- Scala
+- Amazon Web Services
+- Play 2
+tags: []
+comments: []
+---
+<p>Recently I was experiencing an issue with the <a href="http://www.playframework.com/" target="_blank">Play 2 Framework</a> where it could not find environment variables on Mac OS when compiled within <a href="https://www.jetbrains.com/idea/" target="_blank">IntelliJ IDEA</a>.  The solution turned out to be simple, but could be inconvenient when an environment variable is used in many programs.</p>
+<p><!--more--></p>
+<p>Here's how it happened: While perusing <a href="https://devcenter.heroku.com/articles/using-amazon-s3-for-file-uploads-with-java-and-play-2" target="_blank">a tutorial on Heroku</a>, I read that <a href="http://www.12factor.net/config" target="_blank">it is not a good idea</a> to store sensitive connection information (i.e. database user and password, API keys, etc.) in your config files. In fact, it is recommended that, when storing information in a config file you ask yourself the question: if I open sourced my application today, would any credentials be compromised?</p>
+<p>So, as a responsible programmer, I decided to move all my credentials into my environment, i.e. into my <code>.bash_profile</code> file:</p>
+<pre lang="bash">
+# PostgreSQL
+export PGSQL_USER=user
+export PGSQL_PASSWORD=password
+
+# AWS
+export AWS_ACCESS_KEY_ID=id
+export AWS_SECRET_KEY=secret
+</pre>
+<p>...and updated my <code>application.conf</code> in Play 2 to:</p>
+<pre lang="javascript">
+# Database configuration
+# ~~~~~ 
+# You can declare as many datasources as you want.
+# By convention, the default datasource is named `default`
+#
+db.default.driver=org.postgresql.Driver
+db.default.url="jdbc:postgresql://localhost/db_name"
+db.default.user=${?PGSQL_USER}
+db.default.password=${?PGSQL_PASSWORD}
+
+# Amazon Web Services
+# ~~~~~
+aws.accessKeyId=${?AWS_ACCESS_KEY_ID}
+aws.secretKey=${?AWS_SECRET_KEY}
+s3.https=true
+s3.bucket=bucket-name
+</pre>
+<p>However, once I did this and re-compiled it in IntelliJ, I started to get a whole bunch of errors from Play 2 at runtime saying that it couldn't find the configuration keys that it had no problem finding before. After some poking around, I realized that these errors only seemed to be occurring when I compiled my project in IntelliJ, and not if I compiled it via <code>play run</code> from the terminal.</p>
+<p>A <a href="http://stackoverflow.com/questions/11766155/how-do-i-get-intellij-to-pick-up-my-environment-variables-on-macos-x" target="_blank">little</a> <a href="http://apple.stackexchange.com/questions/51677/how-to-set-path-for-finder-launched-applications" target="_blank">more</a> <a href="http://apple.stackexchange.com/questions/57385/where-are-system-environment-variables-set-in-mountain-lion" target="_blank">digging</a> revealed that this was an issue for Mac OS X in general.</p>
+<p>The solution? Unfortunately, there is no general solution. That is, there's no way (that I know of) to get all apps to see your environment variables as you'd expect. However, IntelliJ does provide a facility for defining per-configuration environment variables.  Here's how to do it.</p>
+<p>First, in the IntelliJ toolbar, click Edit Configurations.</p>
+<p><img src="http://i.imgur.com/FsXSpnh.png" alt="Edit Configurations" class="aligncenter" /></p>
+<p>Next, find the configuration that is using the environment variables, and click the icon beside the "Environment variables" field.</p>
+<p><img src="http://i.imgur.com/LV62J6d.png" alt="Environment Variables" class="aligncenter" width="481" /></p>
+<p>Now, add all the environment variables your application is looking for and click "OK".</p>
+<p><img src="http://i.imgur.com/mFPGanF.png" alt="Environment Variables" class="aligncenter" width="481" /></p>
+<p>That's it, your IntelliJ program should now properly find your environment variables!</p>

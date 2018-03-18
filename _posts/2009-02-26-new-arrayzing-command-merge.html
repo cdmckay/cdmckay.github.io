@@ -1,0 +1,121 @@
+---
+layout: post
+status: publish
+published: true
+title: 'New Arrayzing Command: merge()'
+author:
+  display_name: cdmckay
+  login: cdmckay
+  email: me@cdmckay.org
+  url: ''
+author_login: cdmckay
+author_email: me@cdmckay.org
+wordpress_id: 242
+wordpress_url: http://couchware.ca/blogs/cam/?p=242
+date: '2009-02-26 20:53:12 +0100'
+date_gmt: '2009-02-27 01:53:12 +0100'
+categories:
+- Web Development
+- Programming
+- Arrayzing
+tags:
+- jquery
+- JavaScript
+- mutators
+- arrays
+- merge$
+- Arrayzing
+comments: []
+---
+<p>Some nights, as I lay awake in bed, trying to sleep, I think about Arrayzing workflows.&nbsp; Lately, I've been thinking of the different ways users might use Arrayzing.  In particular, I've been thinking of how a user could edit a subset of elements in a zing without disturbing other elements. The result of this thoughtstream is a new Arrayzing command: <code>merge()</code>.</p>
+<p><!--more--></p>
+<p>In short, the <code>merge()</code> command allows you to merge your current zing with the previous zing in your stack.  What's the stack, you ask?</p>
+<p>Recall that, by default, Arrayzing a functional API, meaning that (unless you're using a mutator command) your zing is never modified.  Instead a new one is returned.  So, if we do this...</p>
+<pre lang="javascript">
+_(1, 4, 9, 144).gteq(4).map(Math.sqrt);
+</pre>
+<p>...we have in fact created 3 zings, not one.  Although it seems wasteful to keep making new zings, it turns out to be pretty useful.  For one, it allows us to step backwards using the <code>undo()</code> command:</p>
+<pre lang="javascript">
+_(1, 4, 9, 144)  // [1, 4, 9, 144]
+  .gteq(4)        // [4, 9, 144]
+  .map(Math.sqrt) // [2, 3, 12]
+  .undo()         // [4, 9, 144]
+  .undo()         // [1, 4, 9, 144]
+  .undo();        // []
+</pre>
+<p><em>(Aside: For those familiar with jQuery, the <code>undo()</code> command is the same as the end() command from that library).</em></p>
+<p>Keeping a history (or stack) also allows us to combine the past with the present using the <code>andSelf()</code> command:</p>
+<pre lang="javascript">
+var double = function (x) { return x * 2; };
+_(1, 2, 3)    // [1, 2, 3]
+  .map(double) // [2, 4, 6]
+  .andSelf();  // [2, 4, 6, 1, 2, 3]
+</pre>
+<p>But what else?  Well, consider this situation:  What if we wanted to modify only a subset of a zing?  For example, imagine we a list of monetary values and we wanted to make sure they all had the "$" character in front of them.  Let's try and do that without using <code>merge()</code>:</p>
+<pre lang="javascript" escaped='true'>
+var fn = function(e)
+{
+  if (!e.startsWith("$"))
+    return "$" + e;
+};
+
+_("$1.00", "$1.99", "100.00", "$5").map(fn);
+</pre>
+<p>That solution is OK.  It's pretty simple but it still requires a lot of typing and it's not really using Arrayzing for much (just the <code>map()</code> command).  Let's see if we can reduce the number of keystrokes and make better use of Arrayzing's capabilities by using the new <code>merge()</code> command:</p>
+<pre lang="javascript">
+_("$1.00", "$1.99", "100.00", "$5")
+  .not(/^\$/).prepend$("$").merge();
+</pre>
+<p>So what just happened there?  What does it all mean?  Let's look at that again, and track the contents of the zing:</p>
+<pre lang="javascript" line='1'>
+_("$1.00", "$1.99", "100.00", "$5")
+  .not(/^\$/)    // [ "100.00" ]
+  .prepend$("$") // [ "$100.00" ]
+  .merge(); 
+  // [ "$1.00", "$1.99", "$100.00", "$5" ]
+</pre>
+<p>In line 1, we create the Arrayzing (nothing special here).  In the following line, we filter out all strings that don't begin with "$" using a regular expression.  Things get a little more interesting on line 3, where we use the mutator version of <code>prepend()</code> to modify the filtered array in-place.  Finally, on line 4, we use the <code>merge()</code> command which, basically puts the originally filtered monetary value back into the preceding zing.</p>
+<p>So why did we use the <code>prepend$()</code> instead of <code>prepend()</code>?  The reason for that is because using <code>prepend()</code> would have created another level of history.  For example, here is what would happen if we had used <code>prepend()</code> instead of <code>prepend$()</code>:</p>
+<pre lang="javascript" line='1'>
+_("$1.00", "$1.99", "100.00", "$5")
+  .not(/^\$/)   // [ "100.00" ]
+  .prepend("$") // [ "$100.00" ]
+  .merge();     // [ "$100.00" ]
+</pre>
+<p>Why did that happen?  The answer to that question lies in how <code>merge()</code> merges.  Let's start by looking at line 2 of the last code snippet.  In that line, we filtered out all strings that did not start with a "$" character.  When Arrayzing returns a new zing that contains only the elements that start with a "$", it also remembers where the new elements came from.  So in the case of the <code>not()</code> function on line 2, Arrayzing remembers that "100.00" came from index 2 of the zing in line 1 (that is, the zing _("$1.00", "$1.99", "100.00", "$5")).  The <code>merge()</code> command only operates on the current zing and the one immediately previous to it on the stack.</p>
+<p>With that in mind, let's look at line 3.  On line 3, we run the <code>prepend()</code> command, which creates and returns a new zing that contains the value "$100.00".  What's more, it also remembers that the value "$100.00" was derived from "100.00" (index 0) in the zing immediately previous to it in the stack (that is, the zing _("100.00")).  Thus, when merged, it simply overwrites the value it derived from, which is the 0th index of the zing [ "100.00" ]... which results in the zing [&nbsp;"$100.00"&nbsp;].  You follow all that?</p>
+<p>This concept is easier to understand by annotating the previous code snippet:</p>
+<pre lang="javascript">
+var zing1 = _("$1.00", "$1.99", "100.00", "$5");
+// [ "$1.00", "$1.99", "100.00", "$5" ] index 0-3 come from nothing
+
+var zing2 = zing1.not(/^\$/);
+// [ "100.00" ] index 0 comes from index 2 in zing1
+
+var zing3 = zing2.prepend("$");
+// [ "$100.00" ] index 0 comes from index 0 in zing2
+
+var zing4 = zing3.merge();
+// [ "$100.00" ] copy index 0 from zing3 over index 0 in zing2
+</pre>
+<p>Now, with that more or less explained, let's go on to one final item:  What happens when we try to merge a zing that we've added to or removed from.  For example, if we added elements like this:</p>
+<pre lang="javascript">
+_("str", 2, 3, 4, "a", "b").numbers().add$(7).merge();
+</pre>
+<p>What would be in the zing returned by this sequence of functions?  In this case, when <code>merge()</code> is called, Arrayzing would not know where to merge the 7 element (since it only remembers the original indices of elements that directly derived from the previous zing).  Arrayzing deals with this scenario by simply adding all elements that it does not have an index for to the end of the previous zing in the stack.  Here's what that same snippet would look like if we documented each step:</p>
+<pre lang="javascript">
+_("str", 2, 3, 4, "a", "b")
+  .numbers() // [ 2, 3, 4 ]
+  .add$(7)   // [ 2, 3, 4, 7 ]
+  .merge();  // [ "str", 2, 3, 4, "a", "b", 7 ]
+</pre>
+<p>How about if we removed elements?  If we were to remove elements, they would simply not be merged back into the previous zing on the stack.  For example:</p>
+<pre lang="javascript">
+_("str", 2, 3, 4, "a", "b")
+  .numbers()    // [ 2, 3, 4 ]
+  .set$(0, 4)   // [ 4, 3, 4 ]
+  .set$(2, 7)   // [ 4, 3, 7 ]
+  .removeAt$(0) // [ 3, 7 ]
+  .merge();     // [ "str", 2, 3, 7, "a", "b" ]
+</pre>
+<p>As you can see, the <code>merge()</code> command is a powerful addition to Arrayzing.  It allows us to select a subset of the elements, transform them, and then re-add them to our original zing.</p>

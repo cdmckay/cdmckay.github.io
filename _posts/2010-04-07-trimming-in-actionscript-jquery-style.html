@@ -1,0 +1,86 @@
+---
+layout: post
+status: publish
+published: true
+title: Trimming in ActionScript jQuery-style
+author:
+  display_name: cdmckay
+  login: cdmckay
+  email: me@cdmckay.org
+  url: ''
+author_login: cdmckay
+author_email: me@cdmckay.org
+wordpress_id: 1344
+wordpress_url: http://cdmckay.org/blog/?p=1344
+date: '2010-04-07 13:26:45 +0200'
+date_gmt: '2010-04-07 18:26:45 +0200'
+categories:
+- Programming
+- Flash
+- ActionScript
+tags: []
+comments:
+- id: 414
+  author: Colin
+  author_email: anotheruser@fromreddit.com
+  author_url: ''
+  date: '2010-04-07 19:51:10 +0200'
+  date_gmt: '2010-04-08 00:51:10 +0200'
+  content: |-
+    Great article.
+
+    I am not sure, but I think that, besides being ugly, calling the function using str["trim"] will be fractionally slower than str.trim(), since the compiler will not  be able to optimize it.
+
+    That is just my thought. I don't have anything to back it up.
+
+    Still, a great idea.
+---
+<p>Sometimes we want to remove whitespace from the ends of our strings.  In fact, this task is so common on the web that <a href="http://jquery.com">the ubiquitous jQuery library</a> includes <a href="http://api.jquery.com/jQuery.trim/">a utility method</a> for that purpose.</p>
+<p>What about in ActionScript 3?  Well, not so much.  The <a href="http://livedocs.adobe.com/flash/9.0/ActionScriptLangRefV3/String.htm">String class in AS3 is</a>, in my opinion, a bit lacking compared to languages like <a href="http://msdn.microsoft.com/en-us/library/system.string.aspx">C#</a> and <a href="http://www.scala-lang.org/docu/files/api/scala/runtime/RichString.html">Scala</a>.  What's worse, you can't augment prototypes easily like you can in JavaScript to add missing methods (see update at the end for more information on this).</p>
+<p><!--more--></p>
+<p>So I needed to trim a string in AS3. A quick <a href="http://www.google.ca/#hl=en&safe=off&q=as3+trim">Google search</a> showed a couple so-so methods.  Then I got to thinking: Hey, doesn't jQuery have a trim method?  Aren't they both ECMAScript languages?  Shouldn't something as basic as this be pretty similar in both languages?</p>
+<p>The answer was yes to all those questions.  So I popped open <a href="http://code.jquery.com/jquery-1.4.2.js">the jQuery source</a> and did a quick search and found this a few lines into it:</p>
+<pre lang="javascript">
+// Used for trimming whitespace
+rtrim = /^(\s|\u00A0)+|(\s|\u00A0)+$/g,
+</pre>
+<p>Perfect.  I created a StringHelper AS3 file, plunked it in, and presto, we have an efficient trimmer in AS3:</p>
+<pre lang="actionscript3">
+public final class StringHelper
+{               
+    public function StringHelper() { }
+   
+    public static function trim(str:String):String {
+        return str.replace(/^(\s|\u00A0)+|(\s|\u00A0)+$/g, "")
+    }
+
+    public static function trimStart(str:String):String {
+        return str.replace(/^(\s|\u00A0)+/g, "");
+    }
+
+    public static function trimEnd(str:String):String {
+        return str.replace(/(\s|\u00A0)+$/g, "");
+    }
+}
+</pre>
+<h3>Update</h3>
+<p>After this was <a href="http://www.reddit.com/r/flash/comments/bnrsm/trimming_in_actionscript_jquerystyle/">posted on Reddit</a>, <strong>theillustratedlife</strong> made the following comment regarding the prototype chain in ActionScript:</p>
+<blockquote><p>
+You are supposed to be able to enhance the ECMAScript prototypes, but you might have to call a compiler flag when you do it. If you look in the docs, you'll notice that there are ECMAScript prototypes and interchangeable native code classes for the primitive types.</p></blockquote>
+<p>After doing a bit more experimenting, it looks like you can fairly easily augment the prototype chain in ActionScript as well.  However, there are some caveats when running AS3 in strict mode.  For example, consider having the String class augmented like so:</p>
+<pre lang="actionscript3">
+String.prototype.trim = function():String {
+    return StringHelper.trim(this);
+}
+</pre>
+<p>If we try to call the <code>trim()</code> method in the usual way</p>
+<pre lang="actionscript3">
+var str:String = "foo";
+str.trim();
+</pre>
+<p>we'll get a compile-time error because the AS3 compiler can't find the method in the String class definition.  Fortunately, we can get around this by using a dynamic reference</p>
+<pre lang="actionscript3">
+var str:String = "foo";
+str["trim"]();
+</pre>
+<p>It's a lot uglier, but it works.</p>

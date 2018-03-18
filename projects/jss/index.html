@@ -1,0 +1,110 @@
+---
+layout: page
+status: publish
+published: true
+title: JSS
+author:
+  display_name: cdmckay
+  login: cdmckay
+  email: me@cdmckay.org
+  url: ''
+author_login: cdmckay
+author_email: me@cdmckay.org
+wordpress_id: 349
+wordpress_url: http://couchware.ca/blogs/cam/?page_id=349
+date: '2009-03-27 12:17:42 +0100'
+date_gmt: '2009-03-27 17:17:42 +0100'
+categories:
+- Meta
+tags: []
+comments:
+- id: 359
+  author: Cameron McKay &raquo; JSS 1.0.0-beta1 released!
+  author_email: ''
+  author_url: http://couchware.ca/blogs/cam/2009/05/05/jss-100-beta1-released/
+  date: '2009-05-05 17:43:40 +0200'
+  date_gmt: '2009-05-05 22:43:40 +0200'
+  content: "[...] JSS [...]"
+- id: 361
+  author: Cameron McKay &raquo; JSS 1.0.0-beta 2 released!
+  author_email: ''
+  author_url: http://couchware.ca/blogs/cam/2009/05/24/jss-100-beta-2-released/
+  date: '2009-05-24 23:21:08 +0200'
+  date_gmt: '2009-05-25 04:21:08 +0200'
+  content: "[...] JSS [...]"
+- id: 674
+  author: Jason
+  author_email: jlwicker@gmail.com
+  author_url: http://b.logrythmik.com
+  date: '2011-11-15 22:15:40 +0100'
+  date_gmt: '2011-11-16 03:15:40 +0100'
+  content: Why is this project 'inactive'? Seems like such an awesome idea and implementation.
+---
+<p>To start using JSS now, see:</p>
+<ul>
+<li>the <a href="quick-reference">Quick Reference</a>,</li>
+<li>the <a href="event-property-reference">Event Property Reference</a>,</li>
+<li>the <a href="command-reference">Command Reference</a>,</li>
+<li>all <a href="http://cdmckay.org/blog/category/jss/">blog posts</a> relating to JSS.</li>
+</ul>
+<p><a href="http://javascript-stylesheets.googlecode.com"><strong>JSS</strong> (JavaScript Stylesheets)</a> is a JavaScript implementation of CSS.  JSS allows you to define your stylesheets in JavaScript using a CSS-like syntax.  JSS also offers non-programmers a simplified way to access many of the features of jQuery.</p>
+<p>Unlike the CSS implementations found in most browsers, JSS is CSS3 compliant.  This is achieved by using jQuery's CSS3-compliant selector engine to apply styles.  This means the JSS can use selectors that your browser's CSS implementation cannot.  Furthermore, JSS also gives you access to jQuery's custom properties like "opacity", allowing a developer to easily adjust the transparency of elements regardless of the browser.</p>
+<p>Although it is possible to do so, JSS does not need to replace your CSS stylesheets completely.  JSS can be used alongside CSS to to implement, for example, themes.  JSS can also be used to add code to your stylesheet.  Instead of having your background colour set to something  static like "white", you could make its value dependent on the time of day or uptime of your server.</p>
+<p>To understand how to use JSS, consider the following CSS file:</p>
+<pre lang="css">
+.title
+{
+  background: white;
+  color: black;
+  font-size: 20px;
+}
+
+div.options
+{
+  background: black;
+  color: white;
+  font-family: Georgia, "Times New Roman", serif;
+}
+</pre>
+<p>In JSS, this would be defined as:</p>
+<pre lang="javascript">
+$.jss.declare({
+
+  ".title":
+  {
+    background: "white",
+    color: "black",
+    font_size: "20px"
+  },
+
+  "div.options":
+  {
+    background: "black",
+    color: "white",
+    font_family: 'Georgia, "Times New Roman", serif'
+  }
+
+});
+</pre>
+<p>JSS also exposes jQuery events via a CSS-like syntax.  For example, imagine you wanted to collapse or uncollapse a div (with id "target") when you click on an button with the id "collapser".  In JSS, this would be as easy as:</p>
+<pre lang="javascript">
+$.jss.declare({
+
+  "#collapser": {
+    click: "toggle (#target)"
+  }
+
+});
+</pre>
+<p>It's that simple.  No JavaScript knowledge is required beyond copying the JSS boilerplate.  Let's try something a bit more more complicated.  Let's make it so the collapse/uncollapse is actually animated.  And it's make it so any button will collapse/uncollapse the "target" div.  Finally, let's make the browser alert us when it's done.</p>
+<pre lang="javascript" line="1">
+$.jss.declare({
+
+  "input[type=button]": [
+    { click: "toggle (#target) slow" },
+    { click: "alert Collapsed/uncollapsed!" }
+  ]
+
+});
+</pre>
+<p>You might have noticed the way we declare these got a little bit more complicated.  This is the alternate "array form" of JSS.  The reason for its existence is so that we can ensure that the rules will run in order.  If we use the { } method of declaring JSS declaration blocks, then there's no guarantee the JSS declarations will run in the order they appear.  However, if we use the [ ] form, then the declarations will be guaranteed to run in order.</p>

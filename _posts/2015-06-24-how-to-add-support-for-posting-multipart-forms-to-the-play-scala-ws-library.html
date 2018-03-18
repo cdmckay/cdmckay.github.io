@@ -1,0 +1,35 @@
+---
+layout: post
+status: publish
+published: true
+title: How to add support for posting multipart forms to the Play Scala WS library
+author:
+  display_name: cdmckay
+  login: cdmckay
+  email: me@cdmckay.org
+  url: ''
+author_login: cdmckay
+author_email: me@cdmckay.org
+wordpress_id: 2330
+wordpress_url: http://cdmckay.org/blog/?p=2330
+date: '2015-06-24 01:05:25 +0200'
+date_gmt: '2015-06-24 05:05:25 +0200'
+categories:
+- Meta
+- Programming
+- Java
+- Process Street
+- Scala
+- Play 2
+- Play
+tags: []
+comments: []
+---
+<p>For <a href="https://process.st" target="_blank">Process Street</a>'s <a href="http://yammer.com" target="_blank">Yammer</a> integration, I needed to post file attachments to their API using <a href="https://www.playframework.com/documentation/2.3.x/ScalaWS" target="_blank">the Play Scala WS library</a>.</p>
+<p>However, it turns out <a href="https://github.com/playframework/playframework/issues/902" target="_blank">that WS does not yet support uploading files</a> using multipart/form-data and POST. There are <a href="https://stackoverflow.com/questions/10890362/play-2-0-how-to-post-multipartformdata-using-ws-url-or-ws-wsrequest" target="_blank">several</a> <a href="https://stackoverflow.com/questions/14322217/scala-play-framework-post-file" target="_blank">workarounds</a> on the 'net, but they all involve getting the underlying Ning Java client and doing thing manually.</p>
+<p>Why not harness the power of Play and Scala and write our own Writeable to do that job? Heck, we already have a MultipartFormData object for handling multipart form requests, why not use that?</p>
+<p><!--more--></p>
+<p>Behold, the fruit of my labour:</p>
+<p><script src="https://gist.github.com/cdmckay/4b269e9017a30111556a.js"></script></p>
+<p>Now, how do you use it? Like so:</p>
+<p><script src="https://gist.github.com/cdmckay/5f05cbcb5327259df1cf.js"></script></p>

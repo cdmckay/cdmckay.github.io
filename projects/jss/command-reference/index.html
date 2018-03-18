@@ -1,0 +1,45 @@
+---
+layout: page
+status: publish
+published: true
+title: Command Reference
+author:
+  display_name: cdmckay
+  login: cdmckay
+  email: me@cdmckay.org
+  url: ''
+author_login: cdmckay
+author_email: me@cdmckay.org
+wordpress_id: 540
+wordpress_url: http://couchware.ca/blogs/cam/?page_id=540
+date: '2009-05-22 21:13:43 +0200'
+date_gmt: '2009-05-23 02:13:43 +0200'
+categories:
+- Meta
+tags: []
+comments:
+- id: 360
+  author: Cameron McKay &raquo; JSS 1.0.0-beta 2 released!
+  author_email: ''
+  author_url: http://couchware.ca/blogs/cam/2009/05/24/jss-100-beta-2-released/
+  date: '2009-05-24 23:20:12 +0200'
+  date_gmt: '2009-05-25 04:20:12 +0200'
+  content: "[...] also started writing documentation for the JSS commands. It is only
+    partially completed but can still be helpful. Check out the JSS homepage for other
+    [...]"
+---
+<div style="display: none;"><script src="/data/jss/js/jquery.jss.js" type="text/javascript"></script></div>
+<p><?php<br />
+$start_time = microtime(true);</p>
+<p>$root = "../data/jss/xml";<br />
+$xslDoc = new DOMDocument();<br />
+$xslDoc->load($root . "/commands.xsl");</p>
+<p>$xmlDoc = new DOMDocument();<br />
+$xmlDoc->load($root . "/commands.xml");</p>
+<p>$proc = new XSLTProcessor();<br />
+$proc->importStylesheet($xslDoc);</p>
+<p>echo $proc->transformToXML($xmlDoc);</p>
+<p>$end_time = microtime(true);</p>
+<p>$total_time = $end_time - $start_time;</p>
+<p>//echo "<!-- XSL transform completed in $total_time seconds. -->\n";<br />
+?></p>

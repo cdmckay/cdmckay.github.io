@@ -1,0 +1,35 @@
+---
+layout: post
+status: publish
+published: true
+title: SpriteFactory, an AS3 library for creating multiple sprites using the
+  same bitmap
+author:
+  display_name: cdmckay
+  login: cdmckay
+  email: me@cdmckay.org
+  url: ''
+author_login: cdmckay
+author_email: me@cdmckay.org
+wordpress_id: 1336
+wordpress_url: http://cdmckay.org/blog/?p=1336
+date: '2010-04-06 20:18:25 +0200'
+date_gmt: '2010-04-07 01:18:25 +0200'
+categories:
+- Web Development
+- Programming
+- Flash
+- ActionScript
+tags: []
+comments: []
+---
+<p>While working on Flash sidescroller stuff I noticed that there was no easy way (that I could find) to create multiple sprites from a single bitmap (something you'd do when doing a tile-based graphics layout).</p>
+<p>Sooo... <a href="http://cdmckay.org/blog/projects/spritefactory">I made my own simple library called SpriteFactory</a>.</p>
+<p>Here's some example usage:</p>
+<pre lang="actionscript3">
+var factory:SpriteFactory = new SpriteFactory("assets/sprites");
+factory.loadBitmap("grass", "block-grass.png");
+var grass1:Sprite = factory.newSprite("grass");
+var grass2:Sprite = factory.newSprite("grass");
+</pre>
+<p><a href="http://cdmckay.org/blog/projects/spritefactory">Check out the project page for more information.</a></p>

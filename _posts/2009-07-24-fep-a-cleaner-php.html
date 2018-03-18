@@ -1,0 +1,40 @@
+---
+layout: post
+status: publish
+published: true
+title: 'Fep: A cleaner PHP'
+author:
+  display_name: cdmckay
+  login: cdmckay
+  email: me@cdmckay.org
+  url: ''
+author_login: cdmckay
+author_email: me@cdmckay.org
+wordpress_id: 817
+wordpress_url: http://couchware.ca/blogs/cam/?p=817
+date: '2009-07-24 17:35:57 +0200'
+date_gmt: '2009-07-24 22:35:57 +0200'
+categories:
+- Programming Languages
+- Fep
+tags:
+- PHP
+- Fep
+- apache
+comments: []
+---
+<p>PHP bugs me.  It's a language with so many inconsistencies, it's just screaming to be cleaned up.  I'm surprised it hasn't happened yet.  That's why I'm starting a series of articles on <strong>Fep</strong>, a cleaned up version of PHP.  </p>
+<p><!--more--></p>
+<p>Fep has the following goals:</p>
+<ul>
+<li>Eliminate many of the inconsistencies of PHP while maintaining the core <em>feel</em> of the language.  For example, why is there <code>print</code> and <code>echo</code>? Answer: <a href="http://www.faqts.com/knowledge_base/view.phtml/aid/1/fid/40">it's complicated</a>.  But it doesn't have to be!  <code>isset()</code> is a language construct that requires brackets but <code>require</code> doesn't.  These are the types of things I'd like to fix.</li>
+<li>PHP has a ton of <a href="http://ca2.php.net/manual/en/ref.strings.php">string functions</a> that are just screaming to be separated into classes.  Fep will do this.  This will be also done to groups of functions in a similar state.</li>
+<li>PHP isn't the nicest language, but it's easy and familiar.  It also has a ton of support.  Fep will be a sort of meta-language.  Fep code will be converted to PHP code before it is run in order to maintain compatibility with the PHP ecosystem.</li>
+<li>PHP's OO model is a bit strange.  Why is the constructor called <code>__construct</code>?  To me that's ugly as shit.  I'm also not a big fan of using <code>-></code> to access methods and attributes.  I'd much rather use <code>.</code>, but in order to do that, we'll probably need to stop using <code>.</code> for concatenation.  I'm ok with doing that.</li>
+</ul>
+<p>That's just a few of the things of the top of my head.  The development process will follow this pattern:</p>
+<ol>
+<li>write a series of articles to map out the language (maybe even write a <a href="http://docs.python.org/reference/">language reference like Python</a>),</li>
+<li>write a compiler that'll convert Fep code into PHP code,</li>
+<li>write a module for Apache that'll convert <code>.fep</code> files to <code>.php</code> files and then feed them to the PHP module.</li>
+</ol>

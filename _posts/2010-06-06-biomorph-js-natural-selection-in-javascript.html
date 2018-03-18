@@ -1,0 +1,49 @@
+---
+layout: post
+status: publish
+published: true
+title: 'Biomorph.js: Natural Selection in JavaScript'
+author:
+  display_name: cdmckay
+  login: cdmckay
+  email: me@cdmckay.org
+  url: ''
+author_login: cdmckay
+author_email: me@cdmckay.org
+wordpress_id: 1588
+wordpress_url: http://cdmckay.org/blog/?p=1588
+date: '2010-06-06 19:44:44 +0200'
+date_gmt: '2010-06-07 00:44:44 +0200'
+categories:
+- Web Development
+- Programming
+- Gaming
+- JavaScript
+tags: []
+comments:
+- id: 1973
+  author: Stephen Rose
+  author_email: pixelperfect@me.com
+  author_url: ''
+  date: '2013-07-12 10:15:04 +0200'
+  date_gmt: '2013-07-12 14:15:04 +0200'
+  content: Thank you.
+- id: 6660
+  author: เริ่มเรื่องวิวัฒนาการและการคัดเลือกพันธุ์ ของเล่นรถไฟเหาะ | วิทย์พ่อโก้
+  author_email: ''
+  author_url: http://witpoko.com/?p=2552
+  date: '2014-11-05 11:13:56 +0100'
+  date_gmt: '2014-11-05 16:13:56 +0100'
+  content: "[&#8230;] สำหรับเด็กประถมปลาย ผมให้ลองคัดเลือกพันธุ์ Biomorph ซึ่งเป็นลวดลายบนจอทีเกิดจากคำสั่งในการวาดแบบต่างๆ
+    ทุกครั้งที่เรากดให้มันสร้างลูกหลาน มันก็จะสร้างลูกออกมาให้ 8 ตัว โดยแต่ละตัวจะมีคำสั่งการวาดคล้ายๆตัวแม่แต่แตกต่างไปเล็กน้อย
+    แล้วเราก็เลือกลูกตัวที่ลวดลายถูกใจเราที่สุด จากการเริ่มด้วยเส้นลายง่ายๆ เราสามารถคัดเลือกพันธุ์จนได้ลูกหลานหน้าตาประหลาดๆหลายแบบเช่นเหมือนค้างคาวกางปีกหรือหน้าคนเป็นต้นครับ
+    คำอธิบายอยู่ที่หน้านี้และหน้าจอสำหรับเล่นอยู่ที่หน้านี้ครับ [&#8230;]"
+---
+<p>For his 1986 book <a href="http://en.wikipedia.org/wiki/The_Blind_Watchmaker">The Blind Watchmaker</a>, <a href="http://en.wikipedia.org/wiki/Richard_Dawkins">Richard Dawkins</a> developed a program that created "biomorphs": virtual creatures created by a computer simulation.  The simulation, called <a href="http://www.rennard.org/alife/english/biomintrgb.html">Biomorph</a>, was developed in order to demonstrate the power of natural selection.</p>
+<p><a href="http://cdmckay.org/biomorph"><img class="aligncenter size-full wp-image-1606" title="Biomorph" src="http://cdmckay.org/blog/wp-content/blogs.dir/2/files/2010/06/biomorph-ui.png" alt="" width="350" height="190" /></a></p>
+<p>Recently, in an effort to better understand how the Biomorph program worked, I decided to implement it myself in JavaScript using the HTML5 canvas element.  <a href="http://cdmckay.org/biomorph">The result of this endeavour can be found here</a> and <a href="https://github.com/cdmckay/biomorphjs">the GitHub repository here</a>. Read more to learn how to use the Biomorph program.</p>
+<p><!--more--></p>
+<h3>How do I work it?</h3>
+<p>The user interface contains 9 biomorphs arranged in a 3x3 grid.  This is a biomorph generation.  The centre the grid (with the blue border) contains the parent biomorph.  The parent is the biomorph that the remaining 8 children biomorphs are based on.  The children biomorphs are created by slightly mutating each of the eight genes in a biomorph.</p>
+<p>In order to evolve a biomorph towards a certain goal, look at the 8 child biomorphs and select the one that is closest to looking like the biomorph you are aiming for.  For example, if you're trying to make a bat biomorph, pick the biomorph that looks most like a bat.  Once you have a chosen a biomorph, click it to generate a new generation of biomorphs based on it.</p>
+<p>If you choose the parent biomorph, you will simple be regenerating the child generation.  However, since each gene can move in two directions, you have 16 possible children for each parent.  Thus, if you are unhappy with your choice of children, you can try clicking the parent biomorph again to get one of the 8 other child biomorphs you haven't seen.</p>

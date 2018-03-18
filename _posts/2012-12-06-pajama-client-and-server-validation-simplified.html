@@ -1,0 +1,123 @@
+---
+layout: post
+status: publish
+published: true
+title: 'Pajama: Client and Server Validation Simplified'
+author:
+  display_name: cdmckay
+  login: cdmckay
+  email: me@cdmckay.org
+  url: ''
+author_login: cdmckay
+author_email: me@cdmckay.org
+wordpress_id: 2185
+wordpress_url: http://cdmckay.org/blog/?p=2185
+date: '2012-12-06 11:02:50 +0100'
+date_gmt: '2012-12-06 16:02:50 +0100'
+categories:
+- Web Development
+- PHP
+- JavaScript
+tags: []
+comments:
+- id: 823
+  author: 'Episode 105: Font tools, design thoughts, parallel deployment, and my Florida
+    road trip | PHP Podcasts'
+  author_email: ''
+  author_url: http://www.phppodcasts.com/2012/12/15/episode-105-font-tools-design-thoughts-parallel-deployment-and-my-florida-road-trip/
+  date: '2012-12-17 03:43:20 +0100'
+  date_gmt: '2012-12-17 08:43:20 +0100'
+  content: "[...] Pajama PHP library :: Rules for form validation on server and client
+    side [...]"
+- id: 2109
+  author: aristipp
+  author_email: cglasmeyer@gmail.com
+  author_url: ''
+  date: '2013-08-08 16:20:28 +0200'
+  date_gmt: '2013-08-08 20:20:28 +0200'
+  content: |-
+    Hi,
+
+    thanks a lot! You have done the work i always wanted to do since i use the jquery validation plugin. I will now try Pajama in a real world project and contribute to GitHub if necessary.
+---
+<p>When implementing an HTML form that requires validation, a developer must make a decision: should I use client-side validation, server-side validation, or both?</p>
+<p>In this article I will give a quick overview of the pros and cons of these validation techniques, as well as introduce my solution to the problem: <a href="https://github.com/cdmckay/pajama" target="_blank">Pajama</a>.</p>
+<p><!--more--></p>
+<h3>Client-side Validation</h3>
+<p>Performing validation on the client has the advantage of being responsive to the user, as the data can be validated without communicating with the server.</p>
+<p>On the other hand, client-side validation has the enormous disadvantage in that it cannot be trusted by the server. The client is in total control of what is being sent, meaning there is no way for a developer to guarantee that the browser is sending valid data.  As a result, client-side validation must be combined with some sort of server-side validation in order to ensure the client isn't tampering with the data.</p>
+<h3>Server-side Validation</h3>
+<p>With that in mind, server-side validation seems like a much better solution. Since there are no trust issues with server-side validation, a developer has the option of foregoing client-side validation altogether.</p>
+<p>Unfortunately, server-side validation has the downside that every time the client attempts validation, the entire form must be sent to the server. Worse yet, with some server-side validation schemes, all that data must then be sent back to the client and re-rendered if validation fails. This can happen several times for a single form leading to a significant amount of wasted bandwidth, especially for high-traffic sites.</p>
+<h3>Hybrid Validation</h3>
+<p>This brings us to hybrid validation. Under this validation scheme, data is first validated by the client. Once the client is satisfied the data is valid, it is then sent to the server and re-validated. This allows a form to have the responsiveness and efficiency of client-side validation with the trust of server-side validation. If a client tampers with the data before it is sent, the server-side validation will catch it. </p>
+<p>Hybrid validation isn't without it's own drawbacks, however. Unlike client- or server-side validation, hybrid validation takes place in two different spots: the browser and the server.  This adds to the implementation complexity. Complicating matters further, the client and server typically do not use the same programming language. This leads to a lot of questions: How do we validate the same way on client and server? Do we need to define our rules twice, once in JavaScript and once in the other language? What happens if the rules need to change? Do we have to remember to update the rules in both languages each time? What if each language has a different validation engine? Do I need to learn both? </p>
+<p>This is where Pajama comes in.</p>
+<h3>Pajama</h3>
+<p>Pajama is a model validator written in PHP. It uses the same rule system as the popular <a href="http://bassistance.de/jquery-plugins/jquery-plugin-validation/" target="_blank">jQuery Validation plugin</a> and has a similar API.  For example, here is how a validator is setup with the jQuery Validation plugin:</p>
+<pre lang="javascript">
+$("form").validate({
+    rules: {
+        first_name: "required",
+        last_name: "required"
+    },
+    submitHandler: function() {
+        $.post(...);
+    }
+});
+</pre>
+<p>...and here's how it's setup in Pajama:</p>
+<pre lang="php">
+\Pajama\Validator::validate(array(
+     'model' => $_POST,
+     'rules' => array(
+          'first_name' => 'required',
+          'last_name' => 'required',
+     ),
+     'validHandler' => function() {
+          // Store in database.
+     },    
+));
+</pre>
+<p>Notice the similarities in the API. If someone knows how to use the jQuery Validation plugin, they'll have a good idea of how to use Pajama. </p>
+<p>Also notice how the rules are defined. Except for the differences in language syntax (i.e. <code>{ foo: "bar" }</code> versus <code>array('foo' => 'bar')</code>), they're identical. This is where the power of Pajama lies. Pajama implements all the standard jQuery Validation methods. As a result, most rulesets used by the jQuery Validation plugin can also be used with Pajama with minimal modification to account for syntax. But wouldn't it be nice if we didn't have to do any modifications?</p>
+<h3>JSON To The Rescue</h3>
+<p>One of the biggest issues with hybrid validation is figuring out a way to share the rules between two different programming languages. Pajama solves this issue by using a common JSON rules file. Why does Pajama use a JSON rules file? Well, first off, the jQuery Validation plugin already defines its rules as JavaScript literals, so converting them to JSON is a cinche. Better yet, PHP can easily convert to and from JSON using the <a href="http://php.net/manual/en/function.json-encode.php" target="_blank">json_encode</a> and <a href="http://php.net/manual/en/function.json-decode.php" target="_blank">json_decode</a> functions. Thus, since both JavaScript and PHP can speak JSON, sharing rules between the languages in that format is straightforward and convenient.</p>
+<p>To see how simple it is, here's how the rules from the above example would look as a standalone JSON file:</p>
+<pre lang="javascript">
+{
+    "first_name":"required",
+    "last_name":"required"    
+}
+</pre>
+<p>Next, to use them with client-side JavaScript, we'd modify the previous example to:</p>
+<pre lang="javascript">
+var form = $("form").on("submit", function() { 
+    // Disable submit while loading rules.
+    return false; 
+});
+
+$.getJSON("rules.json", function(rules) {
+    // Enable submit now that rules are loaded.
+    form.off("submit");
+    form.validate({
+        rules: rules,
+        submitHandler: function() {
+            $.post(...);
+        }
+    });
+});
+</pre>
+<p>...and modify the PHP slightly to:</p>
+<pre lang="php">
+\Pajama\Validator::validate(array(
+     'model' => $_POST,
+     'rules' => json_decode('rules.json', true),
+     'validHandler' => function() {
+          // Store in database.
+     },    
+));
+</pre>
+<p>Presto! We now have a single rules file being used by both the client and the server to validate. If any of the rules need to change, we just need to edit that single file.</p>
+<h3>And That's Not All</h3>
+<p>In addition to the basic functionality outlined in this post, Pajama also <a href="https://github.com/cdmckay/pajama#custom-validators" target="_blank">supports custom validation methods</a> and <a href="https://github.com/cdmckay/pajama#limitations" target="_blank">a small subset of CSS selectors</a> that can be used for conditional rules.  For more information on these subjects, <a href="https://github.com/cdmckay/pajama" target="_blank">refer to the GitHub page</a>.</p>

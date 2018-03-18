@@ -1,0 +1,88 @@
+---
+layout: post
+status: publish
+published: true
+title: Arrayzing Design Choices
+author:
+  display_name: cdmckay
+  login: cdmckay
+  email: me@cdmckay.org
+  url: ''
+author_login: cdmckay
+author_email: me@cdmckay.org
+wordpress_id: 191
+wordpress_url: http://couchware.ca/blogs/cam/?p=191
+date: '2009-02-15 03:45:08 +0100'
+date_gmt: '2009-02-15 08:45:08 +0100'
+categories:
+- Programming
+- Arrayzing
+tags:
+- design
+- decisions
+- jquery
+- JavaScript
+- ruby
+- mutators
+- functions
+comments:
+- id: 13
+  author: 'Cameron McKay &raquo; Arrayzing vs. Array: get() and set()'
+  author_email: ''
+  author_url: http://couchware.ca/blogs/cam/2009/02/15/arrayzing-vs-array-get-and-set/
+  date: '2009-02-15 17:49:32 +0100'
+  date_gmt: '2009-02-15 22:49:32 +0100'
+  content: "[...] If you&#8217;re not familiar with the $ after set$(), check out
+    this article. It means that the function is a [...]"
+---
+<p>Lately, I've been working an awful lot on a new project called <a href="http://cdmckay.org/blog/arrayzing">Arrayzing</a>.&nbsp; The goal of Arrayzing is to adapt the design of <a href="http://jquery.com">jQuery</a> to work with JavaScript arrays of anything.&nbsp; </p>
+<p><!--more--></p>
+<p>For example, to get all the numbers out of an Arrayzing array (which I have started calling a <em>zing</em>, much to <a href="http://couchware.ca/blogs/kev">Kevin's</a> dismay) we would simply have to do this:</p>
+<pre lang="javascript">_(1, 2, "foo", function() { return 42 }, false, 3, 42).numbers();</pre>
+<p>Although this is useful in itself, Arrayzing can still do more.  Imagine that not only did we want to extract all the numbers in an array, we wanted to sum them too.  Arrayzing can handle that without breaking a sweat:</p>
+<pre lang="javascript">_(1, 2, "foo", function() {}, false, 3, 42).numbers().sum();</pre>
+<p>And that's just scratching the surface!  But enough about that (we'll deal with the power of Arrayzing is many posts in the future).  Let's talk about API design.</p>
+<p>Arrayzing has been a lot of fun to design.  Along the way there have been many design decisions to make and I thought it'd be useful to write about them for the benefit of myself and other would-be API designers.</p>
+<p>The first decision I'll talk about is probably the most radical of the recent changes.  It has to do with the functional nature of Arrayzing (which was inherited from jQuery).</p>
+<p>Basically, every time an Arrayzing command causes a zing to change (i.e. the numbers() function is invoked), Arrayzing will return a new zing as opposed to just returning a modified version of the current zing.  (Remember, a zing is an Arrayzing object).  This idea is illustrated below:</p>
+<pre lang="javascript">
+// str() is just a convenient way of calling toString()
+var a = _(1, "two", 3);
+a.str(); // "1,two,3"
+var b = a.numbers();
+a.str(); // "1,two,3"
+b.str(); // "1,3"
+</pre>
+<p>This behaviour can be useful in a number of cases.  For instance,</p>
+<pre lang="javascript">
+var a = _(1, 2, "three", 4, false, function() {}, "foo");
+var sum = a.numbers().sum(); // 7
+var strings = a.strings().join(","); // "three,foo"
+</pre>
+<p>As you can see, we don't need to keep a copy of the initial values (1, 2, "three", etc.), we can simply re-use the initial zing.  We also won't accidentally modify a zing when we don't want to.</p>
+<p>However, sometimes we want to modify an array in-place.  For example, imagine we had an object called Reader that would read from some data source, and periodically have strings available.  In order to check if the Reader has more strings, we would call Reader.hasNext().  In order to read the next string, we would call Reader.next().  So, to read all the strings that Reader has available at a given moment, we would iterate like this:</p>
+<pre lang="javascript">
+var array = new Array();
+while (Reader.hasNext())
+{
+  array.push(Reader.next());
+}
+</pre>
+<p>That same code in Arrayzing, as I've described it so far, would be this:</p>
+<pre lang="javascript">
+var zing = _();
+while (Reader.hasNext())
+{
+  zing = zing.push(Reader.next());
+}
+</pre>
+<p>Which has several problems.  First of all, it's not altogether obvious that this is how we'd it.  Secondly, it's pretty inefficent.  Every iteration is creating a new Arrayzing that needn't exist for our purposes.  So what's the solution?  Borrow from our friend <a href="http://ruby-lang.org">Ruby</a> and throw in some mutator methods!  </p>
+<p>In Ruby, when a method modifies an object in-place, it is suffixed with an exclamation mark <strong>!</strong>.  Unfortunately, JavaScript doesn't allow for us to use exclamation marks in our variables.  In place of that, Arrayzing uses the <strong>$</strong> character.  So now, in Arrayzing, every function that returns a modified zing also has a sister function with a suffixed $ that will modify the zing in-place.</p>
+<p>Thus, returning to the example with the Reader, we can now use a mutator function:</p>
+<pre lang="javascript">
+var zing = _();
+while (Reader.hasNext())
+{
+  zing.push$(Reader.next());
+}
+</pre>

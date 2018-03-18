@@ -1,0 +1,46 @@
+---
+layout: post
+status: publish
+published: true
+title: JSS 1.0.0-beta2 released!
+author:
+  display_name: cdmckay
+  login: cdmckay
+  email: me@cdmckay.org
+  url: ''
+author_login: cdmckay
+author_email: me@cdmckay.org
+wordpress_id: 591
+wordpress_url: http://couchware.ca/blogs/cam/?p=591
+date: '2009-05-24 23:20:08 +0200'
+date_gmt: '2009-05-25 03:20:08 +0200'
+categories:
+- Web Development
+- Programming
+- JSS
+- JavaScript
+tags:
+- html
+- web
+- JavaScript
+- JSS
+- 1.0.0-beta2
+comments: []
+---
+<p>I'm proud to announce the release of <a href="http://javascript-stylesheets.googlecode.com/files/jquery.jss-1.0.0-beta2.js">JSS 1.0.0-beta2</a>.  Here are the changes:</p>
+<ul>
+<li>Fixed the way that {attributes} are handled when not using a selector.  They should now properly grab the attribute from element that fired the event.</li>
+<li>Made it so each time a declaration block is applied, all the event handlers bound by JSS to the elements returned by that selector are unbound.</li>
+<li>Fixed the semantics of the {@attr} syntax.  It now means that the eventTarget should always be used, regardless of whether or not a selector is defined.  In order to access the attributes of a selector use {@attr} now.</li>
+<li>Added two new commands: set-data and remove-data.  These commands use the jQuery functions data() and removeData().  They are similar to set-attr and remove-attr except instead of storing the information in an attribute, they are stored in a table.  Data is accessed by using [data] syntax, similar to the {attr} syntax.</li>
+<li>Added new event property: setup.  This event is fired when the JSS stylesheet is loaded (setup).  This is useful in certain cases where the user wants to setup some variables using set-data.</li>
+<li>Made it so you can now set scroll-top and scroll-left via the set-attr command.</li>
+<li>Added trigger command.  It can be used to trigger event properties on elements.</li>
+<li>Fixed bug where you could put a string | in a binary command due to the<br />
+simplistic implementation.  The new version requires any | to be escaped with \|.</li>
+<li>Added fade-to command, based on the jQuery.fadeTo() command.</li>
+<li>Added show and hide commands.</li>
+<li>Fixed issue with data and attribute replacements not working correctly (i.e. the first event would replace them for all events).</li>
+<li>Callbacks may now take string parameters.  For example, "fade-out (#target) normal !callback str1 str2".</li>
+</ul>
+<p>I've also started writing documentation for the <a href="http://cdmckay.org/blog/jss/command-reference/">JSS commands</a>.  It is only partially completed but can still be helpful.  Check out the <a href="http://cdmckay.org/blog/jss">JSS homepage</a> for other documentation.</p>

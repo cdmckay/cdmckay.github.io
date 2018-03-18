@@ -1,0 +1,50 @@
+---
+layout: page
+status: publish
+published: true
+title: PHP Interop
+author:
+  display_name: cdmckay
+  login: cdmckay
+  email: me@cdmckay.org
+  url: ''
+author_login: cdmckay
+author_email: me@cdmckay.org
+wordpress_id: 1070
+wordpress_url: http://couchware.ca/blogs/cam/?page_id=1070
+date: '2009-10-17 22:25:38 +0200'
+date_gmt: '2009-10-18 03:25:38 +0200'
+categories:
+- Meta
+tags: []
+comments: []
+---
+<h3>Global Namespace</h3>
+<p>In order to access the PHP global namespace in Fep the <code>PHP</code> static class is used.</p>
+<pre lang="php">
+var array = [ 1, 2, 3 ];
+var count = PHP::count array;
+
+var name = "Cameron";
+var replaced = PHP::str_replace( "C", "K", name );
+</pre>
+<h3>Superglobals</h3>
+<p>PHP has a concept called <a href="http://www.php.net/manual/en/language.variables.superglobals.php">superglobals</a>: variables that are available in every scope.  Fep discourages use of superglobals (it will use another approach).  However, superglobals will be accessible via the PHP::SuperGlobal static class.</p>
+<pre lang="php">
+// In Example.php
+$foo = "global";
+
+// In Global.fep
+require Example;
+def testGlobal()
+{
+    var foo = "local";
+    println format("foo in global context {foo}", 
+            PHP::SuperGlobal::GLOBALS["foo"]);
+    println format("foo in local context {foo}", foo);
+}
+</pre>
+<pre lang="php">
+// A form is submitted with an input named "Name".
+var name = PHP::SuperGlobal::_REQUEST["name"];
+</pre>

@@ -1,0 +1,117 @@
+---
+layout: post
+status: publish
+published: true
+title: Inconsistencies in the .NET Enum class
+author:
+  display_name: cdmckay
+  login: cdmckay
+  email: me@cdmckay.org
+  url: ''
+author_login: cdmckay
+author_email: me@cdmckay.org
+wordpress_id: 948
+wordpress_url: http://couchware.ca/blogs/cam/?p=948
+date: '2009-09-14 00:59:44 +0200'
+date_gmt: '2009-09-14 04:59:44 +0200'
+categories:
+- Programming
+- Dnum
+- ".NET"
+tags:
+- ".net"
+- c#
+- enum
+- Dnum
+comments:
+- id: 391
+  author: DotNetKicks.com
+  author_email: ''
+  author_url: http://www.dotnetkicks.com/csharp/Inconsistencies_in_the_NET_Enum_class
+  date: '2009-09-14 12:31:45 +0200'
+  date_gmt: '2009-09-14 17:31:45 +0200'
+  content: |-
+    <strong>Inconsistencies in the .NET Enum class...</strong>
+
+    You've been kicked (a good thing) - Trackback from DotNetKicks.com...
+- id: 393
+  author: kev
+  author_email: kev@couchware.ca
+  author_url: http://www.couchware.ca
+  date: '2009-09-14 12:44:55 +0200'
+  date_gmt: '2009-09-14 17:44:55 +0200'
+  content: Really interesting Cam. Any idea why these inconsistencies exist? Is it
+    some restriction with the CLR or some language nuance? Will your fix have any
+    drawbacks such as speed/performance? Looking forward to the official release!
+- id: 394
+  author: path
+  author_email: pathsny@gmail.com
+  author_url: http://pathsny.blogspot.com
+  date: '2009-09-14 14:56:44 +0200'
+  date_gmt: '2009-09-14 19:56:44 +0200'
+  content: This is probably besides the point, but in general enums are probably not
+    even worth using. In general being able to switch back and forth between enums
+    and int's isn't really a good thing. But the issue is deeper than that. Enum's
+    don't allow you to add logic in, so invariably once a system starts with enums
+    it seems to evolve down the path of switching on the value of something or branching.
+    It seems far better to just create an abstract class and a bunch of derived class
+    (maybe single instances of each) and push logic into them.
+- id: 395
+  author: agreed
+  author_email: agreed@with.path
+  author_url: ''
+  date: '2009-09-14 17:20:59 +0200'
+  date_gmt: '2009-09-14 22:20:59 +0200'
+  content: I agree with path. You can create something far better than an enum using
+    classes.
+- id: 396
+  author: BK
+  author_email: bob_kerner@yahoo.com
+  author_url: http://mobilecommerceonline.com/blog/
+  date: '2009-09-15 00:16:28 +0200'
+  date_gmt: '2009-09-15 05:16:28 +0200'
+  content: "Good post.  I didn't realize all those inconsistencies existed..\n\nBTW,
+    instead of using the underlying mappings with their inconsistencies, have a look
+    at my enum framework post-- the framework allows you to tag enum fields using
+    attributes of arbitrary type and parse enums with many-to-many relationships.
+    \n\nhttp://mobilecommerceonline.com/blog/?page_id=127"
+- id: 397
+  author: Twitted by tek_news
+  author_email: ''
+  author_url: http://realurl.org/twitted.php?id=3984793787
+  date: '2009-09-21 05:44:32 +0200'
+  date_gmt: '2009-09-21 10:44:32 +0200'
+  content: "[...] This post was Twitted by tek_news [...]"
+---
+<p>During a recent project of mine, I had to do a lot of enum manipulation using the .NET Enum class and I have to say I wasn't impressed.  Besides the shortcoming of it not being a generic class (and thus not being especially type-safe), Enum also has some strange inconsistencies in terms of how it handles matched integral types.</p>
+<p><!--more--></p>
+<h3>GetName</h3>
+<p>Why does <code><a href="http://msdn.microsoft.com/en-us/library/system.enum.getname.aspx">GetName</a></code> return null for any integral type you pass it except those that correspond to a constant?</p>
+<p>For example, this is completely valid:</p>
+<pre lang="csharp">
+enum Fruit : byte { Apple, Orange, Cumquat };
+var fruit = Enum.GetName( typeof(Fruit), ulong.MaxValue );
+// fruit now equals null
+</pre>
+<p>In every other case in the Enum class where you pass an integral value outside the range of the underlying type, you get an exception.  Except here.</p>
+<h3>IsDefined</h3>
+<p>Why does <code><a href="http://msdn.microsoft.com/en-us/library/system.enum.isdefined.aspx">IsDefined</a></code> throw an exception when you pass it an integral value that can be safely narrowed to the enumeration's underlying type?</p>
+<p>For example, this will throw an exception:</p>
+<pre lang="csharp">
+enum Fruit : byte { Apple, Orange, Cumquat };
+var defined = Enum.IsDefined( typeof(Fruit), 0 );
+</pre>
+<p>Why?  Because it's a integer literal (and therefore type <code>int</code>) and the underlying type of <code>Fruit</code> is <code>byte</code>.  This would be alright if this is how the Enum class consistently treated this case, but it's not.  In every other method, the Enum class is OK with you passing in an <code>int</code> value for a <code>byte</code> enumeration (as long as it's within the range of the underlying type).</p>
+<h3>ToObject</h3>
+<p>Why does <code><a href="http://msdn.microsoft.com/en-us/library/system.enum.toobject.aspx">ToObject</a></code> silently overflow for values outside the range of the enumeration's underlying type?</p>
+<p>For example, this code will give the following non-intuitive result:</p>
+<pre lang="csharp">
+enum Fruit : byte { Apple, Orange, Cumquat };
+var apple = Enum.ToObject( typeof(Fruit), 0 );
+var elppa = Enum.ToObject( typeof(Fruit), 256 );
+Assert.AreEqual(apple, elppa);
+</pre>
+<p>Assuming that we ignore the fact that silently overflowing is typically a bad idea, this is again completely inconsistent with the rest of the library.  Why overflow here, but not in <code>GetName</code>?</p>
+<h3>Conclusion</h3>
+<p>The .NET Enum class is not lacking in it's ability to extract any information you need from an enumeration.  It is, however, a little inconsistent in terms of how it treats underlying type mismatches, overflows and narrowing conversions.  Barring a new, generified Enum class from Microsoft, the best way to deal with these inconsistencies is to either be aware of them, or use a third-party library to hide them.</p>
+<p><em>(Edit: Some people have noted that my conclusion was a bit weak and preachy towards Dnum, which I have to admit is not without truth.  I've seen edited it.  For the record, the old conclusion was: "Fortunately, these and other problems have been fixed in my <a href="http://cdmckay.org/blog/dnum/">Dnum</a> library, which should be released in the next couple days.  Be sure to check it out.").</em></p>

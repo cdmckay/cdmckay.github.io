@@ -1,0 +1,128 @@
+---
+layout: post
+status: publish
+published: true
+title: Creating ASP.NET HttpCookie-compatible multi-valued cookies in JavaScript
+author:
+  display_name: cdmckay
+  login: cdmckay
+  email: me@cdmckay.org
+  url: ''
+author_login: cdmckay
+author_email: me@cdmckay.org
+wordpress_id: 1969
+wordpress_url: http://cdmckay.org/blog/?p=1969
+date: '2012-02-12 16:40:31 +0100'
+date_gmt: '2012-02-12 21:40:31 +0100'
+categories:
+- Web Development
+- Programming
+- JavaScript
+- ".NET"
+tags: []
+comments:
+- id: 759
+  author: Anuj
+  author_email: anuj.koundal1@gmail.com
+  author_url: ''
+  date: '2012-09-20 08:54:04 +0200'
+  date_gmt: '2012-09-20 12:54:04 +0200'
+  content: |-
+    Hi
+       Thanks for nice tutorial. I have one question if we have to update only single value of cookie how it can be done.
+    e.g. I would like only change Val1 and dnt want to loose other values.
+- id: 760
+  author: cdmckay
+  author_email: me@cdmckay.org
+  author_url: ''
+  date: '2012-09-20 09:46:59 +0200'
+  date_gmt: '2012-09-20 13:46:59 +0200'
+  content: "@Anuj:  You'll want to get the value of the multi-valued cookie into a
+    JavaScript object, change the one value, then use the function described in this
+    article to set it in the browser."
+---
+<p>Cookies are ubiquitous on the web.  They're used to store usernames, login tokens, shopping cart contents, and so on.  In libraries, cookies are typically modeled as name-value pairs.  An API consumer requests a cookie using a known name (e.g. <code>$.cookie('user')</code> in jQuery with the Cookie plugin) and the library returns a string (e.g. <code>alice</code>).  Sometimes, however, just plain old name-value pairs aren't enough.  In this article, we will take a look at how to bake multi-valued cookies in JavaScript that are compatible with the <a href="http://msdn.microsoft.com/en-us/library/system.web.httpcookie.values.aspx">Values</a> property of ASP.NET's <a href="http://msdn.microsoft.com/en-us/library/system.web.httpcookie.aspx">HttpCookie</a> class.</p>
+<p><!--more--></p>
+<h3>Serialization</h3>
+<p>The .NET HttpCookie class stores multiple values in a single cookie by <a href="http://en.wikipedia.org/wiki/Serialization">serializing</a> them into a single string.  For example, this code:</p>
+<pre lang="csharp">
+HttpCookie cookie = new HttpCookie("Cookie1");
+cookie.Values["Val1"] = "1";
+cookie.Values["Val2"] = "2";
+cookie.Values["Val3"] = "3";
+Response.Cookies.Add(cookie);
+</pre>
+<p>...will result in a cookie that looks like this:</p>
+<pre lang="csharp">
+Cookie1=Val1=1&Val2=2&Val3=3
+</pre>
+<p>Thus, we can see the HttpCookie serializes the Values property in a similar way to how parameters are encoded in query strings.</p>
+<h3>The JavaScript (for MS .NET and Mono)</h3>
+<p>Based on the example output <code>Cookie1=Val1=1&Val2=2&Val3=3</code>, we can work out some JavaScript code to generate it:</p>
+<pre lang="javascript">
+// Works with Microsoft .NET and Mono runtimes, with reservations.
+var setMultiValuedCookie = function(name, values) {
+    var valuePairs = [];
+    for (var n in values) {
+        valuePairs.push(n + "=" + values[n]);
+    }
+    var cookieValue = valuePairs.join("&");
+    document.cookie = name + "=" + cookieValue;
+};
+</pre>
+<p>This is more or less how the Microsoft .NET implementation of HttpCookie works.  It also happens to be compatible with the Mono implementation (more on that below). The problem with this code is that it does not take into account edge cases, such as when a name or value contain the "=" or "&amp;" characters.  In those cases, things can get weird.  For example, consider this code:</p>
+<pre lang="csharp">
+HttpCookie cookie = new HttpCookie("Cookie1");
+cookie.Values["Val1"] = "1&Val2=2";
+cookie.Values["Val3"] = "3";
+Response.Cookies.Add(cookie);
+</pre>
+<p>Notice how only two values are set.  Yet, when encoded by Microsoft's HttpCookie class the resulting output is <code>Cookie1=Val1=1&Val2=2&Val3=3</code>, the exact same output that results the previous three value example in article.  However, the cookie, when parsed by HttpCookie, will always be interpreted as having 3 values.  This means that Microsoft's .NET HttpCookie serialization scheme is ambiguous and care must be taken when using it with non-alphanumeric characters.</p>
+<h3>The JavaScript (just for Mono)</h3>
+<p>The <a href="https://github.com/mono" title="Mono Project" target="_blank">Mono Project</a>'s <a href="https://github.com/mono/mono/blob/master/mcs/class/System.Web/System.Web/HttpCookie.cs" title="HttpCookie.cs" target="_blank">HttpCookie class</a> fares a lot better than its Microsoft counterpart.  In the HttpCookie source, there is a nested CookieNVC class (NVC stands for NameValueCollection) with the serialization code in the overridden ToString method:</p>
+<pre lang="csharp">
+public override string ToString() {
+    StringBuilder builder = new StringBuilder("");
+    bool first_key = true;
+    foreach (string key in Keys) {
+        if (!first_key) { 
+            builder.Append("&");
+        }
+        string[] vals = GetValues(key);        
+        if (vals == null) {
+           vals = new string[1] {String.Empty};
+        }
+        bool first_val = true;
+        foreach (string v in vals) {
+            if (!first_val) {
+               builder.Append ("&");
+            }
+            if (key != null && key.Length > 0) {
+                builder.Append (HttpUtility.UrlEncode(key));
+                builder.Append ("=");
+            }
+            if (v != null && v.Length > 0) {
+                builder.Append (HttpUtility.UrlEncode(v));
+            }    
+            first_val = false;
+        }        
+        first_key = false;
+    }
+    return builder.ToString();
+}
+</pre>
+<p>Notice that in the Mono HttpCookie, the names and values are URL encoded in order to escape the "=" and "&amp;" characters.  This means that we can use "=" and "&amp;" characters in the name and value of the Values property and they will be serialized unambiguously.  To make our JavaScript work with the Mono HttpCookie class improvements, the name and value strings must be URL encoded using <code>encodeURIComponent</code>:</p>
+<pre lang="javascript">
+// Warning: Does not work well with the Microsoft .NET runtime.
+var setMonoMultiValuedCookie = function(name, values) {
+    var valuePairs = [];
+    for (var n in values) {
+        valuePairs.push(encodeURIComponent(n) + "=" + encodeURIComponent(values[n]));
+    }
+    var cookieValue = valuePairs.join("&");
+    document.cookie = name + "=" + cookieValue;
+};
+</pre>
+<p>And presto, we have a Mono-compatible verison of <code>setMultiValuedCookie</code>.</p>
+<h3>Conclusion</h3>
+<p>In this article we examined how the Microsoft and Mono versions HttpCookie class serialize multiple values into a single cookie.  By looking at a sample cookies encoded by HttpCookie, as well as perusing the Mono HttpCookie source code, two JavaScript functions were written: <code>setMultiValuedCookie</code>, a function that serializes multi-valued cookies in manner compatible with both Microsoft and Mono .NET runtimes and <code>setMonoMultiValuedCookie</code>, a function that more robustly serializes multi-valued cookies but is only compatible with the Mono .NET runtime.</p>

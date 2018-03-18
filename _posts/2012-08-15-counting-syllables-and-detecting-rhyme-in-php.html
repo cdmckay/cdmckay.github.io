@@ -1,0 +1,539 @@
+---
+layout: post
+status: publish
+published: true
+title: Counting Syllables and Detecting Rhyme in PHP
+author:
+  display_name: cdmckay
+  login: cdmckay
+  email: me@cdmckay.org
+  url: ''
+author_login: cdmckay
+author_email: me@cdmckay.org
+wordpress_id: 2067
+wordpress_url: http://cdmckay.org/blog/?p=2067
+date: '2012-08-15 12:27:37 +0200'
+date_gmt: '2012-08-15 16:27:37 +0200'
+categories:
+- Programming
+- PHP
+tags: []
+comments:
+- id: 700
+  author: Greg Bulmash
+  author_email: burgerguy@gmail.com
+  author_url: http://www.kablowie.com
+  date: '2012-08-17 10:59:28 +0200'
+  date_gmt: '2012-08-17 14:59:28 +0200'
+  content: |-
+    Wow. From a programmer whose degree is in Creative Writing, a *major* tip of the hat.
+
+    Of course, the next challenge is to extract meaning. ;-)
+- id: 701
+  author: cdmckay
+  author_email: me@cdmckay.org
+  author_url: ''
+  date: '2012-08-17 11:02:46 +0200'
+  date_gmt: '2012-08-17 15:02:46 +0200'
+  content: "@Greg Bulmash: The next step is to reorganize the function as a fitness
+    function and start breeding poems using a genetic algorithm :)"
+---
+<p>I was looking at a <a href="http://www.freshbooks.com/careers/software-developer.php" target="_blank">Software Developer posting</a> on the FreshBooks careers page the other day, and near the end of the "How to apply" instructions there was a curious sentence:</p>
+<blockquote><p>"If you want to prove you're really paying attention, <strong>include a verse of ottava rima</strong> and a link to your GitHub profile with your application and you're guaranteed to have your application reviewed by our Software Development Manager."</p></blockquote>
+<p>I'd never heard of the <a href="http://en.wikipedia.org/wiki/Ottava_rima" target="_blank">ottava rima</a> rhyming stanza form before, but a quick trip to Wikipedia remedied that.  Essentially, an ottava rima stanza must satisfy three rules:</p>
+<ol>
+<li>Each stanza must have 8 lines,</li>
+<li>The lines must be iambic pentameter,</li>
+<li>The stanza must have the rhyming format a-b-a-b-a-b-c-c.</li>
+</ol>
+<p>Here is an example of an ottava rima stanza by <a href="http://en.wikipedia.org/wiki/John_Hookham_Frere" target="_blank">Frere</a> (as given in the Wikipedia article):</p>
+<blockquote><p>But chiefly, when the shadowy moon had shed<br />
+O'er woods and waters her mysterious hue,<br />
+Their passive hearts and vacant fancies fed<br />
+With thoughts and aspirations strange and new,<br />
+Till their brute souls with inward working bred<br />
+Dark hints that in the depths of instinct grew<br />
+Subjection not from Locke's associations,<br />
+Nor David Hartley's doctrine of vibrations.</p></blockquote>
+<p>The simplicity of the rules got me thinking: <strong>how hard would it be to write a program to check if a poem stanza is ottava rima?</strong></p>
+<p>In this article, we will write a simple ottava rima detector in PHP.  </p>
+<p><em>(If you're not interested in the details, you can skip to <a href="https://github.com/cdmckay/is-ottava-rima" target="_blank">the code</a> at <a href="https://github.com/" target="_blank">GitHub</a>.)</em></p>
+<p><!--more--></p>
+<h3>The Detector Function</h3>
+<p>In our PHP program, the ottava rima detector will be a function named <code>is_ottava_rima</code> that will return true or false depending on whether the stanza string passed to it satisfies the 3 ottava rima rules.  The general structure looks something like this:</p>
+<pre lang="php">
+function is_ottava_rima(
+    $stanza, 
+    $delimiter = "\n", 
+    $syllable_tolerance = 2
+) {
+    $lines = extract_lines_from($stanza, $delimiter);
+    
+    // Rule 1.
+    if (count($lines) !== 8) {
+        return false;
+    }
+
+    // Rule 2.
+    foreach ($lines as $line) {
+        if (!is_iambic_pentameter($line, $syllable_tolerance)) {
+            return false;
+        }
+    }
+
+    // Rule 3.
+    if (!is_abababcc_rhyme($lines)) {
+        return false;
+    }
+
+    return true;
+}
+</pre>
+<p>For the remainder of this article, we will explore how to implement each of the <code>is_ottava_rima</code> sub-functions in detail.</p>
+<h3>Extracting Lines</h3>
+<p>The second rule of our ottava rima detector states:</p>
+<blockquote><p>1. Each stanza must have 8 lines.</p></blockquote>
+<p>This is the most straightforward part of the detector.  The <code>extract_lines_from</code> function separates the stanza into lines which are then counted. Here's what the code looks like:</p>
+<pre lang="php">
+function is_ottava_rima(
+    $stanza, 
+    $delimiter = "\n", 
+    $syllable_tolerance = 2
+) {
+    $lines = extract_lines_from($stanza, $delimiter);
+  
+    // Rule 1.
+    if (count($lines) !== 8) {
+        return false;
+    }
+
+    ...
+}
+
+function extract_lines_from($stanza, $delimiter = "\n") {    
+    // Separate the stanza into lines.
+    return explode($delimiter, trim($stanza));
+}
+</pre>
+<h3>Phonetic Transcription</h3>
+<p>Before we move on to the metre and rhyme rules, we need to briefly discuss the concept phonetic transcription.</p>
+<p>In order for a program to be able to accurately count how many syllables a word has, or compare two words for rhyme, it needs to first transform the words into a <a href="https://en.wikipedia.org/wiki/Phonetic_transcription" target="_blank">phonetic transcription</a>.  This transform is necessary because, in English, the written form of a word, the <a href="https://en.wikipedia.org/wiki/Orthography" target="_blank">orthography</a>, can differ from the pronunciation of it.  For example, the words "bough" and "trough" do not rhyme in English, even though their spellings might suggest they do.</p>
+<p>Our detector will use a combination of two phonetic transcriptions: Arpabet and Metaphone code, although Metaphone code will only be used as a last resort in rhyme detection.</p>
+<p><a href="https://en.wikipedia.org/wiki/Arpabet" target="_blank">Arpabet</a>, developed by Advanced Research Projects Agency (ARPA), represents each phoneme of General American English with a distinct sequence of ASCII characters.  Here is an example of <a href="https://en.wikipedia.org/wiki/Arpabet#Symbols" target="_blank">some of the phonemes</a>:</p>
+<table>
+<tr>
+<th>Arpabet</th>
+<th>Examples</th>
+</tr>
+<tr>
+<td>AO</td>
+<td>off (AO1 F); fall (F AO1 L); frost (F R AO1 S T)</td>
+</tr>
+<tr>
+<td>EY</td>
+<td>say (S EY1); eight (EY1 T)</td>
+</tr>
+<tr>
+<td>P</td>
+<td>pay (P EY1)</td>
+</tr>
+</table>
+<p>Unfortunately, there is no algorithm for taking an English word and converting it to an Arpabet representation.  There is, however, a dictionary called the <a href="http://en.wikipedia.org/wiki/CMU_Pronouncing_Dictionary" target="_blank">CMU Pronouncing Dictionary</a> (CMUDict), that allows a program to convert ~120,000 English words to their Arpabet equivalents.</p>
+<p><a href="https://en.wikipedia.org/wiki/Metaphone" target="_blank">Metaphone</a> is a phonetic algorithm that can transcribe any English word into Metaphone code.  Unfortunately, the resulting transcriptions are not as accurate Arpabet.  There are 3 versions of Metaphone (Metaphone, Double Metaphone and Metaphone 3).  In our detector, we will be using the original Metaphone algorithm that is included in PHP.</p>
+<h3>Detecting Iambic Pentameter</h3>
+<p>The second rule of our ottava rima detector states:</p>
+<blockquote><p>2. The lines must be iambic pentameter.</p></blockquote>
+<p>What does it mean for something to be <a href="https://en.wikipedia.org/wiki/Iamb_(foot)" target="_blank">iambic</a>?  In English, it refers to a <a href="https://en.wikipedia.org/wiki/Metrical_foot" target="_blank">metrical foot</a> comprising of an unstressed syllable followed by a stressed syllable (i.e. "da-DUM").  Thus, in the case of <a href="https://en.wikipedia.org/wiki/Iambic_pentameter" target="_blank">iambic pentameter</a>, there are 5 iambs: "da-DUM da-DUM da-DUM da-DUM da-DUM".</p>
+<p>To simplify our detector, we will be looking for a weaker version of iambic pentameter: we won't be worrying about the stresses ("da-DUM") and instead just be looking for 2 syllables per iamb ("da-da") for a total of 10 syllables per line.  With this in mind, we can sketch out some code for an <code>is_iambic_pentameter</code> function:</p>
+<pre lang="php">
+function is_iambic_pentameter($line, $syllable_tolerance) {
+    $syllables = 0;
+    $words = explode(' ', $line);
+    foreach ($words as $word) {
+        $syllables += estimate_syllables($word);
+    }
+    return $syllables === 10;
+}
+</pre>
+<p>Which brings us to the next question: how do we count the number of syllables in a word?  Well, in order to answer that question, we need ask a more elemental question: what is a syllable?</p>
+<p>A <a href="https://en.wikipedia.org/wiki/Syllable" target="_blank">syllable</a> consists of two parts: a syllable nucleus (most often a vowel) with optional initial and final margins (typically, consonants).  So, we can think of a syllable as a vowel with some optional consonant garnishes.  That means that we can roughly estimate the number of syllables in an English word by counting the number of vowels in it.  Let's try that:</p>
+<pre lang="php">
+function estimate_syllables($word) {
+    return count_english_vowels($word);
+}
+
+function count_english_vowels($word) {
+    static $english_vowels = array('A', 'E', 'I', 'O', 'U');
+    $vowel_count = 0;
+    $letters = str_split(strtoupper($word));
+    foreach ($letters as $letter) {
+        if (in_array($letter, $english_vowels)) {
+            $vowel_count++;
+        }
+    }
+    return $vowel_count;
+}
+</pre>
+<p>This heuristic works, but there are cases where it can give incorrect results due to the peculiarities of the orthography.  For example: "here" would yield 2 syllables instead of 1 and "my" would yield 0 syllables instead of 1.  How can we improve on that?</p>
+<p>The answer lies in using the Arpabet phonetic transcription.  Since a phonetic transcription provides a one-to-one mapping between symbols and sound, we can avoid the over- and under-counting we get with words like "here" and "my".  To demonstrate, here are the Arpabet transcriptions of "here" and "my" (with the vowels bolded):</p>
+<table>
+<tr>
+<th>English</th>
+<th>Arpabet</th>
+<tr>
+<tr>
+<td>here</td>
+<td>HH <strong>IY1</strong> R</td>
+<tr>
+<td>my</td>
+<td>M <strong>AY1</strong></td>
+</tr>
+</table>
+<p>In this case, both words are correctly shown as having a single Arpabet vowel each and therefore a single syllable.  From this somewhat contrived example, we can see that Arpabet more accurately reflect vowel sounds as compared to English orthography.  However, using Arpabet is not without its pitfalls.  First off, it requires more time and memory, as the CMUDict database needs to be loaded into memory.  Second, there are only ~120,000 words in the CMUDict, whereas the English language has ~600,000 words.  That means there are a lot of words that CMUDict cannot transcribe to Arpabet.</p>
+<p>Thus, in order to be able to handle any English word, we need to take a hybrid approach:  If the word is in the CMUDict, we use the Arpabet transcription to get an accurate syllable count.  If it's not, we use the English vowel counting heuristic.  Here's what the code looks like:</p>
+<pre lang="php">
+function estimate_syllables($word, $syllable_tolerance) {
+    $syllable_count = count_arpabet_vowels($word);
+    if ($syllable_count === null) {
+        $syllable_count = count_english_vowels($word);
+    }
+    return $syllable_count;
+}
+
+function count_arpabet_vowels($word) {
+    static $arpabet_vowels = array(
+        'AO', 'AA', 'IY', 'UW', 'EH', // Monophthongs
+        'IH', 'UH', 'AH', 'AX', 'AE',
+        'EY', 'AY', 'OW', 'AW', 'OY', // Diphthongs
+        'ER' // R-colored vowels
+    );
+    $cmu_dict = CMUDict::get();
+    $phonemes = $cmu_dict->getPhonemes($word);
+    if ($phonemes !== null) {
+        $vowel_count = 0;
+        foreach ($phonemes as $phoneme) {
+            if (in_array($phoneme, $arpabet_vowels)) {
+                $vowel_count++;
+            }
+        }
+        return $vowel_count;
+    } else {
+        return null;
+    }
+}
+
+function count_english_vowels($word) {
+    static $english_vowels = array('A', 'E', 'I', 'O', 'U');
+    $vowel_count = 0;
+    $letters = str_split(strtoupper($word));
+    foreach ($letters as $letter) {
+        if (in_array($letter, $english_vowels)) {
+            $vowel_count++;
+        }
+    }
+    return $vowel_count;
+}
+</pre>
+<p>As you might have noticed, there's a <code>$syllable_tolerance</code> argument for the <code>is_iambic_pentameter</code> function.  This is to compensate for two facts: </p>
+<ul>
+<li>the English vowel counting heuristic can under- or over-estimate the number of syllables,</li>
+<li>some poems don't match iambic pentameter perfectly.</li>
+</ul>
+<p>Thus, to give the detector a bit of flexibility in detecting ottava rima, there is a <code>$syllable_tolerance</code> variable.  A value of 2 means that the detector will accept lines that have between 8 and 12 syllables.  Here's the final code for <code>is_iambic_pentameter</code>:</p>
+<pre lang="php">
+function is_iambic_pentameter($line, $syllable_tolerance) {
+    $syllable_count = 0;
+    $words = get_words_from($line);
+    foreach ($words as $word) {
+        $syllable_count += estimate_syllables($word);
+    }
+    $min_syllable_count = 10 - $syllable_tolerance;
+    $max_syllable_count = 10 + $syllable_tolerance;
+    return $syllable_count >= $min_syllable_count && 
+           $syllable_count <= $max_syllable_count;
+}
+
+function get_words_from($line) {
+    $cleaned_line = trim(preg_replace("/[^A-Za-z' ]/", ' ', $line));
+    return preg_split('/\s+/', $cleaned_line);
+}
+</pre>
+<p>You might have noticed the <code>get_words_from</code> function.  This function removes all superfluous punctuation that many poets are so fond of, and then separates the line string into an array of word strings.  The reason this logic has been given its own function is because it is used again when detecting rhyme.</p>
+<h3>Detecting Rhyme</h3>
+<p>The third rule of our ottava rima detector states:</p>
+<blockquote><p>3. The stanza must have the rhyming format a-b-a-b-a-b-c-c.</p></blockquote>
+<p><a href="http://en.wikipedia.org/wiki/Rhyme" target="_blank">Rhyme</a>, according to Wikipedia, is:</p>
+<blockquote><p>"a repetition of similar sounds in two or more words and is most often used in poetry and songs."</p></blockquote>
+<p>There are several different types of rhymes, including perfect rhymes, general rhymes, and mirror rhymes, each with their own subcategories.  In the case of ottava rima, we will be specifically looking for a type of general rhyme called <a href="http://en.wikipedia.org/wiki/Syllable_rhyme" target="_blank">syllabic rhyme</a>, where the last syllable of the words sounds the same.</p>
+<p>What this means from a programming perspective is that we need only look at the last syllable of the last word of every line.  Since we already have the <code>get_words_from</code> function for breaking lines into an array of words, all we need to do is grab the last word of that array, like so:</p>
+<pre lang="php">
+function does_rhyme($line1, $line2) {
+    $words1 = get_words_from($line1);
+    $last_word1 = $words1[count($words1) - 1];
+    $words2 = get_words_from($line2);
+    $last_word2 = $words2[count($words2) - 1];
+
+    ...
+}
+</pre>
+<p>Next, we need to check if the words are in the CMUDict and, if they are, we retrieve their corresponding Arpabet phonemes.</p>
+<pre lang="php">
+function does_rhyme($line1, $line2) {
+    ...
+
+    $words_found = true;
+    $cmu_dict = CMUDict::get();
+    $phonemes1 = $cmu_dict->getPhonemes($last_word1);
+    if ($phonemes1 === null) {
+        $words_found = false;
+    }
+    $phonemes2 = $cmu_dict->getPhonemes($last_word2);
+    if ($phonemes2 === null) {
+        $words_found = false;
+    }
+
+    ...
+}
+</pre>
+<p>Once we know whether or not the CMUDict contains the words, we can check whether or not they rhyme by comparing the last syllable of each word. If the CMUDict did not contain either of the words then we instead compare the last Metaphone code symbol of each word.</p>
+<pre lang="php">
+function does_rhyme($line1, $line2) {
+    ...
+
+    if ($words_found) {
+        $last_syllable1 = get_last_syllable_of($phonemes1);
+        $last_syllable2 = get_last_syllable_of($phonemes2);
+        $rhymes = $last_syllable1 === $last_syllable2;
+    } else {
+        $metaphone1 = metaphone($last_word1);
+        $metaphone2 = metaphone($last_word2);
+        $rhymes = substr($metaphone1, -1) === substr($metaphone2, -1);
+    }
+
+    if (!$rhymes) {
+        error_log("$last_word1 and $last_word2 don't rhyme.");
+    }
+
+    return $rhymes;
+}
+</pre>
+<p>How do we get the last syllable of an Arpabet transcribed word?  Well, as we know from earlier, the vowel is the nucleus of a syllable.  So, if we scan an Arpabet transcription backwards for the last vowel then chop off everything before it, we can approximately get the last syllable.</p>
+<pre lang="php">
+function get_last_syllable_of($phonemes) {
+    static $arpabet_vowels = array(
+        'AO', 'AA', 'IY', 'UW', 'EH', // Monophthongs
+        'IH', 'UH', 'AH', 'AX', 'AE',
+        'EY', 'AY', 'OW', 'AW', 'OY', // Diphthongs
+        'ER' // R-colored vowels
+    );
+
+    $reversed_syllable_phonemes = array();
+    foreach (array_reverse($phonemes) as $phoneme) {
+        $reversed_syllable_phonemes[] = $phoneme;
+        if (in_array($phoneme, $arpabet_vowels)) {
+            break;
+        }
+    }
+    return implode('', array_reverse($reversed_syllable_phonemes));
+}
+</pre>
+<p>That completes the <code>does_rhyme</code> function for determining if two lines rhyme.  Now, in order to determine if an array of lines has the a-b-a-b-a-b-c-c rhyming scheme, we simply need to apply that function to the appropriate lines:</p>
+<pre lang="php">
+function is_abababcc_rhyme($lines) {
+    list($a1, $b1, $a2, $b2, $a3, $b3, $c1, $c2) = $lines;
+    $a_rhyme = does_rhyme($a1, $a2) && 
+               does_rhyme($a2, $a3) && 
+               does_rhyme($a1, $a3);
+    $b_rhyme = does_rhyme($b1, $b2) && 
+               does_rhyme($b2, $b3) && 
+               does_rhyme($b1, $b3);
+    $c_rhyme = does_rhyme($c1, $c2);
+    return $a_rhyme && $b_rhyme && $c_rhyme;
+}
+</pre>
+<h3>Bringing It All Together</h3>
+<p>That completes the simplified ottava rima detector.  Here is what <a href="https://github.com/cdmckay/is-ottava-rima/blob/master/is_ottava_rima.php" target="_blank">the final code</a> looks like:</p>
+<pre lang="php">
+<?php
+require_once __DIR__ . '/classes/CMUDict.class.php';
+
+function is_ottava_rima(
+    $stanza,
+    $delimiter = "\n",
+    $syllable_tolerance = 2
+) {
+    $lines = extract_lines_from($stanza, $delimiter);
+
+    // Rule 1.
+    if (count($lines) !== 8) {
+        return false;
+    }
+
+    // Rule 2.
+    foreach ($lines as $line) {
+        if (!is_iambic_pentameter($line, $syllable_tolerance)) {
+            return false;
+        }
+    }
+
+    // Rule 3.
+    if (!is_abababcc_rhyme($lines)) {
+        return false;
+    }
+
+    return true;
+}
+
+function extract_lines_from($stanza, $delimiter = "\n") {
+    // Separate the stanza into lines.
+    return explode($delimiter, trim($stanza));
+}
+
+function is_iambic_pentameter($line, $syllable_tolerance) {
+    $syllable_count = 0;
+    $words = get_words_from($line);
+    foreach ($words as $word) {
+        $syllable_count += estimate_syllables($word);
+    }
+    $min_syllable_count = 10 - $syllable_tolerance;
+    $max_syllable_count = 10 + $syllable_tolerance;
+    return $syllable_count >= $min_syllable_count && 
+           $syllable_count <= $max_syllable_count;
+}
+
+function get_words_from($line) {
+    $cleaned_line = trim(preg_replace("/[^A-Za-z' ]/", ' ', $line));
+    return preg_split('/\s+/', $cleaned_line);
+}
+
+function estimate_syllables($word) {
+    $syllable_count = count_arpabet_vowels($word);
+    if ($syllable_count === null) {
+        $syllable_count = count_english_vowels($word);
+    }
+    return $syllable_count;
+}
+
+function count_arpabet_vowels($word) {
+    static $arpabet_vowels = array(
+        'AO', 'AA', 'IY', 'UW', 'EH', // Monophthongs
+        'IH', 'UH', 'AH', 'AX', 'AE',
+        'EY', 'AY', 'OW', 'AW', 'OY', // Diphthongs
+        'ER' // R-colored vowels
+    );
+    $cmu_dict = CMUDict::get();
+    $phonemes = $cmu_dict->getPhonemes($word);
+    if ($phonemes !== null) {
+        $vowel_count = 0;
+        foreach ($phonemes as $phoneme) {
+            if (in_array($phoneme, $arpabet_vowels)) {
+                $vowel_count++;
+            }
+        }
+        return $vowel_count;
+    } else {
+        return null;
+    }
+}
+
+function count_english_vowels($word) {
+    static $english_vowels = array('A', 'E', 'I', 'O', 'U');
+    $vowel_count = 0;
+    $letters = str_split(strtoupper($word));
+    foreach ($letters as $letter) {
+        if (in_array($letter, $english_vowels)) {
+            $vowel_count++;
+        }
+    }
+    return $vowel_count;
+}
+
+function is_abababcc_rhyme($lines) {
+    list($a1, $b1, $a2, $b2, $a3, $b3, $c1, $c2) = $lines;
+    $a_rhymes = does_rhyme($a1, $a2) &&
+                does_rhyme($a2, $a3) &&
+                does_rhyme($a1, $a3);
+    $b_rhymes = does_rhyme($b1, $b2) &&
+                does_rhyme($b2, $b3) &&
+                does_rhyme($b1, $b3);
+    $c_rhymes = does_rhyme($c1, $c2);
+    return $a_rhymes && $b_rhymes && $c_rhymes;
+}
+
+function does_rhyme($line1, $line2) {
+    $words1 = get_words_from($line1);
+    $last_word1 = $words1[count($words1) - 1];
+    $words2 = get_words_from($line2);
+    $last_word2 = $words2[count($words2) - 1];
+
+    $words_found = true;
+    $cmu_dict = CMUDict::get();
+    $phonemes1 = $cmu_dict->getPhonemes($last_word1);
+    if ($phonemes1 === null) {
+        $words_found = false;
+    }
+    $phonemes2 = $cmu_dict->getPhonemes($last_word2);
+    if ($phonemes2 === null) {
+        $words_found = false;
+    }
+
+    if ($words_found) {
+        $last_syllable1 = get_last_syllable_of($phonemes1);
+        $last_syllable2 = get_last_syllable_of($phonemes2);
+        $rhymes = $last_syllable1 === $last_syllable2;
+    } else {
+        $metaphone1 = metaphone($last_word1);
+        $metaphone2 = metaphone($last_word2);
+        $rhymes = substr($metaphone1, -1) === 
+                  substr($metaphone2, -1);
+    }
+
+    if (!$rhymes) {
+        error_log("$last_word1 and $last_word2 don't rhyme.");
+    }
+
+    return $rhymes;
+}
+
+function get_last_syllable_of($phonemes) {
+    static $arpabet_vowels = array(
+        'AO', 'AA', 'IY', 'UW', 'EH', // Monophthongs
+        'IH', 'UH', 'AH', 'AX', 'AE',
+        'EY', 'AY', 'OW', 'AW', 'OY', // Diphthongs
+        'ER' // R-colored vowels
+    );
+
+    $reversed_syllable_phonemes = array();
+    foreach (array_reverse($phonemes) as $phoneme) {
+        $reversed_syllable_phonemes[] = $phoneme;
+        if (in_array($phoneme, $arpabet_vowels)) {
+            break;
+        }
+    }
+    return implode('', array_reverse($reversed_syllable_phonemes));
+}
+</pre>
+<h3>Does It Work?</h3>
+<p>Of course, there's no point in writing all this code unless we test it.  To that end, a <a href="https://github.com/cdmckay/is-ottava-rima/blob/master/is_ottava_rima_test.php" target="_blank">test program</a> was written that analyzed a smattering of ottava rima poems found on <a href="http://rpo.library.utoronto.ca/" target="_blank">the University of Toronto Representative Poetry Online site</a>.  The test program analyzed ottava rima stanzas (for false negatives) and non ottava rima stanzas (for false positives).  These were the results:</p>
+<table>
+<tr>
+<th>Rhyme</th>
+<th>Stanzas</th>
+<th>Detected</th>
+</tr>
+<tr>
+<td>Ottava rima</td>
+<td>23</td>
+<td>52.17%</td>
+</tr>
+<tr>
+<td>Garbage</td>
+<td>15</td>
+<td>0%</td>
+</tr>
+</table>
+<p>From this rather limited testing, we can can conclude that the detector has a 47.83% chance of false negatives and 0% chance of false positives.</p>
+<p>So the detector works, but there is clearly room for improvement.</p>
+<h3>Conclusion</h3>
+<p>In this article we implemented a simple ottava rima detector in PHP.  This was done by analyzing a string of text representing a poem stanza for the three characteristic properties of an ottava rima poem.  The resulting program detected ottava rima stanzas correctly 52% of the time and never detected an non-ottava rima stanzas as ottava rima.</p>
+<p>The final code, including the test program and test poetry, is available for download at <a href="https://github.com/cdmckay/is-ottava-rima" target="_blank">GitHub</a>.</p>

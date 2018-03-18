@@ -1,0 +1,95 @@
+---
+layout: post
+status: publish
+published: true
+title: A little bit about Webble and JavaScript games
+author:
+  display_name: cdmckay
+  login: cdmckay
+  email: me@cdmckay.org
+  url: ''
+author_login: cdmckay
+author_email: me@cdmckay.org
+wordpress_id: 1535
+wordpress_url: http://cdmckay.org/blog/?p=1535
+date: '2010-05-19 16:37:48 +0200'
+date_gmt: '2010-05-19 21:37:48 +0200'
+categories:
+- Wezzle Development
+- Wezzle
+- Web Development
+- Programming
+- JavaScript
+tags: []
+comments:
+- id: 459
+  author: Arthur
+  author_email: tylik1@gmail.com
+  author_url: ''
+  date: '2010-06-29 19:11:13 +0200'
+  date_gmt: '2010-06-30 00:11:13 +0200'
+  content: Very interesting! Although when I looked up in webble.min.js I can't say
+    that "Writing games purely in HTML, CSS and JavaScript is easier than it ever"
+    I think one should be a really advanced coder to create games...
+- id: 460
+  author: cdmckay
+  author_email: me@cdmckay.org
+  author_url: ''
+  date: '2010-06-29 19:38:52 +0200'
+  date_gmt: '2010-06-30 00:38:52 +0200'
+  content: "@Arthur:\nThe source code you saw is the <a href=\"http://en.wikipedia.org/wiki/Minification_(programming)\"
+    rel=\"nofollow\">minified</a> version of the JS source.  Look up minification
+    in Wikipedia for more information.  \n\nBasically, it's a compiled version of
+    my source code."
+---
+<p><a href="http://couchware.ca/webble">Webble</a> is a pure HTML/CSS/JavaScript implementation of some of the core features <a href="http://couchware.ca/www/wezzle">Wezzle game engine</a>.  By "pure" I mean that there are no external plugins like Flash used.  Furthermore, Webble does not make use of the HTML5 canvas element: all the animation is done purely by moving around HTML elements using JavaScript.</p>
+<p>Writing a simple game engine using the DOM and JavaScript poses some interesting problems that are atypical to regular website development.  In this article I will discuss a few of the problems that I encountered while writing Webble and how I solved them.</p>
+<p><!--more--></p>
+<h3>Tracking Mouse Movement</h3>
+<p>In Wezzle, there is a selector that follows around the mouse cursor.  This was fairly easy to implement in Java, as having a mouse movement listener isn't too costly.  In JavaScript, however, listening to the <code>mousemove</code> event is very expensive.  In fact, listening to <code>mousemove</code> slows down the browser window so much that JavaScript animations become unusable.  This is fine if your game does not animate while you listen to mouse movements.  Unfortunately, with Webble, this was not the case.  I needed to be able to follow the cursor at all times.</p>
+<p>What was the solution? Webble has a 8x10 grid called the "board" (see image below).  Each board cell can contain a tile. Overlayed on that board is a selector centered on whatever board cell the mouse cursor is on. Thus, Webble only needs to know when the mouse moves over a new board cell. This means that instead of using the <code>mousemove</code> event, I could instead use an invisible 8x10 grid of divs and listen for their less expensive <code>mouseover</code> event.  This solution ended up working extremely well, allowing me to easily keep track of the mouse while simultaneously running animations.</p>
+<p><img class="aligncenter size-full wp-image-1557" title="The We*le Board" src="http://cdmckay.org/blog/wp-content/blogs.dir/2/files/2010/05/board.png" alt="" width="256" height="320" /></p>
+<h3>Animation</h3>
+<p>Animation in Webble was quite painless, thanks to jQuery. For most animations, it was as easy as setting the correct parameters for the <a href="http://api.jquery.com/animate/">animate function</a>. In particular, there were some situations were I needed animations to run in lockstep.  In Webble, when you get a line, all the tiles in that line must animated away together.  Thus, doing something like this...</p>
+<pre lang="javascript">
+// Gets all the line tiles on the board.
+var tiles = board.findLineTiles();
+
+// Get all the underlying DOM elements.
+var elements = $(tiles.map(function(tile) { 
+    return tile.element()[0]; 
+}));
+
+// Fade out the elements.
+tiles.fadeOut(500, function() {
+    // Remove tiles from internal board structure.
+});
+</pre>
+<p>...would not work very well and would be inefficient. Why? Because if I had, say, 10 tiles to animate, jQuery would create 10 tile animations.  This wasteful.  Moreover, since they're independent animations, there's no guarantee they will be moving the same amount each animation step. This visual disparity is exacerbated when the JS engine lags.</p>
+<p>Fortunately, the jQuery animate function provides <a href="http://cdmckay.org/blog/2010/03/01/the-jquery-animate-step-callback-function/">a convenient step callback function</a> that allows you to animate many elements in lockstep. As a result, the code above can become a single animation that looks like this:</p>
+<pre lang="javascript">
+// The elements to animate in lockstop.
+var elements = ( ... same as above ... );
+var elementsTail = elements.slice(1);
+elements
+    .eq(0)
+    .animate({opacity: 0}, {
+        duration: 500,
+        step: function(now, fx) {
+            elementsTail.css(fx.prop, fx.now);
+        },
+        complete: function() {
+            // Remove tiles from internal board structure.
+        }
+    });	
+</pre>
+<h3>Audio</h3>
+<p>The Wezzle game has several sound effects that need to play at specifc times (i.e. when a tile is inserted, when a line is removed, etc.).  Webble features some experimental sound support via the HTML5 audio element.  Unfortunately, like HTML5 video, not everyone can agree on a format.  Firefox supports Vorbis.  Safari (and Safari Mobile) supports MP3.  Chrome supports both.  IE supports none (until IE9, in the distant, distant future).  Thus, in order to support sounds across all modern browsers I needed to make both Vorbis and MP3 versions of all the sound effects.  This is a minor inconvenience that could have been avoided if Apple just played nice and included Vorbis support, at the very least on desktop Safari.</p>
+<p>Other than that issue, HTML5 audio is pretty nice to work with.  All it takes to play a sound is:</p>
+<pre lang="javascript">
+var lineSound = new Audio("sounds/line.ogg");
+lineSound.play();
+</pre>
+<p>This is a cinche compared to the hoops that need to be jumped through to get decent sound in Java.  Although HTML5 audio still has a little bit further to go, I think it has a happy future in HTML5.</p>
+<h3>Conclusion</h3>
+<p>Writing games purely in HTML, CSS and JavaScript is easier than it ever has been thanks to wonderful libraries like jQuery and next generation technologies like HTML5.  Although clever hacks are still required to make everything work together across browsers, I firmly believe that HTML/CSS/JavaScript combo will be a viable browser game platform in the near future.</p>

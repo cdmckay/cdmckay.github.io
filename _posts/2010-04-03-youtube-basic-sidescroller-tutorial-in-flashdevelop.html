@@ -1,0 +1,68 @@
+---
+layout: post
+status: publish
+published: true
+title: YouTube Basic Sidescroller Tutorial in FlashDevelop
+author:
+  display_name: cdmckay
+  login: cdmckay
+  email: me@cdmckay.org
+  url: ''
+author_login: cdmckay
+author_email: me@cdmckay.org
+wordpress_id: 1284
+wordpress_url: http://cdmckay.org/blog/?p=1284
+date: '2010-04-03 01:07:36 +0200'
+date_gmt: '2010-04-03 06:07:36 +0200'
+categories:
+- Gaming
+- Flash
+tags:
+- flashdevelop
+- Flash
+- sidescroller
+- games
+comments: []
+---
+<p>As I've made up my mind to learn Flash, and don't want to pay a <a href="http://www.adobe.com/products/flash/">honkin'</a> <a href="http://www.fdt.powerflasher.com/">amount</a> of cash, I decided to go with <a href="http://www.flashdevelop.org/wikidocs/index.php?title=Main_Page">a free Flash IDE called FlashDevelop</a>.</p>
+<p>Since I'm toying around with the idea of sidescrollers, I did a search for "Flash sidescroller tutorial" and <a href="http://www.youtube.com/watch?v=xQN4VyUVj3Y&amp;NR=1">found this excellent 3-parter</a> by <a href="http://devnote.org">devnote.org</a>.&nbsp; Unfortunately (for me), the tutorial expects that you're using Adobe's Flash IDE.&nbsp; Thus, as a contribution to the web (and myself... mostly myself), I translated the tutorial to work with FlashDevelop.&nbsp; Read on to see how I did it, or <a href="http://cdmckay.org/files/BasicSidescrollerTutorial.zip">just grab the source here</a>.</p>
+<p><!--more-->There are basically only 3 elements in the DevNote tutorial that require the Flash IDE.&nbsp; They are the Boundaries, Player and StartMarker MovieClips.</p>
+<p>As the StartMarker was just a point, I used the Point class to represent it (and called it <code>_startPos</code> instead).  Since Boundaries and Player were basically sprites, I represented them using the Sprite class.  Here is the pertinent code:</p>
+<pre lang="actionscript3">
+public class Main extends MovieClip 
+{
+    private var _startPos:Point;
+    private var _player:Sprite;
+    private var _boundaries:Sprite;    
+    ...
+    public function Main():void {
+        // Assign defaults.
+        _startPos = new Point(100, 10);
+ 
+        _player = new Sprite();
+        _player.graphics.beginFill(0xff0000);
+        _player.graphics.drawRect(-10, -50, 20, 50);
+        _player.graphics.endFill();
+        _player.x = _startPos.x;
+        _player.y = _startPos.y;
+        addChild(_player);
+ 
+        _boundaries = new Sprite();
+        _boundaries.graphics.beginFill(0x0000ff);
+        _boundaries.graphics.drawRect(40, 100, 110, 20);
+        _boundaries.graphics.drawRect(100, 150, 110, 20);
+        _boundaries.graphics.lineStyle(20, 0x0000ff);
+        _boundaries.graphics.moveTo(200, 300);
+        _boundaries.graphics.lineTo(500, 100);
+        _boundaries.graphics.moveTo(500, 100);
+        _boundaries.graphics.lineTo(600, 100);
+        _boundaries.graphics.moveTo(800, 200);
+        _boundaries.graphics.lineTo(500, 200);
+        _boundaries.graphics.endFill();
+        addChild(_boundaries);
+        ...
+    }    
+    ...
+}
+</pre>
+<p>I also change the code slightly in the case of the key handlers (I used constants for the key codes isntead of magic numbers) and used a <code>do ... while</code> loop for the collision detection.</p>

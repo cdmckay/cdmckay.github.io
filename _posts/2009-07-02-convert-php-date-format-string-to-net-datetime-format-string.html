@@ -1,0 +1,298 @@
+---
+layout: post
+status: publish
+published: true
+title: Convert PHP date format string to .NET DateTime format string
+author:
+  display_name: cdmckay
+  login: cdmckay
+  email: me@cdmckay.org
+  url: ''
+author_login: cdmckay
+author_email: me@cdmckay.org
+wordpress_id: 612
+wordpress_url: http://couchware.ca/blogs/cam/?p=612
+date: '2009-07-02 16:13:09 +0200'
+date_gmt: '2009-07-02 20:13:09 +0200'
+categories:
+- Web Development
+- Programming
+- PHP
+- ".NET"
+tags:
+- php .net date datetime dateformat table
+comments:
+- id: 22634
+  author: Patrick
+  author_email: pat@catchyour.com
+  author_url: http://catchyour.com
+  date: '2018-03-01 19:59:34 +0100'
+  date_gmt: '2018-03-02 00:59:34 +0100'
+  content: As a fluent PHP speaker diving into C# for the first time, this has proven
+    to actually be pretty damned useful. Thanks!
+---
+<p>I recently had to convert some JavaScript code I'd written that used a <a href="http://php.net/manual/en/function.date.php">PHP-style date format string</a> to a <a href="http://msdn.microsoft.com/en-us/library/8kb3ddd4.aspx">.NET DateTime-style date format string</a>.</p>
+<p>It would've been a helluva lot faster to have had some sort of conversation table.  After a little searching on Google, I found nothing so I decided to make one myself.  Behold, the fruits of my labour!</p>
+<p><!--more--></p>
+<p>To use a PHP date format string:<br />
+<code>$time = date("g:i a")</code></p>
+<p>To use a .NET date format string (in C#):<br />
+<code>string time = DateTime.Now.ToString("h:mm tt")</code></p>
+<table>
+<tr>
+<th colspan="3"><strong>Day</strong></th>
+</tr>
+<tr>
+<th>PHP date()</th>
+<th>DateTime</th>
+<th>Example</th>
+</tr>
+<tr>
+<td>d</td>
+<td>dd</td>
+<td><em>01</em> to <em>31</em></td>
+</tr>
+<tr>
+<td>D</td>
+<td>ddd</td>
+<td><em>Mon</em> through <em>Sun</em></td>
+</tr>
+<tr>
+<td>j</td>
+<td>d</td>
+<td><em>1</em> to <em>31</em></td>
+</tr>
+<tr>
+<td>l&nbsp;(lowercase&nbsp;L)</td>
+<td>dddd</td>
+<td><em>Sunday</em> through <em>Saturday</em></td>
+</tr>
+<tr>
+<td>N</td>
+<td>-</td>
+<td><em>1</em> (for Monday) through <em>7</em> (for Sunday)</td>
+</tr>
+<tr>
+<td>S</td>
+<td>-</td>
+<td><em>st</em>, <em>nd</em>, <em>rd</em> or <em>th</em></td>
+</tr>
+<tr>
+<td>w</td>
+<td>DateTime#DayOfWeek</td>
+<td>0 (for Sunday) through 6 (for Saturday)</td>
+</tr>
+<tr>
+<td>z</td>
+<td>DateTime#DayOfYear&nbsp;-&nbsp;1</td>
+<td><em>0</em> through <em>365</em></td>
+</tr>
+</table>
+<table>
+<tr>
+<th colspan="3"><strong>Week</strong></th>
+</tr>
+<tr>
+<th>PHP date()</th>
+<th>DateTime</th>
+<th>Example</th>
+</tr>
+<tr>
+<td>W</td>
+<td>-</td>
+<td><em>42</em> (the 42nd week in the year)</td>
+</tr>
+</table>
+<table>
+<tr>
+<th colspan="3"><strong>Day</strong></th>
+</tr>
+<tr>
+<th>PHP date()</th>
+<th>DateTime</th>
+<th>Example</th>
+</tr>
+<tr>
+<td>F</td>
+<td>MMMM</td>
+<td><em>January</em> through <em>December</em></td>
+</tr>
+<tr>
+<td>m</td>
+<td>MM</td>
+<td><em>01</em> through <em>12</em></td>
+</tr>
+<tr>
+<td>M</td>
+<td>MMM</td>
+<td><em>Jan</em> through <em>Dec</em></td>
+</tr>
+<tr>
+<td>n</td>
+<td>M</td>
+<td><em>1</em> through <em>12</em></td>
+</tr>
+<tr>
+<td>t</td>
+<td>DateTime#DaysInMonth()</td>
+<td><em>28</em> through <em>31</em></td>
+</tr>
+</table>
+<table>
+<tr>
+<th colspan="3"><strong>Year</strong></th>
+</tr>
+<tr>
+<th>PHP date()</th>
+<th>DateTime</th>
+<th>Example</th>
+</tr>
+<tr>
+<td>L</td>
+<td>DateTime#IsLeapYear()</td>
+<td><em>1</em> if it is a leap year, <em>0</em> otherwise</td>
+</tr>
+<tr>
+<td>o</td>
+<td>yyyy (?)</td>
+<td>ISO-8601 year number</td>
+</tr>
+<tr>
+<td>Y</td>
+<td>yyyy</td>
+<td><em>1999</em> or <em>2003</em></td>
+</tr>
+<tr>
+<td>y</td>
+<td>yy</td>
+<td><em>99</em> or <em>03</em></td>
+</tr>
+</table>
+<table>
+<tr>
+<th colspan="3"><strong>Time</strong></th>
+</tr>
+<tr>
+<th>PHP date()</th>
+<th>DateTime</th>
+<th>Example</th>
+</tr>
+<tr>
+<td>a</td>
+<td>-</td>
+<td><em>am</em> or <em>pm</em></td>
+</tr>
+<tr>
+<td>A</td>
+<td>tt</td>
+<td><em>AM</em> or <em>PM</em></td>
+</tr>
+<tr>
+<td>B</td>
+<td>-</td>
+<td><em>000</em> through <em>999</em></td>
+</tr>
+<tr>
+<td>g</td>
+<td>h</td>
+<td><em>1</em> through <em>12</em></td>
+</tr>
+<tr>
+<td>G</td>
+<td>H</td>
+<td><em>0</em> through <em>23</em></td>
+</tr>
+<tr>
+<td>h</td>
+<td>hh</td>
+<td><em>01</em> through <em>12</em></td>
+</tr>
+<tr>
+<td>H</td>
+<td>HH</td>
+<td><em>00</em> through <em>23</em></td>
+</tr>
+<tr>
+<td>i</td>
+<td>mm</td>
+<td><em>00</em> to <em>59</em></td>
+</tr>
+<tr>
+<td>s</td>
+<td>ss</td>
+<td><em>00</em> through <em>59</em></td>
+</tr>
+<tr>
+<td>u</td>
+<td>fffff</td>
+<td><em>54321</em></td>
+</tr>
+</table>
+<table>
+<tr>
+<th colspan="3"><strong>Time Zone</strong></th>
+</tr>
+<tr>
+<th>PHP date()</th>
+<th>DateTime</th>
+<th>Example</th>
+</tr>
+<tr>
+<td>e</td>
+<td>-</td>
+<td><em>UTC</em>, <em>GMT</em>, <em>Atlantic/Azores</em></td>
+</tr>
+<tr>
+<td>I&nbsp;(capital&nbsp;i)</td>
+<td>DateTime#IsDaylightSavingTime()</td>
+<td><em>1</em> if Daylight Saving Time, <em>0</em> otherwise</td>
+</tr>
+<tr>
+<td>O</td>
+<td>-</td>
+<td><em>+0200</em></td>
+</tr>
+<tr>
+<td>P</td>
+<td>zzz</td>
+<td><em>+02:00</em></td>
+</tr>
+<tr>
+<td>T</td>
+<td>-</td>
+<td><em>EST</em>, <em>MDT</em></td>
+</tr>
+<tr>
+<td>Z</td>
+<td>-</td>
+<td><em>-43200</em> through <em>50400</em></td>
+</tr>
+</table>
+<table>
+<tr>
+<th colspan="3"><strong>Full Date/Time</strong></th>
+</tr>
+<tr>
+<th>PHP date()</th>
+<th>DateTime</th>
+<th>Example</th>
+</tr>
+<tr>
+<td>c</td>
+<td>-</td>
+<td>2004-02-12T15:19:21+00:00</td>
+</tr>
+<tr>
+<td>r</td>
+<td>-</td>
+<td>Thu, 21 Dec 2000 16:01:07 +0200</td>
+</tr>
+<tr>
+<td>U</td>
+<td>-</td>
+<td>Seconds since the Unix Epoch</td>
+</tr>
+</table>
+<p><em>(Please note that just because I have no entry for the DateTime version of one of the PHP date strings, it doesn't mean you can't get that information using .NET easily.  It just means that it's not in DateTime or not a one-liner.)</em></p>
+<p>This table highlights some pretty interesting differences between the .NET API (i.e. a carefully designed API) and the PHP API (i.e. an ad-hoc API).  For example, if I asked you what <code>g</code> stood for in a PHP date format string, would you be able to say (without looking at a chart) "hours with no leading zeroes?"</p>
+<p>What's cool about the .NET API is that they try to make the format strings mean something.  For example, <code>d</code> means "day number with no leading zeroes", <code>dd</code> means "day number with leadings zeros", <code>ddd</code> means "short form day name", <code>dddd</code> means "long form day name".  That is, as you add d's, you get progressive larger date string as a results.</p>

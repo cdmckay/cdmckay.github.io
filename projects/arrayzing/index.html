@@ -1,0 +1,97 @@
+---
+layout: page
+status: publish
+published: true
+title: Arrayzing
+author:
+  display_name: cdmckay
+  login: cdmckay
+  email: me@cdmckay.org
+  url: ''
+author_login: cdmckay
+author_email: me@cdmckay.org
+wordpress_id: 132
+wordpress_url: http://couchware.ca/blogs/cam/?page_id=132
+date: '2009-02-07 01:46:46 +0100'
+date_gmt: '2009-02-07 06:46:46 +0100'
+categories:
+- Meta
+tags: []
+comments:
+- id: 10
+  author: Kevin Grad &raquo; Blog Archive &raquo; Introducing Arrayzing - Designer,
+    Programmer and Co-Founder
+  author_email: ''
+  author_url: http://couchware.ca/blogs/kev/2009/02/07/introducing-arrayzing/
+  date: '2009-02-07 17:36:50 +0100'
+  date_gmt: '2009-02-07 22:36:50 +0100'
+  content: '[...] The above code would return result = ["hello", "heLlo", "hellO"];
+    That is a lot of code to filter out an array. This spawned the creative process
+    and got Cam working on a little public API in which I am assisting with called
+    Arrayzing. [...]'
+- id: 12
+  author: Cameron McKay &raquo; Arrayzing Design Choices
+  author_email: ''
+  author_url: http://couchware.ca/blogs/cam/2009/02/15/arrayzing-design-choices/
+  date: '2009-02-15 04:04:08 +0100'
+  date_gmt: '2009-02-15 09:04:08 +0100'
+  content: "[...] Arrayzing [...]"
+---
+<p><a href="http://arrayzing.googlecode.com">Arrayzing</a> (a contraction of "array" and "amazing") is a JavaScript array manipulation library with a syntax similar to <a href="http://jquery.com">jQuery</a>.</p>
+<p>Arrayzing is currently hosted at <a href="http://arrayzing.googlecode.com">Google Code</a> and under heavy development.  A beta version should be available by the end of March 2009.</p>
+<h2>Introduction</h2>
+<p>Since Arrayzing is inspired by jQuery, it shares a similar syntax.  For instance, to make a new Arrayzing object, you would type the following:</p>
+<pre lang="javascript">// Create an Arrayzing instance.
+var ex1 = _([0, 1, "two", ["three", "4"]]);
+
+// Equivalent to the above.
+var ex2 = Arrayzing([0, 1, "two", ["three", "4"]]);</pre>
+<p>Or you can omit the square braces altogether:</p>
+<pre lang="javascript">var ex3 = _(0, 1, "two", ["three", "4"]);</pre>
+<p>But we're getting off track here.  What's the point of Arrayzing?  Why would I want to use it?  Essentially, Arrayzing brings to JavaScript a convenient way to manipulate arrays.  This is accomplished by using bulk methods and chaining.</p>
+<p>For example, consider a table with headers that are pulled down from an Oracle database and are used (by say PHP or ASP) to generate an array in JavaScript.</p>
+<pre lang="javascript">headers = ["Client Name", "JANUARY", "FEBRUARY", "MARCH"];</pre>
+<p>Now, imagine your client tells you that he doesn't want any of the headers to be all uppercase letters because he thinks it looks unprofessional.  So you say fine, I'll write some JavaScript to handle that.</p>
+<pre lang="javascript" escaped='true'>
+// A regular expression that matches a string that 
+// is all uppercase.
+var pattern = /^[A-Z]+$/;
+
+// Iterate through the header values.
+for (var i = 0; i < headers.length; i++)
+{
+  var header = headers[i];
+  if (pattern.test(headers[i]))
+  {
+    header =
+      header.substring(0, 1).toUpperCase() +
+      header.substring(1).toLowerCase();
+  }
+}</pre>
+<p>And that works.  But it's an awful lot of code to achieve something relatively simple.  Let's see how we'd do it in Arrayzing.</p>
+<pre lang="javascript">headers = _(headers).areUpper().capitalize().merge();</pre>
+<p>As simple as that.  Because of chain and bulk methods, Arrayzing let's you pack a lot of functionality into a couple lines of code.</p>
+<p>How about another example?  Let's say you have an array, and you want to filter all the non-numbers from it?  Or maybe just get the index of all the numbers in it?  Or maybe just the index of the second occurrence of a number?  Here's how you'd do that:</p>
+<pre lang="javascript">var array = [1, 2, "foo", "bar", 23, 3.33];
+
+// Get all the numbers.
+var numbers = _(array).numbers();
+
+// Get the indices of all the numbers in the array.
+var indices = _(array).indicesOf(/\d+/);
+alert(indices.str()); // shows "0, 1, 4, 5"
+
+// ... or just the second number in the array.
+alert(indices[1]); // shows "1"</pre>
+<p>But what if you want something more complicated than just the numbers?  Maybe you want to filter out all the values that are formatted as money? And then maybe add them up?</p>
+<pre lang="javascript">// An array of various elements, some of them money.
+var array = ["$40.25", 5.99, "20.00", "foo", false, "$2.50"];
+
+var total = _(array)
+  .filter(/^\$\d+\.\d{2}$/) // Filter out money strings.
+  .prechop() // Chop off the first letter of each element.
+  .sum();    // Convert all the elements to numbers
+             // and then add them together.
+
+// Prepends "$" to the total and then show the total.
+alert(_(total).prefix("$").str()); // Shows  "$42.75".</pre>

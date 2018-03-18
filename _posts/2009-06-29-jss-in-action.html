@@ -1,0 +1,167 @@
+---
+layout: post
+status: publish
+published: true
+title: JSS in Action
+author:
+  display_name: cdmckay
+  login: cdmckay
+  email: me@cdmckay.org
+  url: ''
+author_login: cdmckay
+author_email: me@cdmckay.org
+wordpress_id: 598
+wordpress_url: http://couchware.ca/blogs/cam/?p=598
+date: '2009-06-29 02:05:15 +0200'
+date_gmt: '2009-06-29 06:05:15 +0200'
+categories:
+- Web Development
+- Programming
+- JSS
+- JavaScript
+tags:
+- web
+- JavaScript
+- JSS
+- reneelung
+comments: []
+---
+<p>The first page to use JSS in the wild has recently been launched: <a href="http://reneelung.ca">reneelung.ca</a>.</p>
+<p>The page was designed by my fiancee Renee Lung and programmed by me.  You'll notice if you look at the source that there is no JavaScript in the traditional sense.  The page consists of three JavaScript files: the jQuery library, the JSS plugin, and a JSS stylesheet.</p>
+<p>I hope this gives people an idea of the power of JSS.  Read on for an annotated version of the JSS stylesheet used on that site (as of June 29th 2009).</p>
+<p><!--more--></p>
+<pre lang="javascript">
+$.jss.declare({
+  
+// Fades the background in on each page.
+// You'll notice the square bracket notation.  This is used to 
+// attach multiple JSS commands to a single event property.  
+// They run in the order they are declared.
+".background":
+{
+  setup: 
+  [ 
+    "set-css (.background) display none", 
+    "fade-in (.background) normal" 
+  ]
+},  
+  
+// This block only runs on the front page.
+// It is used to show a different button mouse-over 
+// image on the frontpage.
+".front .button":
+{
+  setup: 
+  [ 
+    // This saves the name of mouseover image 
+    // to the element so that the mouseover code
+    // (down further) can use it.
+    // The {id} is an attribute getter.
+    // Thus, if the id for one of the buttons is
+    // "portfolio", then the class-over variable
+    // will be "front-portfolio-over".
+    "set-data class-over front-{id}-over",       
+    "preload-image gfx/buttons/front-{link-to}-over.png"
+  ]
+},
+  
+// This block runs on any page except the front page.
+"#window:not(.front) .button":
+{
+  setup: 
+  [ 
+    "set-data class-over {id}-over",
+    "preload-image gfx/buttons/{link-to}-over.png"
+  ]  
+},  
+  
+// This the code that is used to transition
+// between pages.
+".button":
+{    
+  // This is the rollover code.  Pretty simple eh?
+  hover: "toggle-class [class-over] | toggle-class [class-over]",
+  click: 
+  [
+    // This make the background fade out 
+    // and then links the user to the link
+    // provided in the HTML.
+    "fade-out (.background) normal !then-link-to {@link-to}.html",
+    "fade-out (#portfolio-window) normal"
+  ]
+},
+  
+// This a custom user function.  They can
+// be tagged on to most JSS commands
+// (in cases where you'd have things like
+// a callback for an animation).
+"then-link-to": function(link_target)
+{  
+  var event = $.Event("click");
+  event.data = { arguments: [ link_target ] };
+  this["link-to"](event);
+},
+    
+// This is the code that handles making the 
+// the images on the portfolio page "glow"
+// when you mouseover them.
+"div.artwork img":
+{
+  // This "setup" event property is used
+  // to basically create a variable...
+  setup: 
+  [ 
+    "set-data opacity-off 0.3", 
+    "set-css opacity [opacity-off]"
+  ],
+
+  // ... that is then used by the "hover"
+  // event property to set the opacity.
+  hover: "fade-to 1 | fade-to [opacity-off]"
+},
+  
+// The next block as well as the 
+// two following #link-page-n classes are
+// an admittedly hack way of making pages,
+// but get the job done for a relatively simple
+// page.  If you were dealing with anymore
+// than a couple pages, this method would 
+// quickly get unwieldly.
+
+"#pager a":
+{
+  click: 
+  [ 
+    "set-css (.portfolio-window) display none",
+    "set-css (#pager a) font-weight normal"
+  ]
+},
+
+"#link-page-1":
+{
+  font_weight: "bold",
+  click: 
+  [
+    "set-css (#portfolio-page-1) display block",
+    "set-css font-weight bold"
+  ]
+},
+  
+"#link-page-2":
+{
+  click: 
+  [
+    "set-css (#portfolio-page-2) display block",
+    "set-css font-weight bold"
+  ]
+},
+
+// This is using JSS to make an image
+// into a hyperlink.
+"#pdf-button":
+{
+  click: "link-to {resume-link}"
+}
+  
+});
+</pre>

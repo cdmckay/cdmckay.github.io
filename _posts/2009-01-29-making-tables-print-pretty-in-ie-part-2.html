@@ -1,0 +1,181 @@
+---
+layout: post
+status: publish
+published: true
+title: Making tables print pretty in IE, part 2
+author:
+  display_name: cdmckay
+  login: cdmckay
+  email: me@cdmckay.org
+  url: ''
+author_login: cdmckay
+author_email: me@cdmckay.org
+wordpress_id: 29
+wordpress_url: http://couchware.ca/blogs/cam/?p=29
+date: '2009-01-29 18:00:52 +0100'
+date_gmt: '2009-01-29 23:00:52 +0100'
+categories:
+- Web Development
+tags:
+- html
+- css
+- tables
+- printing
+- ie
+- ie6
+- ie7
+comments:
+- id: 3
+  author: Paul Schofield
+  author_email: pscho@microsoft.com
+  author_url: ''
+  date: '2009-01-30 21:03:38 +0100'
+  date_gmt: '2009-01-31 02:03:38 +0100'
+  content: I enjoyed this article and hope that you continue to post articles related
+    to web development in the future. Mmmm sushi.
+---
+<p>In my last <a href="http://cdmckay.org/blog/2009/01/28/making-tables-print-pretty-in-ie/">post</a>, I mentioned that I had come up with a way to prevent tables in Internet Explorer 6 and 7 from looking like <a href="http://www.xefteri.com/articles/content/26/images/table_footer_issue.gif">this</a>.  In this post, I'll show you how to do it.</p>
+<p><strong>(Disclaimer: This method has been found to break if the a cell has a line break in it or is wrapped to a second line).</strong></p>
+<p><!--more--></p>
+<p>First, let's start with an example table:</p>
+<pre lang='html4strict'>
+<table id="example-table">
+  <thead>
+    <tr><th>First Name</th><th>Last Name</th><th>Client #</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Joe</td><td>Shmoe</td><td>123451</td></tr>
+    <tr><td>Joe</td><td>Shmoe</td><td>123451</td></tr>
+    <tr><td>Joe</td><td>Shmoe</td><td>123451</td></tr>
+    <tr><td>Joe</td><td>Shmoe</td><td>123451</td></tr>
+    <!-- Repeat these many times to make it go to a second page. -->
+  </tbody>
+</table>
+</pre>
+<p>Add a stylesheet like this:</p>
+<pre lang="css">
+#example-table
+{
+  border: 1px black solid;
+  border-collapse: collapse;
+}
+
+#example-table th, #example-table td
+{
+  border: 1px black solid;
+}
+</pre>
+<p>If you repeat those rows enough times you can get the graphical glitch mentioned above.  Now, to fix it, what we'll do is add a <code>
+<div></code> tag to every cell and then make it provide the side borders.</p>
+<p>So first, we'll modify the table as follows:</p>
+<pre lang='html4strict'>
+<table id="example-table">
+  <thead>
+    <tr><th>First Name</th><th>Last Name</th><th>Client #</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><div class="cell">Joe</div></td>
+      <td><div class="cell">Shmoe</div></td>
+      <td class="last-col"><div class="cell">123451</div></td>
+    </tr>    
+    <!-- Repeat this many times to make it go to a second page. -->
+  </tbody>
+</table>
+</pre>
+<p>What we've done here is added a <code>
+<div></code> to each cell and given these <code>
+<div></code>'s a class called <code>cell</code>.  This is so we can do stuff to them in our CSS stylesheet.  We've also given the last cell in each row the class <code>last-col</code>.  This is so we can identify the last column of each row.  The reasoning for this will be explained shortly.</p>
+<p>Now, as I've said, our goal here is to replace the <code>table</code>-provided vertical borders (the | ones) with the <code>div</code>-provided ones.  So we need to modify the stylesheet to reflect that:</p>
+<pre lang="css">
+#example-table
+{
+  border-top: 1px black solid;
+  border-bottom: 1px black solid;
+  border-collapse: collapse;
+}
+
+#example-table th, #example-table td
+{
+  border-top: 1px black solid;
+  border-bottom: 1px black solid;
+}
+</pre>
+<p>There's also an issue of padding.  By default, tables are slightly padded, which is fine for most circumstances.  However, in this case, padding would be counterproductive, it would prevent the <code>div</code>'s border from matching up with the <code>table</code>'s border.  So that'll have to be changed:</p>
+<pre lang="css">
+#example-table
+{
+  border-top: 1px black solid;
+  border-bottom: 1px black solid;
+  border-collapse: collapse;
+}
+
+#example-table th, #example-table td
+{
+  border-top: 1px black solid;
+  border-bottom: 1px black solid;
+  padding: 0;
+}
+</pre>
+<p>Time for some <code>div</code> styling.  Since the <code>div</code> is our new cell, we need to style it as such.  First thing, let's make the <code>div</code> provide us with sides.  Now, we could do something like <code>border-left: 1px black solid; border-right: 1px black solid;</code>.  This would look fine, except that all the vertical borders in the middle of the table would 2 pixels wide (think about it).  So, instead, we'll make all the <code>div</code> cells provide borders on the left side, except for the last column, which'll provide borders on both sides (hence the purpose of the <code>last-col</code> class).</p>
+<pre lang="css">
+div.cell
+{
+  border-left: 1px black solid;
+}
+
+#example-table .last-col div.cell
+{
+  border-right: 1px black solid;
+}
+</pre>
+<p>We also need to add back the padding we stripped out from the table <code>td</code> tags:</p>
+<pre lang="css">
+div.cell
+{
+  border-left: 1px black solid;
+  padding: 4px;
+}
+
+#example-table .last-col div.cell
+{
+  border-right: 1px black solid;
+}
+</pre>
+<p>And there you have it.  Now when you load up print preview, your tables should look pretty.  Here's the final stylesheet in case you got lost:</p>
+<pre lang="css">
+/* So the headers will display on every page. */
+thead { display: table-header-group; }
+
+/* Make table only provides vertical border. */
+#example-table
+{
+  border-top: 1px black solid;
+  border-bottom: 1px black solid;
+  border-collapse: collapse;
+}
+
+/* 
+ * Make header and normal cells only show top and bottom border,
+ * and remove all padding so the div lines will match up with the table.
+ */
+#example-table th, #example-table td
+{
+  border-top: 1px black solid;
+  border-bottom: 1px black solid;
+  padding: 0;
+}
+
+/* Make the div cell only provide the left border, and simulate table padding. */
+div.cell
+{
+  border-left: 1px black solid;
+  padding: 4px;
+}
+
+/* Provide the right border in the last column. */
+#example-table .last-col div.cell
+{
+  border-right: 1px black solid;
+}
+</pre>

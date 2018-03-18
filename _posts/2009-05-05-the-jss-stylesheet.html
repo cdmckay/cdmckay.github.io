@@ -1,0 +1,137 @@
+---
+layout: post
+status: publish
+published: true
+title: The JSS Stylesheet, Part 1
+author:
+  display_name: cdmckay
+  login: cdmckay
+  email: me@cdmckay.org
+  url: ''
+author_login: cdmckay
+author_email: me@cdmckay.org
+wordpress_id: 459
+wordpress_url: http://couchware.ca/blogs/cam/?p=459
+date: '2009-05-05 11:05:40 +0200'
+date_gmt: '2009-05-05 16:05:40 +0200'
+categories:
+- Web Development
+- Programming
+- JSS
+tags:
+- html
+- css
+- jquery
+- JavaScript
+- JSS
+- stylesheets
+- event properties
+comments: []
+---
+<p>I've said previously that JSS is a lot like <a href="http://en.wikipedia.org/wiki/CSS">CSS</a>.  What is CSS?</p>
+<blockquote><p>Cascading Style Sheets (CSS) is a style sheet language used to describe the presentation (that is, the look and formatting) of a document written in a markup language.</p></blockquote>
+<p>If that blurb were written about JSS, it'd sound a little like this:</p>
+<blockquote><p>JavaScript Style Sheets (JSS) is a style sheet language used to describe the presentation (that is, the look and formatting) and functionality of a document written in HTML.</p></blockquote>
+<p>In this article, we will look at the syntactic structure of a JSS stylesheet.  We will also talk briefly about including JSS stylesheets in your HTML documents.</p>
+<p><!--more--></p>
+<p>At this point, some people may be wondering: <em>aren't we mucking up CSS by combining functionality and presentation in the same place?</em>  This is a valid concern.  However, just because we can combine presentation and functionality in JSS, doesn't necessarily mean we should.  A good JSS site will have two or more JSS stylesheets: one for JSS styles (if they are needed) and one for JSS event properties.  JSS event properties will be covered in a future article.</p>
+<h3>Syntactic Structure</h3>
+<p>Let's get back to the CSS/JSS connection.  What do people do with CSS?  They write stylesheets.  More specifically, they write rules.  In JSS, we write rules too.  In fact, we write them in a very similar format to CSS, although with some important differences owing to the fact that JSS stylesheets are actually JavaScript programs.  Here's the basic format of a CSS stylesheet:</p>
+<pre lang="css">
+rule-selector-a
+{
+  property-a: value-a;
+  property-b: value-b;
+  ...
+}
+
+rule-selector-b
+{
+  property-a: value-a;
+  property-b: value-b;
+  ...
+}
+
+...
+</pre>
+<p>In JSS, we use pretty much the same format, with the differences being the addition of boilerplate code (1), quoted selectors with colons (2), underscores instead of dashes in property names (3), quoted values with commas (4) and commas between rules (5).  The JSS format is shown below:</p>
+<pre lang="javascript">
+$.jss.declare({ // (1)
+
+"rule-selector-a": // (2)
+{
+  property_a: "value-a", // (3) and (4)
+  property_b: "value-b",
+  ...
+}, // (5)
+
+"rule-selector-b":
+{
+  property_a: "value-a",
+  property_b: "value-b",
+  ...
+},
+
+...
+}); // (1)
+</pre>
+<p>Let's talk a bit about each of these difference:</p>
+<ol>
+<li><strong>Boilerplate code.</strong>  This is an unfortunate side effect of having to use JavaScript to extend CSS.  Fortunately, it's the same for each JSS stylesheet, so it's not too much of a hassle to remember.</li>
+<li><strong>Quoted selectors with colons.</strong> Since the selector portion of a JSS rule is a string, it must be represented in JSS as a JavaScript string.  All strings in JavaScript must be either single-quoted (as in 'Hello!') or double-quoted (as in "w00t w00t").  The colon following the selector is a necessity as internally, JSS selectors act as keys in a JavaScript object.  A JSS selector may be any valid jQuery selector.</li>
+<li><strong>Underscores instead of dashes in property names.</strong>  This is not strictly true, although using underscores instead of dashes is the recommended way of representing JSS properties.  Consider, for example, the <em>font-family</em> property from CSS.  This can be represented in 3 ways in JSS:
+<ol>
+<li>font_family</li>
+<li>"font_family"</li>
+<li>"font-family"</li>
+</ol>
+</li>
+<li><strong>Quoted values with commas.</strong> Unlike CSS, all values in JSS are quoted with either single or double quotes.  Furthermore, between declarations, there must be a comma.<br />
+<br/></p>
+<pre lang="javascript">
+// This is correct.
+"rule-selector-a":
+{
+  property_a: "value-a",
+  property_b: "value-b"
+},
+
+// This is incorrect.
+"rule-selector-b":
+{
+  property_a: "value-a",
+  property_b: "value-b", // This declaration should not 
+                         // have a comma.
+}
+</pre>
+</li>
+<li><strong>Commas between rules.</strong> Like declarations, each rule must have a comma between it:
+<pre lang="javascript">
+"rule-selector-a":
+{ ... },
+
+"rule-selector-b":
+{ ... } // Make sure the last rule has no comma after it.
+</pre>
+</li>
+</ol>
+<h3>Loading JSS and JSS stylesheets</h3>
+<p>Now that we understand the syntactic structure of a JSS stylesheet, it's time to take look at how we include them in an HTML file.  Every page that makes use of JSS will have the following structure:</p>
+<pre lang="html4strict" escaped="true">
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;title&gt;Title&lt;/title&gt;
+    &lt;script type="text/javascript" src="jquery.js"&gt;&lt;/script&gt;
+    &lt;script type="text/javascript" src="jquery.jss.js"&gt;&lt;/script&gt;
+    &lt;script type="text/javascript" src="sheet-1.jss.js"&gt;&lt;/script&gt;
+    &lt;script type="text/javascript" src="sheet-2.jss.js"&gt;&lt;/script&gt;
+    ...
+    &lt;script type="text/javascript" src="sheet-n.jss.js"&gt;&lt;/script&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;!-- Your website here. --&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+<p>Let's quickly go through the components here.  The first <code>script</code> tag includes the jQuery library, which is required by JSS.  The second <code>script</code> tag includes the JSS jQuery plugin, which is the brains of JSS, and is required for any JSS stylesheet to work.  All the <code>script</code> tags after that are the JSS stylesheets that you wish to load.</p>
+<p>As you can see, you can add an unlimited number of JSS stylesheets, and when the page loads, they'll be applied in the same order they are included in the page.  Keep in mind, however, that if you're including many <code>script</code> tags on a single webpage, it is advisable to use some sort of JavaScript loader.</p>

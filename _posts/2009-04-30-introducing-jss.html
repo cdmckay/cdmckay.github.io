@@ -1,0 +1,165 @@
+---
+layout: post
+status: publish
+published: true
+title: Introducing JSS
+author:
+  display_name: cdmckay
+  login: cdmckay
+  email: me@cdmckay.org
+  url: ''
+author_login: cdmckay
+author_email: me@cdmckay.org
+wordpress_id: 391
+wordpress_url: http://couchware.ca/blogs/cam/?p=391
+date: '2009-04-30 23:43:34 +0200'
+date_gmt: '2009-05-01 04:43:34 +0200'
+categories:
+- Web Development
+- Programming
+- JSS
+tags:
+- html
+- css
+- ie7
+- jquery
+- JavaScript
+- JSS
+- stylesheet
+- selector
+- css3
+- firefox
+comments: []
+---
+<p>Ever wanted to make an image rollover, but you don't know JavaScript?  In this tutorial, we show you how JSS, a CSS-like language, makes this a breeze.</p>
+<p><!--more--></p>
+<p>Consider these two images:</p>
+<p><img src="http://couchware.ca/users/cam/example/rollover/image_off.gif" alt="Zebra" /><br />
+<img src="http://couchware.ca/users/cam/example/rollover/image_on.gif" alt="Shark" /></p>
+<p>Imagine we wanted to make them "rollover", i.e. the zebra should be shown when nothing is happening, and the shark should be showed when the mouse is "rolled over" (i.e. on top of) the zebra.  Like this:</p>
+<p><img src="http://couchware.ca/users/cam/example/rollover/image_off.gif" src-out="http://couchware.ca/users/cam/example/rollover/image_off.gif" src-over="http://couchware.ca/users/cam/example/rollover/image_on.gif" /><script src="http://www.google.com/jsapi" type="text/javascript"></script> <script type="text/javascript"><!--<br />
+google.load("jquery", "1.3.2");<br />
+google.setOnLoadCallback(function()<br />
+{<br />
+  $("img[src-over]").hover(<br />
+    function() { $(this).attr('src', $(this).attr('src-over')); },<br />
+    function() { $(this).attr('src', $(this).attr('src-out')); }<br />
+  );<br />
+});<br />
+// --></script></p>
+<p>Before we start writing some JSS, let's write some HTML for a page just showing the rollover at rest (i.e. just show a plain old static image):</p>
+<pre lang="html4strict" escaped='true'><html>
+  <head>
+    <title>JSS Rollover</title>
+  </head>
+  <body>
+    <img src="image_off.png" />
+  </body>
+</html></pre>
+<p>If we copied this code into an HTML file and ran it on our browser, we would see a static image of a zebra.  Not that exciting, right?  Now let's see how we can use JSS to make this zebra "rollover" to the shark when the mouse is on it.  Here's the JSS stylesheet:</p>
+<pre lang="javascript">$.jss.declare({
+
+  "img[src-over]":
+  {
+    hover: "set-attr src {src-over} | set-attr src {src-out}"
+  }
+
+});</pre>
+<p>Let's step through this syntax, because there's a lot going on here, even though it's a single line.  First, let's annotate the JSS source so we can refer to it easier:</p>
+<pre lang="javascript">$.jss.declare({ // 1. Boilerplate that starts any JSS stylesheet.
+
+  // 2. Rule
+  "img[src-over]": // 3. CSS Selector
+  {
+    // 4. JSS Declaration
+    hover: "set-attr src {src-over} | set-attr src {src-out}"
+  }
+
+});</pre>
+<p>As you might have noticed, a JSS stylesheet looks very similar to a CSS stylesheet.  Let's walk through the anatomy of a JSS stylesheet.</p>
+<p>At the top of any JSS stylesheet there is some boilerplate code (1).  This is necessary because a JSS stylesheet is actually a JavaScript program.  However, beyond the fact that this boilerplate needs to be in every JSS stylesheet, you don't really need to know what it does.</p>
+<p>A JSS stylesheet is made up of an unlimited number of rules (2).  This is the same as in a CSS stylesheet.  Inside a JSS rule, there are two components, a selector (3) and an unlimited number of declarations (inside a declaration block) (4).  This is where we start to see some of the advantages of JSS over using plain CSS.</p>
+<p>JSS selectors are powered by <a href="http://jquery.com">jQuery</a>.  As such, JSS supports any CSS3-compliant selector.  In addition, JSS also allows you to use any of the jQuery CSS selector extensions as well.</p>
+<p>For example, in CSS, this stylesheet should stripe all the tables on the page as alternating gray and white:</p>
+<pre lang="css">table tr:nth-child(odd)
+{ background-color: #eee; }
+
+table tr:nth-child(even)
+{ background-color: #fff; }</pre>
+<p>However, if you tried to use that CSS stylesheet in the two most popular browsers available (IE7 and Firefox 3) you would discover that it didn't work.  On the other hand, if you use the following JSS stylesheet...</p>
+<pre lang="javascript">$.jss.declare({
+
+  "table tr:nth-child(odd)":
+  { background_color: "#eee" }
+
+  "table tr:nth-child(even)":
+  { background_color: "#fff" }
+
+});</pre>
+<p>...you would discover that it worked in all major browsers.  By using a JavaScript selector engine, JSS offers better cross-browser styling than regular CSS.</p>
+<p><em>(Aside: Before all you web developers out there go crazy, I would like to note that I realize there are several drawbacks to using JavaScript to style your page.  Stay tuned to the end of this article for a discussion of them).</em></p>
+<p>Now let's return to our task of making a rollover.  How does the JSS stylesheet make it possible?  Let's take a look at that JSS stylesheet again:</p>
+<pre lang="javascript">$.jss.declare({ // 1. Boilerplate that starts any JSS stylesheet.
+
+  // 2. Rule
+  "img[src-over]": // 3. CSS Selector
+  {
+    // 4. JSS Declaration
+    hover: "set-attr src {src-over} | set-attr src {src-out}"
+  }
+
+});</pre>
+<p>Let's look closer at the rule.  More specifically, take a look at the CSS selector.  For anyone familiar CSS, it reads &ldquo;select all <strong>img</strong> tags that have the attribute <strong>src-over</strong>&rdquo;.  Why would we want to do that?  Well, as it happens, we need some way to describe which image to use when the user mouses over our image.  In order to do that, we're going to use something called a <strong>custom attribute</strong>.</p>
+<p>Custom attributes are user-defined attributes on HTML tags.  For example, the <strong>img</strong> tag has an attribute called <strong>src</strong>.  That's a proper attribute that is defined in a W3C recommendation.  What we're going to do is add two new attributes, <strong>src-over</strong> and <strong>src-out</strong>, that are not part of any W3C standard.  We just made them up because they're convenient for our purposes.</p>
+<p>Now that we've decided that we're adding these two attributes, we need to add them to our HTML file:</p>
+<pre lang="html4strict" escaped='true'>
+<html>
+  <head>
+    <title>JSS Rollover</title>
+  </head>
+  <body>
+    <img src="image_off.png"
+        src-out="image_off.png" src-over="image_on.png" />
+  </body>
+</html></pre>
+<p>With that done, let's take a look at the last part of the JSS stylesheet: the declaration.  A JSS declaration has a property (hover) and a value ("set-attr src {src-over} | set-attr src {src-out}").  This is just like a CSS declaration, like "font-family: Arial, sans-serif".  In that case, "font-family" is the property and "Arial, sans-serif" is the value.</p>
+<p>In the case of the rollover JSS stylesheet, the hover property must have a value with the following structure:</p>
+<pre lang="javascript">hover: "jss-expression | jss-expression"</pre>
+<p>The first JSS expression on the left is run when the mouse is over the image area, and the right JSS expression is run when the mouse leaves the image area.</p>
+<p>Let's look at what happens in the JSS rollover stylesheet when the mouse is brought over the image area:</p>
+<pre lang="javascript">
+set-attr src {src-over}
+</pre>
+<p>This JSS expression reads: "set the src attribute (of the selected element) to the contents of the src-over attribute (of the selected element)".  This is because "set-attr" is a JSS <em>command</em>.  The "set-attr" command takes two arguments: the attribute to change, and the value to change it to.  That leaves one more question.  What's the deal with the curly braces?</p>
+<p>In JSS, curly braces are basically a "get-attr" command.  They fetch the value of an attribute.  In the context they are being used here, they fetch the value of the "src-over" attribute (which happens to be the name of the shark image "image_on.gif").</p>
+<p>With that information in hand, it can be deduced that the right hand side...</p>
+<pre lang="javascript">
+set-attr src {src-out}
+</pre>
+<p>...switches the src attribute back to src-out image URL when the mouse leaves the image area.</p>
+<p>Thus, if we put it all together, and include the appropriate JavaScript files, we have the following.  In the "index.html" file we have:</p>
+<pre lang="html4strict" escaped='true'><html>
+  <head>
+    <title>JSS Rollover</title>
+    <script type='text/javascript' src='jquery.js'></script>
+    <script type='text/javascript' src='jquery.jss.js'></script>
+    <script type='text/javascript' src='styles.jss.js'></script>
+  </head>
+  <body>
+    <img src="image_off.png"
+        src-off="image_off.png" src-over="image_on.png" />
+  </body>
+</html></pre>
+<p>And in the "styles.jss.js" file we have this:</p>
+<pre lang="javascript">$.jss.declare({
+
+  "img[src-over]":
+  {
+    hover: "set-attr src {src-over} | set-attr src {src-out}"
+  }
+
+});</pre>
+<p>These files together create a page that has a rollover that changes from zebra to shark when the mouse is hovered over it.  Better yet, this JSS stylesheet can be used with any web page to enable rollover images.  All the user has to do is set the "src-over" and "src-out" custom attributes.</p>
+<h3>Notes on JSS Availability &amp; Performance</h3>
+<p>JSS applies its stylesheets using JavaScript.  This has several implications to web designers using it.  First of all, in order for a site to take advantage of JSS, JavaScript must be enabled.  Fortunately, something like 95% of all web surfers have JavaScript enabled, so that's not too big of deal.  Secondly, JSS is a lot slower than CSS.  For most websites, this difference will probably be imperceptible deal, but it's still something to be aware of.</p>
+<p>My recommendations would be this: if you can do it in CSS, and it works properly across all browsers, then use CSS.  There's no reason not to.  However, if you need to use JSS features like event properties (like hover) or cross-browser selectors, then use JSS.</p>

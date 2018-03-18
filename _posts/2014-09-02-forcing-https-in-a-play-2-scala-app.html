@@ -1,0 +1,34 @@
+---
+layout: post
+status: publish
+published: true
+title: Forcing HTTPS in a Play 2 Scala app
+author:
+  display_name: cdmckay
+  login: cdmckay
+  email: me@cdmckay.org
+  url: ''
+author_login: cdmckay
+author_email: me@cdmckay.org
+wordpress_id: 2281
+wordpress_url: http://cdmckay.org/blog/?p=2281
+date: '2014-09-02 21:03:43 +0200'
+date_gmt: '2014-09-03 01:03:43 +0200'
+categories:
+- Web Development
+- Programming
+- Java
+- Scala
+- Play 2
+tags: []
+comments: []
+---
+<p>At <a href="http://process.st">Process Street</a> we've been developing a new app called <a href="http://mailthe.me" target="_blank">MailTheme</a> that, like the <a href="http://process.st">Process Street</a> app, it uses the <a href="http://playframework.com" target="_blank">Play Framework</a>.</p>
+<p>Unlike Process Street, MailTheme will be running on <a href="https://cloud.google.com/" target="_blank">Google Cloud</a> and, for the time being, won't be behind a load balancer or proxy. As such, I needed to make all HTTP requests auto-redirect to HTTPS via Play. This turned out to be more difficult than I first imagined, as Play prior to version 2.3 has no way to detect whether or not the incoming request is over SSL.</p>
+<p><!--more--></p>
+<p>Sure, you can look at the port, but that only works if the browser has sent the port, which it doesn't do for port 80 and 443. Moreover, Play inexplicably does not expose the protocol anywhere in the request object. This doesn't leave you with many options other than than <a href="https://www.playframework.com/documentation/2.4.x/Migration23" target="_blank">upgrading to Play 2.3</a>.</p>
+<p>Fortunately, Play 2.3 provides a <code>secure</code> property in the request object. With that in hand, we can now write a <code>HttpsAction</code> that ensures an action is over HTTPS:</p>
+<p><script src="https://gist.github.com/cdmckay/792c52d9c7d1d071acc4.js"></script></p>
+<p>To use it in your app, simply add the code, and use it where you'd normally use an action, like so:</p>
+<p><script src="https://gist.github.com/cdmckay/cf3df1778f437d6f7888.js"></script></p>
+<p>And there you have it. Keep in mind that I haven't tested this with any load balancers or proxies, so I don't know how it'll perform under those circumstances.</p>

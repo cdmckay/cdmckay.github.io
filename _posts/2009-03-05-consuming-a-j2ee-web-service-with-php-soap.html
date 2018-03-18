@@ -1,0 +1,173 @@
+---
+layout: post
+status: publish
+published: true
+title: Consuming a J2EE Web Service with PHP SOAP
+author:
+  display_name: cdmckay
+  login: cdmckay
+  email: me@cdmckay.org
+  url: ''
+author_login: cdmckay
+author_email: me@cdmckay.org
+wordpress_id: 303
+wordpress_url: http://couchware.ca/blogs/cam/?p=303
+date: '2009-03-05 17:39:59 +0100'
+date_gmt: '2009-03-05 22:39:59 +0100'
+categories:
+- Web Development
+- Programming
+- PHP
+- Java
+tags:
+- xml
+- java
+- PHP
+- wsdl
+- web services
+- soap
+- nusoap
+- j2ee
+comments:
+- id: 386
+  author: Ashwin
+  author_email: ashwinkr@hotmail.com
+  author_url: ''
+  date: '2009-09-03 10:54:38 +0200'
+  date_gmt: '2009-09-03 15:54:38 +0200'
+  content: "Nice article Cameron. My requirement is about consuming a .NET web service
+    from PHP via SOAP. The .NET web method (or web service method) accepts an XMLDocument
+    as a single method parameter. The web method must process the contents of the
+    XMLDocument and respond indicating success or failure. I have created the .NET
+    web service method and the WSDL is auto-generated. Do you think I am at a good
+    starting point to adopt PHP Soap module and achieve my goal?\r\n\r\nThanks.\r\n\r\nAshwin"
+- id: 387
+  author: cam
+  author_email: cam@couchware.ca
+  author_url: ''
+  date: '2009-09-03 11:15:52 +0200'
+  date_gmt: '2009-09-03 16:15:52 +0200'
+  content: |-
+    @Ashwin:
+    I think it's pretty much your only option.  I looked around a bit for other SOAP libraries, and the only other one I found, NuSOAP, doesn't seem to be actively maintained anymore, so the built-in SOAP module is your best bet.
+- id: 388
+  author: Ashwin
+  author_email: ashwinkr@hotmail.com
+  author_url: ''
+  date: '2009-09-04 13:52:05 +0200'
+  date_gmt: '2009-09-04 18:52:05 +0200'
+  content: I was able to make progress, but I ended up modifying the web service method
+    signature to accept a string instead of an XmlDocument (.NET specific), since
+    I could not figure out how to send the equivalent object from PHP. Your article
+    was still very insightful and gave me a push in the right direction. Thanks.
+- id: 389
+  author: cam
+  author_email: cam@couchware.ca
+  author_url: ''
+  date: '2009-09-04 13:58:22 +0200'
+  date_gmt: '2009-09-04 18:58:22 +0200'
+  content: |-
+    @Ashwin:
+    No problem, glad I could help.
+- id: 464
+  author: Maarten
+  author_email: Maarten.Boot@bizmail.xnet.hr
+  author_url: ''
+  date: '2010-07-05 09:42:28 +0200'
+  date_gmt: '2010-07-05 14:42:28 +0200'
+  content: |-
+    any hints as how to create xml elements like
+     with php using the soap interface?
+
+    I have a php interface to a soap server where some calls use this conscruct during a update of a entity.
+---
+<p>I recently had to do some work for a company which involved using <a href="http://www.php.net">PHP</a> to consume a <a href="http://java.sun.com/javaee/">J2EE</a>-based <a href="http://www.w3.org/TR/wsdl">WSDL</a> web service.  The project was fairly straightforward, involving only a one-way call to the web service, i.e. no result needed to be collected.</p>
+<p><!--more--></p>
+<h3>What is WSDL?</h3>
+<p>Before we start, let's talk a bit about what <a href="http://en.wikipedia.org/wiki/Web_Services_Description_Language">WSDL</a> is.  <em>(Warning: I am very new to WSDL, SOAP and web services in general, so feel free to correct me if I get any of these details wrong).</em></p>
+<p>WSDL stands for Web Service Description Language.  As the name suggests, it is an XML language used for describing web services.  By describe, I mean a WSDL file contains information like the functions that a client can call, and data types it uses, and what exceptions it might throw.  This is useful for clients that might contact the web service.  Exactly why that information is useful will become evident in examples below.</p>
+<h3>What is SOAP?</h3>
+<p>At one point, a long time ago, in a web far far away, <a href="http://en.wikipedia.org/wiki/SOAP_(protocol)">SOAP</a> stood for Simple Object Access Protocol.  Now it stands for nothing.  SOAP is a protocol for exchanging structured information on the web.  Like WSDL, SOAP uses XML.  In fact, SOAP is a protocol often used to exchange WSDL information, although one can also use straight HTTP to do it as well.</p>
+<p>All we really need to know (right now) is that a SOAP library permits us to communicate with a WSDL web service that has SOAP bindings (which would be almost any we would encounter in the wild).</p>
+<h3>Which library/module to use?</h3>
+<p>In order to determine which library to use, I did some googling.  What I found were two options: the <a href="http://sourceforge.net/projects/nusoap/">NuSOAP</a> library and the <a href="http://ca.php.net/manual/en/book.soap.php">PHP SOAP</a> module.</p>
+<p>So which one should we use? I initially leaned towards NuSOAP due to the fact that it was an external library, and thus would probably work with almost any PHP installation.  Unfortunately, after perusing the NuSOAP Sourceforge website, I noticed the library hadn't been updated since 2005 (a bad sign).  In fact, after further reading, I discovered that, as of PHP 5, the NuSOAP namespace also conflicted with the PHP SOAP module namespace (and hadn't yet been fixed).  As a result, I decided to go with the PHP SOAP module.</p>
+<h3>The Code</h3>
+<p>The first thing anyone needs to do when consuming a WSDL service with PHP is to create a new client object.  By creating a client object, PHP basically reads the server's WSDL file and determines which functions are available to us.  A SoapClient is created using the following code:</p>
+<pre lang="php" escaped='true' line='1'>
+<?php
+  // The path to the WSDL web service.
+  $wsdl = "http://path/to/webservice.wsdl";
+
+  // The connection options.
+  $options = array('features' => 
+    SOAP_USE_XSI_ARRAY_TYPE + SOAP_SINGLE_ELEMENT_ARRAYS);
+
+  // Create a new SoapClient.
+  $client = new SoapClient($wsdl, $options);
+  echo "SoapClient creation successful<br>\n";
+?>
+</pre>
+<p>So what's going on at line 7?  Those two features are basically used to make the SoapClient act as we'd expect.  For example, if you don't include the SOAP_USE_XSI_ARRAY_TYPE feature, then you'll find you get a lot of casting exceptions when dealing with a Java-based webservice that uses any complex data structures.  If you don't include the SOAP_USE_XSI_ARRAY_TYPE feature, then PHP will turn 1-element arrays return types into objects, which is not what you want 90% of the time and often gives confusing results.</p>
+<p>Now let's actually consume a web service.  Let's pretend we're using the J2EE service provided by this <a href="http://java.sun.com/developer/technicalArticles/J2EE/j2ee_ws/">article</a>.  Here are the contents of the WSDL file from that article:</p>
+<pre lang="xml" escaped="true" line="1">
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions name="MyFirstService" targetNamespace="urn:Foo" xmlns:tns="urn:Foo"
+    xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+  <types/>
+  <message name="MathFace_add">
+    <part name="int_1" type="xsd:int"/>
+    <part name="int_2" type="xsd:int"/></message>
+  <message name="MathFace_addResponse">
+    <part name="result" type="xsd:int"/></message>
+  <portType name="MathFace">
+    <operation name="add" parameterOrder="int_1 int_2">
+      <input message="tns:MathFace_add"/>
+      <output message="tns:MathFace_addResponse"/>
+    </operation>
+  </portType>
+  <binding name="MathFaceBinding" type="tns:MathFace">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="rpc"/>
+    <operation name="add">
+      <soap:operation soapAction=""/>
+      <input>
+        <soap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
+		    use="encoded" namespace="urn:Foo"/>
+      </input>
+      <output>
+        <soap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
+		    use="encoded" namespace="urn:Foo"/>
+      </output>
+    </operation>
+  </binding>
+  <service name="MyFirstService">
+    <port name="MathFacePort" binding="tns:MathFaceBinding">
+      <soap:address location="http://localhost:8080/math-service/math"/>
+    </port>
+  </service>
+</definitions>
+</pre>
+<p>What can we tell about the web service by looking at this file?  Well the first thing you should notice is lines 12-14.  In those lines, the web service defines an operation ("add") that takes two arguments ("int_1 int_2").  As a result, we know that the web service exposes an add operation that takes two integer arguments.  Let's use that knowledge to invoke the add operation in PHP using the SOAP module:</p>
+<pre lang="php" escaped='true' line='1'>
+<?php
+  // The path to the WSDL web service.
+  $wsdl = "http://localhost:8080/math-service/math?wsdl";
+
+  // The connection options.
+  $options = array('features' => 
+    SOAP_USE_XSI_ARRAY_TYPE + SOAP_SINGLE_ELEMENT_ARRAYS);
+
+  // Create a new SoapClient.
+  $client = new SoapClient($wsdl, $options);
+  echo "SoapClient creation successful<br>\n";
+
+  // Call the add operation.
+  $response = $client->add(2, 2);
+
+  // This should print 4.
+  echo $response . "<br>\n";
+?>
+</pre>
+<p>How'd the PHP object $client know to have an add method?  It simply read the WSDL file the same way we did, and realized that the web service exposed that operation.</p>
+<p>As you can see, consuming a J2EE web service from a PHP client is not too complicated.  Once you understand the rudiments of a WSDL file and the PHP SOAP module, calling remote functions becomes a snap.</p>

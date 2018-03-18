@@ -1,0 +1,130 @@
+---
+layout: page
+status: publish
+published: true
+title: Olivine
+author:
+  display_name: cdmckay
+  login: cdmckay
+  email: me@cdmckay.org
+  url: ''
+author_login: cdmckay
+author_email: me@cdmckay.org
+wordpress_id: 1234
+wordpress_url: http://cdmckay.org/blog/?page_id=1234
+date: '2010-03-29 02:24:29 +0200'
+date_gmt: '2010-03-29 07:24:29 +0200'
+categories:
+- Meta
+tags: []
+comments: []
+---
+<p>Olivine is a .NET (and Java and Objective C to a lesser extent) inspired PHP class library that attempts to provide useful types for PHP.</p>
+<h3>Motivation</h3>
+<p>PHP is an unplanned language that was developed in a more-or-less ad-hoc fashion.  As a result, PHP did not gain a useful object system until PHP 5.  So, even though PHP has things like classes, inheritance, data-hiding, namespaces and other goodies that you'd find in languages like C# and Java, it doesn't really make use of them in the standard API.</p>
+<p>Olivine attempts to fill that gap by implementing an API, inspired by the .NET framework, that wraps many of the built-in PHP functions.</p>
+<h3>Let the Examples Do The Talking</h3>
+<p>Olivine is best demonstrated in examples.  Consider this C# code:</p>
+<pre lang="csharp">
+var str = "I am a long, long string";
+str.StartsWith("I am"); // true
+str.Reverse().EndsWith("ma I"); // true
+</pre>
+<p>This can be easily transcoded to Olivine like this:</p>
+<pre lang="php">
+$str = is("I am a long, long string");
+$str->startsWith("I am"); // true
+$str->reverse()->endsWith("I"); // true
+</pre>
+<p>You're probably wondering what all the <code>is()</code> function calls are for.  They're there to wrap the PHP types to the Olivine types.  Olivine provides many of the .NET types you know and love like String and Boolean.  In Olivine they are known as NString and NBoolean.  Here's how you instantiate an Olivine NString type without using <code>is()</code>.</p>
+<pre lang="php">
+$str1 = NString::get("Apple");
+$str2 = is("Apple");
+$str1->equals($str2); // true
+$str1->equals("Apple"); // true
+</pre>
+<p>What about Int32, Int64, Single, Double and the other number structures?  Olivine provides two numeric types: NInt and NFloat.  They wrap the PHP primitives int and float.</p>
+<pre lang="php">
+$num1 = NNumber::get(4);
+$num2 = is(5);
+$num1->isLessThan($num2); // true
+
+$num3 = _int(3);
+$num1->isGreaterThan($num3); // true
+</pre>
+<p>You're probably wondering why we used <code>_int()</code> instead of <code>is()</code>.  This was purely for demonstrative reasons.  <code>is()</code> is smart enough to determine what Olivine type you want based on the argument type, as shown in this mapping:</p>
+<table>
+<tr>
+<th colspan="2"><code>is()</code> Mapping</th>
+<tr>
+<th>PHP Type (argument)</th>
+<th>Olivine Type (returned)</th>
+</tr>
+<tr>
+<td>int</td>
+<td>NInt</td>
+</tr>
+<tr>
+<td>float</td>
+<td>NFloat</td>
+</tr>
+<tr>
+<td>bool</td>
+<td>NBoolean</td>
+</tr>
+<tr>
+<td>string</td>
+<td>NString</td>
+</tr>
+</table>
+<p>In addition to <code>is()</code>, Olivine provides 5 functions that wrap the <code>::get()</code> calls of the 5 main Olivine value types.</p>
+<table>
+<tr>
+<th colspan="2">Olivine Type Aliases</th>
+<tr>
+<th>Alias</th>
+<th>Olivine Type</th>
+</tr>
+<tr>
+<td><code>_object()</code></td>
+<td>NObject</td>
+</tr>
+<tr>
+<td><code>_int( int value )</code></td>
+<td>NInt</td>
+</tr>
+<tr>
+<td><code>_float( float value )</code></td>
+<td>NFloat</td>
+</tr>
+<tr>
+<td><code>_bool( bool value )</code></td>
+<td>NBoolean</td>
+</tr>
+<tr>
+<td><code>_string( string value )</code></td>
+<td>NString</td>
+</tr>
+</table>
+<h3>What are the advantages?</h3>
+<p>Why bother with Olivine at all, you ask?  Here are a couple reasons:</p>
+<ol>
+<li><strong>A tried and true object-oriented API inspired by the .NET framework.</strong>  No longer will you have to fish around in the PHP manual looking for the function you need &mdash; they'll all appear when you press Ctrl-Space after an Olivine type.</li>
+<li><strong>Method chaining.</strong>  Instead of having do stuff like <code>strtoupper(substr($str, 0, 10))</code> you can do <code>$str->substring(0, 10)->toUpper()</code>.  This allows you to write  code faster (as you don't have to backtrack when chaining) that is also easier to read.</li>
+<li><strong>Knowledge reuse.</strong>  If you already know the .NET API, you already know Olivine.  All that time you spent programming in C# and Visual Basic can be translated to PHP quickly.</li>
+</ol>
+<p>Olivine is also completely compatible with existing PHP code.  If you want to use an NString with an existing PHP method that is expecting a regular string, you can simply access the underlying value using the methods provided by the <code>IConvertible</code> interface.  For example:</p>
+<pre lang="php">
+$str = is( ... lots and lots of text ... );
+$wrapped = wordwrap( $str->string() );
+</pre>
+<h3>Drawbacks</h3>
+<p>Olivine isn't perfect, nor is it the solution to every problem you'll encounter in PHP.  Specifically, Olivine has the following known drawbacks:</p>
+<ul>
+<li><strong>Overhead.</strong>  Olivine has a .NET inspired type hierarchy that requires more resources than just using the primitive PHP types.</li>
+<li><strong>Incompleteness.</strong>  Currently, Olivine only implements NString, NBoolean, NNumber, parts of Math, and a handful of interfaces.  Most glaringly, Olivine currently does not implement the System.Collections API.  This will be needed in order to complete the NString class (specifically things like split and join operations).</li>
+<li><del datetime="2010-04-26T04:40:29+00:00"><strong>NNumber is probably slow.</strong>  NNumber currently wraps function calls to the BCMath arbitrary precision library the ships with PHP.  This is probably much slower than the built-in ints and floats.  This will hopefully be remedied in the future by having NNumber choose its underlying type based on if it can fit in an int, float or BCMath container.</del> For performance and simplicity, Olivine now provides NInt and NFloat instead of a unified NNumber class.</li>
+<li><del datetime="2010-04-19T00:43:37+00:00"><strong>Boxing.</strong>  Having to box every literal that you pass to a method with <code>is()</code> is tedious and obfuscates the code.  Perhaps making all Olivine types auto-box primitive types might be a good idea.  For example, if you write <code>$str->replace("foo", "bar")</code>, Olivine could automatically box "foo" and "bar" into NString types.</del>  Olivine now has auto-boxing.  That is, anywhere you can pass an NString, you can pass a regular string equivalent.  Same goes for NBoolean and NNumber.</li>
+</ul>
+<h3>What Needs to be Done?</h3>
+<p>More on this after the first release.</p>

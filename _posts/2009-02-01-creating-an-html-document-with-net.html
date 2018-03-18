@@ -1,0 +1,174 @@
+---
+layout: post
+status: publish
+published: true
+title: Creating an HTML document with .NET
+author:
+  display_name: cdmckay
+  login: cdmckay
+  email: me@cdmckay.org
+  url: ''
+author_login: cdmckay
+author_email: me@cdmckay.org
+wordpress_id: 43
+wordpress_url: http://couchware.ca/blogs/cam/?p=43
+date: '2009-02-01 03:15:09 +0100'
+date_gmt: '2009-02-01 08:15:09 +0100'
+categories:
+- Programming
+- ".NET"
+tags:
+- html
+- ".net"
+- xml
+- vb
+- visual basic
+- vb.net
+- asp.net
+comments:
+- id: 4
+  author: kev
+  author_email: kev@couchware.ca
+  author_url: http://couchware.ca
+  date: '2009-02-01 12:02:35 +0100'
+  date_gmt: '2009-02-01 17:02:35 +0100'
+  content: "Just as a note, Java servelets use the same type of structure to write
+    out HTML. They use the printwriter \"out\" and statements like out.println(HTML
+    in here); So an approach like this using DOM or JDOM might be good as well.\r\n\r\nAlthough
+    no one uses strictly servlets anymore (other than the company i'm currently working
+    for ;)) and java has largely fixed this problem with the introduction of JSP's."
+- id: 5
+  author: Paul Schofield
+  author_email: pscho@microsoft.com
+  author_url: ''
+  date: '2009-02-01 17:28:17 +0100'
+  date_gmt: '2009-02-01 22:28:17 +0100'
+  content: You had me at gear down sugar plum. I'm surprised Kevin didn't try to plug
+    JQuery. I think that the threat of not generating well formed HTML should be reason
+    enough not to use string concatenation.
+- id: 6
+  author: cam
+  author_email: cam@couchware.ca
+  author_url: http://
+  date: '2009-02-01 20:25:07 +0100'
+  date_gmt: '2009-02-02 01:25:07 +0100'
+  content: "<a href=\"#comment-5\" rel=\"nofollow\">@Paul Schofield</a> \r\nI'm planning
+    on making a jQuery post in the future.  That shit is just too good not to plug."
+- id: 7
+  author: cam
+  author_email: cam@couchware.ca
+  author_url: http://
+  date: '2009-02-01 21:00:33 +0100'
+  date_gmt: '2009-02-02 02:00:33 +0100'
+  content: "<a href=\"#comment-4\" rel=\"nofollow\">@kev</a> \r\nYeah, I'll probably
+    make another post talking about how much better JDOM is compared to the .NET API."
+- id: 407
+  author: anon_anon
+  author_email: crackeur@comcast.net
+  author_url: http://vtd-xml.sf.net
+  date: '2009-11-24 16:32:47 +0100'
+  date_gmt: '2009-11-24 21:32:47 +0100'
+  content: "VTD-XML is 10x faster and 5x more memory efficient than JDOM\r\nor DOM4J\r\n\r\n<a
+    href=\"http://vtd-xml.sf.net\" rel=\"nofollow\">http://vtd-xml.sf.net</a>"
+- id: 18381
+  author: Srinivas
+  author_email: kkcc.ong@yahoo.com
+  author_url: http://dadfasd
+  date: '2017-08-04 08:33:00 +0200'
+  date_gmt: '2017-08-04 12:33:00 +0200'
+  content: adfasdfadf
+---
+<p>Sometimes when you're programming, you'll want to generate an HTML document.  This may be because you're writing some sort of web app, or maybe you want your program to be able to output in a web-friendly format.</p>
+<p><!--more--></p>
+<h3>The String Concatenation Approach</h3>
+<p>Whatever your reason is for generating HTML, the best bet is your first prototype looked something like this:</p>
+<p><em>(Aside: All this code is in VB.NET... the original VB.NET (i.e. not 2005 or later).  It also assumes ASP.NET 1.1.  This is because the client I work for still uses this technology, so all my experience is with it.  The code should still be fine though, as all versions of .NET after 1.1 are more or less backwards compatible.)</em></p>
+<pre lang="asp" escaped='true'>' Run some query on the database.
+Dim dataTable As DataTable = Query()
+
+' Dump it into an HTML document.
+Response.Write("<html>" + Environment.NewLine)
+Response.Write("<head><title>Database Table</title></head>")
+Response.Write(Environment.NewLine)
+Response.Write("<body>" + Environment.NewLine)
+Response.Write("<table>" + Environment.NewLine)
+
+' Print the rows.
+For Each row As DataRow In dataTable
+  Response.Write("<tr>")
+  ' Print the cells.
+  For Each item As Object In row
+    If IsDBNull(item) = False Then
+      Response.Write("<td>" + CStr(item) + "</td>")
+    Else
+      Response.Write("<td>&amp;nbsp;</td>")
+    End If
+  End For
+  Response.Write("</tr>")
+End For
+
+Response.Write("</table>" + Environment.NewLine)
+Response.Write("</body>" + Environment.NewLine)
+Response.Write("</html>" + Environment.NewLine)</pre>
+<p>Now don't get me wrong, this code will do the trick.  But as you write it, you start to feel a bit dirty.  HTML is a language for representing hierarchies, yet you're concatenating strings.  You start to feel like there's a more elegant way to do it, a way that takes advantage of the structure of HTML.</p>
+<p>And there is.</p>
+<h3>The Programmatic Approach</h3>
+<p>Ok, so we want to take an approach that has some knowledge of the HTML we're writing.  Enter XML.  .NET uses XML for, among other things, it's <a href="http://en.wikipedia.org/wiki/Javadoc">Javadoc</a>-like documentation generator and it's ASP.NET config files.  With XML so prevalent in .NET, it's not surprising to discover that it's part of the standard library, in the namespace <code>System.Xml</code>.</p>
+<p>So you're thinking "Cameron, who cares about XML, I want to make an HTML document!"  Gear down, sugar plum, XML can still help!  As you may or may not know, HTML (at least the XHTML dialects) is a reformulation of XML.  That is, an XHTML document is an XML document.  As a result, we can use .NET's built-in XML support to generate an HTML document.</p>
+<p>Thus, if we want to write the same code in previous example in .NET XML, we would do the following.  First, we would need to make a new XML document.  That's easy enough:</p>
+<pre lang="vbnet">Imports System.Xml
+
+' Create a new XML document.
+Dim xmlDoc As XmlDocument = New XmlDocument</pre>
+<p>Now we want to start writing some HTML.  So let's create our <code>html</code> tag and add some headers.</p>
+<pre lang="vbnet">' Create the html tag.
+Dim xmlRoot As XmlElement = xmlDoc.CreateElement("html")
+xmlDoc.AppendChild(xmlRoot)
+
+' Create the head tag and append it under the html element.
+Dim xmlHead As XmlElement = xmlDoc.CreateElement("head")
+xmlRoot.AppendChild(xmlHead)
+
+' Create the title tag, set it's text to "Database Table"
+' and append it under the head element.
+Dim xmlTitle As XmlElement = xmlDoc.CreateElement("title")
+xmlTitle.AppendChild(xmlDoc.CreateTextNode("Database Table"))
+xmlHead.AppendChild(xmlTitle)</pre>
+<p>Wow, that's a lot of code.  What's going on there?  First, let's look at the <code>XmlDocument</code> class.  This is important when we're generating XML documents.  It's what we use to create new elements.  However, even though it creates new elements, it doesn't add them to the document.  Thus, we need to use the <code>AppendChild</code> method of the appropriate element to add it to the document.  As you can see above, we created a root element (<code>html</code>) and added that to the XML document (<code>xmlDoc</code>) first.  Then we created a <code>head</code> element, and added that to the root element, not the <code>xmlDoc</code>.  This was done in order to form a hierarchy, which is, in essence, what a XML (and by extension HTML) document is.</p>
+<p>Here is what the resulting XML/XHTML document would look like so far:</p>
+<pre lang="xml" escaped='true'><html>
+  <head>
+    <title>Database Table</title>
+  </head>
+</html></pre>
+<p>So far so good, let's finish it off.  Here's the rest of the code we'd need to make our simple HTML document:</p>
+<pre lang="vbnet">' Create the body element and append it to the root.
+Dim xmlBody As XmlElement = xmlDoc.CreateElement("body")
+xmlRoot.AppendChild(xmlBody)
+
+' Create the table and append it.
+Dim xmlTable As XmlElement = xmlDoc.CreateElement("table")
+xmlBody.AppendChild(xmlTable)
+
+' Create the rows.
+For Each row As DataRow In dataTable
+  Dim xmlRow As XmlElement = xmlDoc.CreateElement("tr")
+  xmlTable.AppendChild(xmlRow)
+
+  ' Create the cells.
+  For Each item As Object In row
+    Dim content As String = ""
+    If IsDBNull(item) = False Then content = CStr(item)
+    Dim xmlCell As XmlElement = xmlDoc.createElement("td")
+    xmlCell.AppendChild(xmlDoc.createTextNode(content))
+    xmlRow.AppendChild(xmlCell)
+  End For
+End For
+
+' Write the XML/HTML document.
+Response.Write(xmlDoc.OuterXml)</pre>
+<p>And there you have it: a programmatic way to generate an HTML document.  So why bother?  Here's a few reasons:</p>
+<p><strong>Safety</strong>.  If you generate your HTML document by concatenating strings, there's a chance you might forget to close a tag.  If you generate the document programmatically, you can ensure that all your tags will always be closed.</p>
+<p><strong>Maintainability and readability</strong>.  I've had to deal with code where the HTML is generated by concatenation.  It's confusing and frustrating.  If you generate your HTML documents programmatically, it's a lot easier for a future programmer to follow what's going on (especially if you, y'know, document it).</p>
+<p><strong>Reusability and modifiability</strong>.  If you create your HTML document as a flat string, it makes it really hard to modify and reuse elsewhere in your code.  For example, if you wanted to add a tag in the middle of your HTML document using the string concatenation method, you will have to do a lot of painful string manipulations.  With the programmatic approach, it's as simple as just calling <code>AppendChild</code> on the appropriate <code>XmlElement</code>.</p>
+<p>Using an <code>XmlDocument</code> to represent an XML document just makes sense.  It's less crude and more versatile.</p>

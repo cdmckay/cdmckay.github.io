@@ -1,0 +1,265 @@
+---
+layout: post
+status: publish
+published: true
+title: Adding Extension Methods to PHP
+author:
+  display_name: cdmckay
+  login: cdmckay
+  email: me@cdmckay.org
+  url: ''
+author_login: cdmckay
+author_email: me@cdmckay.org
+wordpress_id: 1432
+wordpress_url: http://cdmckay.org/blog/?p=1432
+date: '2010-04-23 14:51:16 +0200'
+date_gmt: '2010-04-23 19:51:16 +0200'
+categories:
+- Web Development
+- Programming
+- PHP
+tags: []
+comments:
+- id: 419
+  author: Tweets that mention Adding Extension Methods to PHP &raquo; Cameron McKay
+    -- Topsy.com
+  author_email: ''
+  author_url: http://topsy.com/trackback?utm_source=pingback&amp;utm_campaign=L2&amp;url=http://cdmckay.org/blog/2010/04/23/adding-extension-methods-to-php/
+  date: '2010-04-23 16:28:26 +0200'
+  date_gmt: '2010-04-23 21:28:26 +0200'
+  content: "[...] This post was mentioned on Twitter by kicauan, Hacker News. Hacker
+    News said: Adding Extension Methods to PHP: http://bit.ly/bRsJzl Comments: http://bit.ly/9evzhk
+    [...]"
+- id: 420
+  author: m0sh3g
+  author_email: m0sh3g@gmail.com
+  author_url: ''
+  date: '2010-04-23 16:51:06 +0200'
+  date_gmt: '2010-04-23 21:51:06 +0200'
+  content: "Thanks for great idea :)\r\n\r\nIs there any specific reason you're limiting
+    it to closures in description and not regular callbacks for users of PHP 5.x ?\r\n\r\nfunction
+    extended_method($self, $arg) {\r\n  //...\r\n}\r\nBug::addMethod(\"punch\", \"extended_method\");\r\n\r\nOR
+    \r\n\r\nclass NewBug {\r\n    public function extended_method($self, $arg) {\r\n
+    \       //...\r\n    }\r\n}\r\nBug::addMethod(\"punch\", array(\"NewBug\", \"extended_method\"));"
+- id: 421
+  author: cdmckay
+  author_email: me@cdmckay.org
+  author_url: ''
+  date: '2010-04-23 17:00:17 +0200'
+  date_gmt: '2010-04-23 22:00:17 +0200'
+  content: "@m0sh3g: There's no particular reason, it just looks prettier with closures
+    :)"
+- id: 422
+  author: uberVU - social comments
+  author_email: ''
+  author_url: http://www.ubervu.com/conversations/cdmckay.org/blog/2010/04/23/adding-extension-methods-to-php/
+  date: '2010-04-23 17:24:53 +0200'
+  date_gmt: '2010-04-23 22:24:53 +0200'
+  content: |-
+    <strong>Social comments and analytics for this post...</strong>
+
+    This post was mentioned on Twitter by hntweets: Adding Extension Methods to PHP: http://bit.ly/bRsJzl Comments: http://bit.ly/9evzhk...
+- id: 424
+  author: PHP Developer
+  author_email: comment@virvo.com
+  author_url: http://www.virvo.com
+  date: '2010-04-23 22:48:58 +0200'
+  date_gmt: '2010-04-24 03:48:58 +0200'
+  content: great article! I havent been using 5.3 enough to playing around with new
+    features - but this just convinced me to start :)
+- id: 2153
+  author: Resistance-free Development
+  author_email: deansmithiphone5@gmail.com
+  author_url: http://dev.codal.com/followthesun.html
+  date: '2013-10-09 07:23:38 +0200'
+  date_gmt: '2013-10-09 11:23:38 +0200'
+  content: Very nice article you have shared, Very informative post. Thank you for
+    sharing.
+---
+<p>If you've ever used the .NET Framework version 3.5 of later, you'll probably have encountered <a href="http://msdn.microsoft.com/en-us/library/bb383977.aspx">extension methods</a>.  Microsoft describes extension methods as:</p>
+<blockquote><p>Extension methods enable you to "add" methods to existing types without creating a new derived type, recompiling, or otherwise modifying the original type. Extension methods are a special kind of static method, but they are called as if they were instance methods on the extended type. For client code written in C# and Visual Basic, there is no apparent difference between calling an extension method and the methods that are actually defined in a type.
+</p></blockquote>
+<p>In this article, I will show you how to write a base class that will allow you to add methods to any PHP class that inherits from it at runtime.  You will be able to call these methods transparently, without any special syntax.</p>
+<p><!--more--></p>
+<p>For those unfamiliar with .NET, I'll explain extension methods in a PHP context.  For example, consider the following code for a limited .NET-style string class in PHP:</p>
+<pre lang="php">
+final class NetString {
+   private $value;
+   public function __construct($str)  {
+      $this->value = $str;
+   }
+   public function toUpper() {
+      return new NetString(strtoupper($this->value));
+   }
+   public function string() {
+      return $this->value;
+   }
+}
+
+$str = new NetString("foo");
+$upper = $str->toUpper()->string();
+// $upper now contains "FOO"
+</pre>
+<p>What if, at some point in the future, we wanted to add a <code>toLower</code> method and we didn't have access to the source code?  The first thing that probably comes to mind is to use inheritance.  Unfortuantely, <code>NetString</code> is a final class, so that's out of the question.  So what else?  </p>
+<p>All we're left with is using a function or a static method.  Wouldn't it be nice if we could do something like this?</p>
+<pre lang="php">
+NetString::addMethod("toLower", function($str) {
+    return new NetString(strtolower($str->string()));
+});
+
+$str = new NetString("foo");
+
+$upper = $str->toUpper()->string();
+// $upper now contains "FOO"
+
+$lower = $upper->toLower()->string();
+// $lower now contains "foo"
+</pre>
+<p>Starting with PHP 5.3, this is possible thanks to closures and some other new features.  The rest of this article will be dedicated to explaining how to setup extension methods in PHP.</p>
+<h3>How It Works</h3>
+<p>In order to add extension methods to PHP, we need to do a couple of things.  First off, since an extension method is basically a missing method, we need to find some way to catch any calls to missing methods.  Fortunately, PHP provides <a href="http://www.php.net/manual/en/language.oop5.overloading.php#language.oop5.overloading.methods">a mechanism for doing this</a>.  It's a magic method called <code>__call</code>.</p>
+<p>What we need to do is make sure any class that we want to have extension methods have it's <code>__call</code> method rerouted to a method dispatcher.  This dispatcher will have to be static so all instances of a class can access it.  In order to ensure that these calls are rerouted to the dispatcher, we'll create a common base class that does that automatically for us.  We'll call this base class <code>Extensible</code>.</p>
+<pre lang="php">
+class Extensible {
+    public function __call($name, $args) {
+        self::methodDispatcher($this, $name, $args);
+    }
+
+    public static function methodDispatcher( 
+            $instance, $name, $args) {
+    }
+}
+</pre>
+<p>Now that we have our missed calls rerouted to our dispatcher, we need two more things.  We need a way to add methods to the object (<code>addMethod</code>) and we need somewhere to store them to look them up with the dispatcher (<code>$methodTable</code>).</p>
+<pre lang="php">
+class Extensible {
+    public function __call($name, $args) {
+        self::methodDispatcher($this, $name, $args);
+    }
+
+    private static $methodTable = array();
+
+    public static function methodDispatcher( 
+            $instance, $name, $args) {
+    }
+
+    public static function addMethod($methodName, $method) {
+    }
+}
+</pre>
+<p>We're almost there.  How can we store a method so that we can uniquely identify it?  The easiest way would be in an associative array indexed by class name.  Each value in the that associative array would be another associative array holding all the extension methods (i.e. the closures) for that class.</p>
+<pre lang="php">
+class Extensible {
+    public function __call($name, $args) {
+        self::methodDispatcher($this, $name, $args);
+    }
+
+    private static $methodTable = array();
+
+    public static function methodDispatcher( 
+            $instance, $name, $args) {
+    }
+
+    public static function addMethod($methodName, $method) {
+
+        $class = get_called_class();        
+        $table =& self::$methodTable;
+        if (!array_key_exists($class, $table))        
+            $table[$class] = array();                
+
+        $table[$class][$methodName] = $method;
+    }
+}
+</pre>
+<p>Now that we have all the extension methods stored, how do we invoke them?  Well, if they're going to be useful at all, they'll need to have access to the instance they're attached to.  Like .NET, we'll provide that automatically as the first argument.  We also need to pass the arguments that were passed in the call.</p>
+<pre lang="php">
+class Extensible {
+    public function __call($name, $args) {
+        self::methodDispatcher($this, $name, $args);
+    }
+
+    private static $methodTable = array();
+
+    public static function methodDispatcher( 
+            $instance, $name, $args) {
+        $table =& self::$methodTable;        
+        $class = get_class($instance);
+        do {
+            if (array_key_exists($class, $table) 
+                    && array_key_exists($name, $table[$class]))
+                break;
+
+            $class = get_parent_class($class);
+        } while ($class !== false);
+
+        if ($class === false)
+            throw new Exception("Method not found");
+
+        $func = $table[$class][$name];
+        array_unshift($args, $instance);
+
+        return call_user_func_array($func, $args);
+    }
+
+    public static function addMethod($methodName, $method) {
+
+        $class = get_called_class();        
+        $table =& self::$methodTable;
+        if (!array_key_exists($class, $table))        
+            $table[$class] = array();                
+
+        $table[$class][$methodName] = $method;
+    }
+}
+</pre>
+<p>And we're there.  Now, in order to add extension methods to a class, we just have to ensure that inherits from our Extensible class.  I'll admit this is kind of a crappy requirement, but it's the best we can do for now.</p>
+<p>Here's an example:</p>
+<pre lang="php">
+final class Bug extends Extensible {
+    private $name;
+    private $arms;
+    public function __construct($name, $arms) {
+        $this->name = $name;
+        $this->arms = $arms;
+    }
+    public function getName() { return $this->name; }
+    public function getArms() { return $this->arms; }
+}
+
+Bug::addMethod("hug", function($bug, $otherBug) {
+    echo $bug->getName() . " hugs " . $otherBug->getName();
+});
+
+Bug::addMethod("punch", function($bug, $otherBug) {
+    echo $bug->getName() 
+       . " punches " . $otherBug->getName()
+       . " with " . $bug->getArms() . " fists ";
+});
+
+$doug = new Bug("Doug", 10);
+$fred = new Bug("Fred", 4);
+$fred->hug($doug);
+$doug->punch($fred);
+</pre>
+<h3>Limitations</h3>
+<p>This implementation of extension methods in PHP isn't all puppy dogs and ice cream.  It has its share of drawbacks:</p>
+<ul>
+<li>Classes must inherit from <code>Extensible</code> to be capable of having extension methods.  This sucks, but you can get around it in existing classes by using composition.</li>
+<li>Speed.  Although I have not tested it myself, magic methods like <code>__call</code> are apparently quite slow.</li>
+<li><del datetime="2010-04-23T19:52:15+00:00">Ignores inheritance.  This particular implementation does not follow the inheritance chain to see if any parent classes have extension methods for a given method call.  This could be easily remedied with a bit of code.</del> See the update below.</li>
+</ul>
+<h3>Source</h3>
+<p>The source code I have written in this article is public domain, and you are free to do what you will with it. <a href="http://cdmckay.org/files/Extensible.zip">Here is the source file.</a></p>
+<h3>Update</h3>
+<p>I've updated the code so that <code>methodDispatcher</code> will search the inheritance chain for a suitable extension method.  This behaviour is illustrated by this example:</p>
+<pre lang="php">
+class Foo extends Extensible { }
+class Bar extends Foo { }
+Foo::addMethod("customMethod", function($object) {
+    return "Foo";
+});
+
+$bar = new Bar();
+$result = $bar->customMethod();
+// $result contains the string "Foo"
+</pre>

@@ -1,0 +1,53 @@
+---
+layout: page
+status: publish
+published: true
+title: Anonymous Functions
+author:
+  display_name: cdmckay
+  login: cdmckay
+  email: me@cdmckay.org
+  url: ''
+author_login: cdmckay
+author_email: me@cdmckay.org
+wordpress_id: 1056
+wordpress_url: http://couchware.ca/blogs/cam/?page_id=1056
+date: '2009-10-17 17:53:48 +0200'
+date_gmt: '2009-10-17 22:53:48 +0200'
+categories:
+- Meta
+tags: []
+comments: []
+---
+<p>Anonymous functions are described by the following lexical definitions:</p>
+<pre lang="bnf">
+anonfn_longform  ::=  fn [parameter_list] { expression }
+anonfn_shortform ::=  [parameter_list] => expression
+</pre>
+<p>Here are some examples of it in action:</p>
+<pre lang="php">
+// Example with one parameter.
+var a = [ 1, 2, "foo" ];
+var found = a.find( e => e is FString );
+println found; // Prints "foo"
+
+// Example with multiple parameters.
+var adder = (x, y) => x + y;
+var sum = adder(1, 1);
+println sum; // Prints "2"
+
+// Example with multiple expressions.
+var complicated = (x, y) => (var z = x + y; z + y)
+var result = complicated( 1, 2 ); 
+// result has value 5
+
+// Example of a long anonymous function.
+var long = fn(x, y, z)
+{
+  var z = x + y;
+  var a = z * z;
+  return a;
+};
+var answer = long( 1, 2, 3 );
+// answer has value 9
+</pre>

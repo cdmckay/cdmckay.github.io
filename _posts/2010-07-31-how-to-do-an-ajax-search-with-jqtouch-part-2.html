@@ -1,0 +1,472 @@
+---
+layout: post
+status: publish
+published: true
+title: How to do an AJAX search with jQTouch, Part 2
+author:
+  display_name: cdmckay
+  login: cdmckay
+  email: me@cdmckay.org
+  url: ''
+author_login: cdmckay
+author_email: me@cdmckay.org
+wordpress_id: 1667
+wordpress_url: http://cdmckay.org/blog/?p=1667
+date: '2010-07-31 10:53:25 +0200'
+date_gmt: '2010-07-31 15:53:25 +0200'
+categories:
+- Web Development
+- Programming
+- PHP
+- JavaScript
+tags: []
+comments:
+- id: 517
+  author: Edmundo Junior
+  author_email: majesticskull@gmail.com
+  author_url: http://edmundojr.com
+  date: '2010-09-01 13:33:01 +0200'
+  date_gmt: '2010-09-01 18:33:01 +0200'
+  content: "Awesome tutorial, works great for me! Until...\n\nThere's any way to wrap
+    up the results with a link? I'm trying to do something like this:\n\n$songs =
+    array(\t\n\tnew Song(<a href=\"#05\" rel=\"nofollow\">\"Controle\", \"Neozinho\"</a>),\n);\n\nBut
+    don't work! I do not now PHP so well =/\nCan you help me? What do I do?\nThanks!\n\nPs.:
+    sorry for the bad english;"
+- id: 518
+  author: Edmundo Junior
+  author_email: majesticskull@gmail.com
+  author_url: http://edmundojr.com
+  date: '2010-09-01 13:36:29 +0200'
+  date_gmt: '2010-09-01 18:36:29 +0200'
+  content: "This is the code, now right, hehe.\n\n<pre><code>\n$songs = array(\t\n\tnew
+    Song(<a href=\"#06\" rel=\"nofollow\">\"Controle\", \"Neo Light\"</a>),\n);\n</code></pre>"
+- id: 519
+  author: cdmckay
+  author_email: me@cdmckay.org
+  author_url: ''
+  date: '2010-09-01 13:53:16 +0200'
+  date_gmt: '2010-09-01 18:53:16 +0200'
+  content: |-
+    @Edmundo Junior:
+
+    If you want to wrap it in a link, you'll probably need to add a new field to Song (maybe called <code>$url</code>) and then make the jQuery code create a link if that field isn't empty.
+
+    I suggest grabbing a book on PHP :)
+- id: 520
+  author: Edmundo Junior
+  author_email: majesticskull@gmail.com
+  author_url: http://edmundojr.com
+  date: '2010-09-01 14:51:26 +0200'
+  date_gmt: '2010-09-01 19:51:26 +0200'
+  content: |-
+    @cdmckay I'm grabbing a book called internet right now :)
+    Again, excellent tutorial! Thanks for the fast reply!
+- id: 577
+  author: morgan
+  author_email: morganbigot@gmail.com
+  author_url: ''
+  date: '2010-09-16 09:52:19 +0200'
+  date_gmt: '2010-09-16 14:52:19 +0200'
+  content: "Hi, \r\n\r\nThis code sample doesn't work for me, the search always return
+    undefined, undefined in the result list.\r\nIt seems that this part of code doesn't
+    work:\r\n<pre lang=\"javascript\">\r\n$.get(\"search.php\",\r\n    { value: text.val()
+    },\r\n    function(data) {\r\n        $.each(data, function(i, song) {\r\n            var
+    str = song.artist \r\n            ...\r\n</pre>\r\nI put my \"search.php\" file
+    in the same place as the other files.\r\nAm i doing sthing wrong?\r\nThanks in
+    advance.\r\nMorgan"
+- id: 578
+  author: cdmckay
+  author_email: me@cdmckay.org
+  author_url: ''
+  date: '2010-09-16 09:58:00 +0200'
+  date_gmt: '2010-09-16 14:58:00 +0200'
+  content: |-
+    Try downloading the code that I used (and tested):
+    http://cdmckay.org/files/jqtouch-ajax-search-part2.zip
+
+    It may be a PHP version issue.  I was using 5.3.  It may not work with previous versions.
+- id: 579
+  author: morgan
+  author_email: morganbigot@gmail.com
+  author_url: ''
+  date: '2010-09-16 13:00:00 +0200'
+  date_gmt: '2010-09-16 18:00:00 +0200'
+  content: "That's good, that was a php issue. Thank you very much! I just discovered
+    jQTouch and webapps and your sample was very useful for me.\n\nWhat would you
+    advise me to do in order to accomplish the following:\n\nI want to have a 3 depth
+    cascading links in unordererd lists. I'm not sure I'm clear so I make a draft:\n\nsection1
+    > link1>\n           link2>\n           ...  > linkA > content1\n                  linkB
+    > content2\n                  ...\nEach time I click a link, a php request to
+    a database is made to get a list of datas that will populate my ul and will be
+    links to launch other php requests ... until I reach a final description. \nI
+    hope it won't bother you to respond to such strange thing.\nThank you.\nMorgan."
+- id: 582
+  author: thor
+  author_email: maskopat@hotmail.com
+  author_url: ''
+  date: '2010-10-26 02:45:06 +0200'
+  date_gmt: '2010-10-26 07:45:06 +0200'
+  content: Script doesnt work for me either, says search results are undefined, tried
+    the other version posted but didnt help. ive been trying to make a search (without
+    reloading the page) for 3 days now, was hoping this would be it, its almost exactly
+    what im looking for. Good job anyways.
+- id: 583
+  author: thor
+  author_email: maskopat@hotmail.com
+  author_url: ''
+  date: '2010-10-27 06:28:48 +0200'
+  date_gmt: '2010-10-27 11:28:48 +0200'
+  content: So this only works with PHP 5.3? Should mention that in the tutorial, how
+    do I display the results then? When I do alert(data) I see that its grabbed the
+    data, but no idea how to display it. evalJSON(data) or parseJSON(data) doesn't
+    work either.
+- id: 584
+  author: cdmckay
+  author_email: me@cdmckay.org
+  author_url: ''
+  date: '2010-10-27 08:49:17 +0200'
+  date_gmt: '2010-10-27 13:49:17 +0200'
+  content: |-
+    @thor:
+
+    The JSON is already parsed.  The "data" object is the JSON object.
+- id: 586
+  author: steve
+  author_email: xavier86@gmail.com
+  author_url: ''
+  date: '2010-11-05 02:08:40 +0100'
+  date_gmt: '2010-11-05 07:08:40 +0100'
+  content: Is there a way to have the results appear dynamically as I'm typing? Like
+    how iTunes search works.
+- id: 587
+  author: cdmckay
+  author_email: me@cdmckay.org
+  author_url: ''
+  date: '2010-11-05 09:10:09 +0100'
+  date_gmt: '2010-11-05 14:10:09 +0100'
+  content: |-
+    @steve:
+
+    If you listened for the "onKeyUp" event (check the jQuery documentation) and fired your AJAX request then, you could simulate that behaviour.
+- id: 593
+  author: Sebastian
+  author_email: paul161@gmail.com
+  author_url: ''
+  date: '2011-01-07 10:54:59 +0100'
+  date_gmt: '2011-01-07 15:54:59 +0100'
+  content: Just thanks, well coded with clear explanations.
+- id: 600
+  author: steven
+  author_email: stevensatch@gmail.com
+  author_url: ''
+  date: '2011-02-23 12:25:05 +0100'
+  date_gmt: '2011-02-23 17:25:05 +0100'
+  content: "Great tutorial, just one thing please...\r\n\r\nYou are currently heardcoding
+    the results in an array and searching the results in the page.\r\nHow can I query
+    a database instead please?\r\n\r\nthanks"
+- id: 601
+  author: John P
+  author_email: johnpusey@gmail.com
+  author_url: ''
+  date: '2011-02-28 21:58:32 +0100'
+  date_gmt: '2011-03-01 02:58:32 +0100'
+  content: Thanks a million. People like you make the world a better place. :-)
+- id: 602
+  author: cdmckay
+  author_email: me@cdmckay.org
+  author_url: ''
+  date: '2011-02-28 23:35:22 +0100'
+  date_gmt: '2011-03-01 04:35:22 +0100'
+  content: "@steven:\r\n\r\nYou'll need to grab your records from a database and then
+    load them into Song objects.\r\n\r\nFor example:\r\n\r\n<pre lang=\"php\">\r\n$songs
+    = array();\r\n$db = new mysqli( ... );\r\n$result = $db->query( ... );\r\nwhile
+    ($row = $result->fetch_assoc) {\r\n  $songs[] = new Song($row['artist'], $row['title']);\r\n}\r\n</pre>\r\n\r\nIf
+    you want something more sophisticated, have a look at an ORM like Doctrine or
+    Propel."
+- id: 603
+  author: Randy
+  author_email: rleslein@hotmail.com
+  author_url: ''
+  date: '2011-03-28 14:25:38 +0200'
+  date_gmt: '2011-03-28 19:25:38 +0200'
+  content: "I keep getting \"Undefined - Undefined\" too.\r\nI am using PHP 5.3.6...I
+    even downloaded your files and tested them, and get it. Any ideas?"
+- id: 604
+  author: Randy
+  author_email: rleslein@hotmail.com
+  author_url: ''
+  date: '2011-03-28 14:29:57 +0200'
+  date_gmt: '2011-03-28 19:29:57 +0200'
+  content: "nevermind...i found my error (was using old jquery call instead of \r\n\"
+    google.load(\"jquery\", \"1.4.2\"); \""
+- id: 606
+  author: Kannan
+  author_email: notrealemail@k.com
+  author_url: ''
+  date: '2011-04-29 16:45:07 +0200'
+  date_gmt: '2011-04-29 21:45:07 +0200'
+  content: "Hi Morgan,\r\n\r\nChanging $.each to:\r\n$.each(JSON.parse(data), function(i,
+    song) {\r\nworks for me. Otherwise it behaves like a string.\r\n\r\nKannan"
+- id: 666
+  author: moffie
+  author_email: mosfetti@gmail.com
+  author_url: ''
+  date: '2011-07-30 02:34:36 +0200'
+  date_gmt: '2011-07-30 06:34:36 +0200'
+  content: "I'm sorry for my bad english.\nHere is my question: is it possible to
+    give the results a specified link? \n\nexample: \nI would like to search for Weezer,
+    and end up with a clickable result \"Weezer - Say It Ain't So\" that points me
+    to a http://example.com \n\nIs it possible? \nCan you provide the code?\n\nThanks"
+- id: 667
+  author: moffie
+  author_email: mosfetti@gmail.com
+  author_url: ''
+  date: '2011-07-30 02:37:16 +0200'
+  date_gmt: '2011-07-30 06:37:16 +0200'
+  content: |-
+    I forgot to say, obviously, I would like to have a different link for each different result.
+
+    Thanks again
+- id: 671
+  author: galo
+  author_email: galohernandez@gmail.com
+  author_url: ''
+  date: '2011-10-04 17:09:42 +0200'
+  date_gmt: '2011-10-04 21:09:42 +0200'
+  content: Hi, thanks for the tutorial, it works. I am on a task, i dont need to search
+    i just need to show a mysql table when i push over a button. Your tutorial almost
+    gettin me there, how can i do this?
+- id: 672
+  author: Kamal
+  author_email: majidnakit@yahoo.com
+  author_url: ''
+  date: '2011-10-15 23:43:54 +0200'
+  date_gmt: '2011-10-16 03:43:54 +0200'
+  content: |-
+    Hi,
+    Nice tutorial,
+
+    Please, what did you use (tools IDE,..) to develope this example and how it was simulated  ?
+
+    2)How it was reloaded the web page in  iPhone or iPad ?
+
+    3) I see php here, does iPhone or ipad or a simulator understand php ?
+
+    Thanks
+    Your help is appreciated.
+- id: 676
+  author: cdmckay
+  author_email: me@cdmckay.org
+  author_url: ''
+  date: '2011-11-28 16:06:34 +0100'
+  date_gmt: '2011-11-28 21:06:34 +0100'
+  content: |-
+    @Kamal:
+
+    I used NetBeans to develop it and used my iPod Touch to run it over my local network.  The page was served using Apache via XAMPP on Windows.  You are right, iOS does not natively run PHP.  The PHP is run on the server side.
+---
+<p>In the last installment of <a href="http://cdmckay.org/blog/2010/04/22/how-to-do-an-ajax-search-with-jqtouch-part-1/">How to do an AJAX search with jQTouch</a> we looked at how to setup a jQTouch interface with the goal of performing an AJAX search. In this article, we will write the necessary JavaScript to perform that AJAX search, as well as a PHP script to respond to those calls.</p>
+<p>This article assumes you have read <a href="http://cdmckay.org/blog/2010/04/22/how-to-do-an-ajax-search-with-jqtouch-part-1/">the first part of this series</a>.</p>
+<p><!--more--></p>
+<p>Before we start, we should take a step back and consider what we're about to do.  Our Searcher app has three parts:</p>
+<ul>
+<li>the client-side jQTouch UI,</li>
+<li>the client-side jQuery AJAX calls,</li>
+<li>the server-side PHP script (that could easily be backed by a database)</li>
+</ul>
+<p>At this point we have finished the jQTouch UI.  However, instead of immediately moving on to writing the jQuery AJAX calls, let's start with the PHP script instead.  This will help us understand our AJAX calls when it comes time to write them.</p>
+<h3>The PHP Script</h3>
+<p>Since our PHP script will be performing a search, let's create a file called <code>search.php</code> and add a single line of boilerplate:</p>
+<pre lang="php" escaped='true'>&lt;?php
+</pre>
+<p>There's no need for an end tag.  In fact, in files containing only PHP, <a href="http://framework.zend.com/manual/en/coding-standard.php-file-formatting.html">it is recommended that you do not include an end tag</a>:</p>
+<blockquote><p>For files that contain only PHP code, the closing tag ("?>") is never permitted. It is not required by PHP, and omitting it prevents the accidental injection of trailing white space into the response.</p></blockquote>
+<p>Our Searcher app needs to search for something, so let's pretend it's an interface for a music player and we're searching for songs. In order to express that idea into PHP code, we need the following elements:</p>
+<ul>
+<li>a Song class to hold the artist name and the title,</li>
+<li>an array holding a bunch of Song objects,</li>
+<li>a function for searching the Song array,</li>
+<li>a way to get a search value from the AJAX request,</li>
+<li>a way to set the MIME type to JSON,</li>
+<li>a way to encode our Song array as JSON</li>
+</ul>
+<p>First, we'll need a class to hold the songs (place this starting at line 3 in <code>search.php</code>):</p>
+<pre lang="php" escaped='true' line='3'>
+class Song {
+    public $artist;
+    public $title;
+
+    public function __construct($artist, $title) {
+        $this->artist = $artist;
+        $this->title = $title;
+    }
+}
+</pre>
+<p>Let's break it down for those not familiar with PHP classes:</p>
+<ul>
+<li>at line 3, we declare the class name</li>
+<li>at lines 4-5, we declare two public fields to represent the artist's name and the title of the song,</li>
+<li>at lines 7-10, we declare the class constructor that we use to initialize the two fields of a Song object</li>
+</ul>
+<p>Now that we have a way to model songs in our PHP script, we need to make an array of some dummy songs that we can query using AJAX:</p>
+<pre lang="php" line='13'>
+$songs = array(
+    new Song("Weezer", "Say It Ain't So"),
+    new Song("Weezer", "Undone"),
+    new Song("Cake", "Meanwhile, Rick James..."),
+    new Song("The Stars", "Ageless Beauty"),
+    new Song("Roy Orbison", "In Dreams")
+);
+</pre>
+<p>Now we have something of a faux database setup. How will we search it?  Why, with a search function, of course! Let's write that now:</p>
+<pre lang="php" escaped='true' line='21'>
+function search($songs, $value) {
+    if (empty($value))
+        return $songs;
+
+    $matches = array();
+    foreach ($songs as $s)
+    {
+        $matchArtist = stripos($s->artist, $value) !== false;
+        $matchTitle = stripos($s->title, $value) !== false;
+        if ($matchArtist || $matchTitle)
+            $matches[] = $s;
+    }
+    return $matches;
+}
+</pre>
+<p>So what does this function do? Let's take a look line-by-line:</p>
+<ul>
+<li>at lines 22-23, we check to see if the search value is empty (i.e. an empty string or null). If that's the case, then we just return all the songs</li>
+<li>at line 25, we declare the <code>$matches</code> array. This will contain all the songs that match the search value <code>$value</code></li>
+<li>at line 26, we use a foreach loop to iterate through all the Song objects in the <code>$songs</code> array</li>
+<li>at lines 28-29, we check to see if the artist name or song title contain the search value <code>$value</code></li>
+<li>at line 30-31, we add the Song object to the <code>$matches</code> array if it matches the artist name or song title</li>
+<li>at line 33, we return whatever matches (if any) we have found</li>
+</ul>
+<p>Ok, so now we have a Song class, an array of Song objects, and a function that searches that array. What's left in our PHP script? Well, as it stands, we have no way to interface with it. What we need to do now is have some sort of way to respond to the AJAX GET request that our Searcher app will send. To do that, we harness the awesome power of the <code>$_GET</code> <a href="http://php.net/manual/en/language.variables.superglobals.php">superglobal</a>:</p>
+<pre lang="php" line='36'>
+$value = $_GET['value'];
+$matches = search($songs, $value);
+</pre>
+<p>On the first line, we extract "value" parameter from the <code>$_GET</code> superglobal and assign it to the <code>$value</code> variable.  The second line runs our search function on the <code>$songs</code> database and searches for songs that have an artist or title that contains the <code>$value</code> string.</p>
+<p>We're almost there!  At this point we've managed to get an array of Song objects that match the passed search value.  All we need to do now is return that PHP array of objects as a JSON-encoded array of objects.  Let's do that now:</p>
+<pre lang="php" line='39'>
+header('Content-Type: application/json');
+echo json_encode($matches);
+</pre>
+<p>The first line sets the the <a href="http://en.wikipedia.org/wiki/Internet_media_type">MIME type</a> of an HTTP response.  MIME types are a sort of meta data that is used to describe what sort of content is being returned.  In this case, we are telling jQuery (or whatever client that issued the request) that we are returning content that is JSON formatted.  The second line is a built-in PHP function that converts PHP types into a string containing their JSON counterparts.  Basically, it allows us to encode our PHP objects into JavaScript and allow us to access them in a nearly identical way:</p>
+<pre lang="php" escaped='true'>
+// PHP
+array(
+    new Song("Artist 1", "Title 1"),
+    new Song("Artist 2", "Title 2")
+);
+
+// Becomes... (after json_encode)
+// JavaScript
+[
+    { artist: "Artist 1", title: "Title 1" },
+    { artist: "Artist 2", title: "Title 2" }
+];
+</pre>
+<p>And we're done the PHP script! If we want to test it, we can load execute the PHP file on our server and try different search values.  For example, entering this URL should return a JSON array with two Song objects:</p>
+<pre lang="php">
+// URL
+http://example.com/jQTouch-ajax-search/search.php?value=Weezer
+
+// Response
+[{"artist":"Weezer","title":"Say It Ain't So"},{"artist":"Weezer","title":"Undone"}]
+</pre>
+<h3>The jQuery AJAX calls</h3>
+<p>The finish line is now in sight.  We've successfully written our jQTouch UI and our PHP script.  The last thing we need to do is write some jQuery AJAX calls to execute our search and load the results into our UI.  In order to do that, we need to do the following:</p>
+<ul>
+<li>listen for the submission of the search form in the jQTouch UI</li>
+<li>when the submission happens, get the search value from the form and set it as a parameter in an AJAX call to <code>search.php</code></li>
+<li>register a callback that will populate the jQTouch search results when the AJAX call completes</li>
+</ul>
+<p>Let's start with listening for the submit event on the search form.  First, we'll need to create a new JavaScript source file <code>search.js</code> and fill it with the following boilerplate:</p>
+<pre lang="javascript">
+(function($){
+
+    // Put code here.    
+
+})(jQuery);
+</pre>
+<p>What this boilerplate does is give our JavaScript script its own context so that can minimize leaking variables into the global JavaScript namespace.  It also gives us access to the jQuery object in the convenient <code>$</code> form, regardless of whether or not <a href="http://api.jquery.com/jQuery.noConflict/">"no conflict" mode is enabled</a>.</p>
+<p>Recall in part 1 we defined an HTML search form that looked like this:</p>
+<pre lang="html4strict" line="1">
+&lt;form id="search" action=""&gt;
+    &lt;div class="toolbar"&gt;
+        &lt;h1&gt;Search&lt;/h1&gt;
+        &lt;a href="#" class="back"&gt;Back&lt;/a&gt;
+    &lt;/div&gt;
+    &lt;ul class="rounded"&gt;
+        &lt;li&gt;&lt;input type="text" name="search-text" placeholder="Search" id="search-text" /&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+    &lt;ul class="edgetoedge" id="search-results"&gt;
+        &lt;li class="sep"&gt;Results&lt;/li&gt;                
+    &lt;/ul&gt;
+&lt;/form&gt;
+</pre>
+<p>Note that on line 1 we defined the id of the form as <code>search</code>. We'll use that to find the form and register a handler for its submit event so that we can take action when someone tries to perform a search using the jQTouch UI.</p>
+<pre lang="javascript" line="1">
+(function($){
+
+$(function(){
+
+    $("#search").submit(function(event, info) {
+        var text = $("input[id=search-text]", this);
+        text.blur();
+
+        var results = $("#search-results", this).empty();
+        results.append($("&lt;li&gt;", {
+            "class": "sep",
+            text: 'Results for "' + text.val() + '"'
+        }));
+
+        $.get("search.php",
+            { value: text.val() },
+            function(data) {
+                $.each(data, function(i, song) {
+                    var str = song.artist 
+                        + " - "
+                        + song.title;
+                    $("&lt;li&gt;")
+                        .text(str)
+                        .appendTo(results);
+                });
+            }
+        );
+
+        return false;       
+    });
+
+});
+
+})(jQuery);
+</pre>
+<p>There's a lot there, so let's break it down line-by-line:</p>
+<ul>
+<li>starting at line 3 and ending at line 32 we have <a href="http://api.jquery.com/ready/">the jQuery ready handler</a> which is run once the DOM has finished loading</li>
+<li>starting at line 5 and ending at line 30 we bind a submit event handler to the submit event for the <code>#search</code> form</li>
+<li>at lines 6-7, we retrieve the <code>search-text</code> element, assign it to a variable (for later use on line 16), and then blur (i.e. deselect) the element so that the iPhone keyboard will go away</li>
+<li>at lines 9-13, we clear any previous items in the list that may be hanging around from a previous search and then load in a new separator ("sep") that contains the search value</li>
+<li>at line 15-27, we perform our AJAX GET request to <code>search.php</code> with the value of the search text field as our value parameter (line 16) and a callback that adds the results to the list (lines 17-26)</li>
+<li>finally, at line 29, we return false to prevent the default form behaviour (i.e. submitting the form) from being carried out</li>
+</ul>
+<p>And we're done.  All we need to do now and include <code>search.php</code> in the header of <code>index.html</code> so that it'll be run:</p>
+<pre lang="html" line='12'>
+&lt;script src="search.js" type="application/x-javascript" charset="utf-8"&gt;&lt;/script&gt;
+</pre>
+<h3>Conclusion</h3>
+<p>In this, the final installment of <em>How to do an AJAX search with jQTouch</em>, we finished off the example application we started in <a href="http://cdmckay.org/blog/2010/04/22/how-to-do-an-ajax-search-with-jqtouch-part-1/">the first part of this series</a>.  </p>
+<p>In part 1, we covered building a UI using jQTouch.  In part 2, we helped visualize our problem by pretending that we were writing a front-end UI to a server-side music player.  To do that, we jumped into server side programming with PHP to write a script to serve us JSON-encoded Song objects.  Once we had that setup, we moved back into JavaScript.  In order to make use of the PHP script, we wrote a jQuery handler to respond to a jQTouch form submission.  The handler, once triggered, issued an AJAX call to the PHP script to pull down the appropriate Song objects for display in our UI.</p>
+<h3>What Now?</h3>
+<p>With respect to the goals of this tutorial, nothing.  However, if you want to pimp up the application a bit more, some things you could do are: </p>
+<ul>
+<li>Add genres and albums to the PHP Song object and then make the jQTouch UI menu have two additional options: Genres and Albums</li>
+<li>Try to make a Now Playing sub-menu that is activated when a Song is picked from the Search screen</li>
+</ul>
+<h3>Source</h3>
+<p>The source code I have written in this article is public domain, and you are free to do what you will with it. Here is <a href="http://cdmckay.org/files/jqtouch-ajax-search-part2.zip">a zip of the source, along with the required jQTouch source</a>. It should work pretty much right out of the box.</p>

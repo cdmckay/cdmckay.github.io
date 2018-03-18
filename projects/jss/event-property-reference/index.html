@@ -1,0 +1,93 @@
+---
+layout: page
+status: publish
+published: true
+title: Event Property Reference
+author:
+  display_name: cdmckay
+  login: cdmckay
+  email: me@cdmckay.org
+  url: ''
+author_login: cdmckay
+author_email: me@cdmckay.org
+wordpress_id: 531
+wordpress_url: http://couchware.ca/blogs/cam/?page_id=531
+date: '2009-05-06 13:54:48 +0200'
+date_gmt: '2009-05-06 18:54:48 +0200'
+categories:
+- Meta
+tags: []
+comments: []
+---
+<p>JSS exposes two types of event properties: unary and binary.  That basically means there are event properties that take one JSS command...</p>
+<pre lang="javascript">
+event-prop: "jss-command";
+</pre>
+<p>...and there are event properties that take two JSS commands:</p>
+<pre lang="javascript">
+event-prop: "jss-command | jss-command";
+</pre>
+<h3>Unary JSS Commands</h3>
+<p>Currently, the unary commands are:</p>
+<ul>
+<li>blur</li>
+<li>change</li>
+<li>click</li>
+<li>dblclick</li>
+<li>error</li>
+<li>focus</li>
+<li>keydown</li>
+<li>keypress</li>
+<li>keyup</li>
+<li>load</li>
+<li>mousedown</li>
+<li>mouseenter</li>
+<li>mouseleave</li>
+<li>mousemove</li>
+<li>mouseout</li>
+<li>mouseover</li>
+<li>mouseup</li>
+<li>resize</li>
+<li>scroll</li>
+<li>select</li>
+<li>submit</li>
+<li>unload</li>
+</ul>
+<p>For more information about when these events properties are fired, check out the <a href="http://docs.jquery.com/Events">jQuery documentation</a>, as JSS simply wraps these events.</p>
+<p>Here is an example of a JSS unary event property:</p>
+<pre lang="javascript">
+$.jss.declare({
+
+  ".box":
+  {
+    click: "set-css background green";
+  }
+
+});
+</pre>
+<p>This event property will change the colour of any element that has the "box" class when it is clicked.</p>
+<h3>Binary JSS Commands</h3>
+<p>There is currently only one binary JSS command: <strong>hover</strong>.  Here is an example of hover in action:</p>
+<pre lang="javascript">
+$.jss.declare({
+
+  ".box":
+  {
+    hover: "set-css background green | set-css background blue";
+  }
+
+});
+</pre>
+<p>In the above example, all elements with the "box" class will have a green background when the mouse is hovered over them, and a blue background when the mouse is unhovered (i.e. moved off the element).</p>
+<p>The hover JSS command is equivalent to:</p>
+<pre lang="javascript">
+$.jss.declare({
+
+  ".box":
+  {
+    mouseenter: "set-css background green",
+    mouseleave: "set-css background blue"
+  }
+
+});
+</pre>

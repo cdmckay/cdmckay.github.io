@@ -1,0 +1,57 @@
+---
+layout: post
+status: publish
+published: true
+title: 'Arrayzing vs. Array: get() and set()'
+author:
+  display_name: cdmckay
+  login: cdmckay
+  email: me@cdmckay.org
+  url: ''
+author_login: cdmckay
+author_email: me@cdmckay.org
+wordpress_id: 222
+wordpress_url: http://couchware.ca/blogs/cam/?p=222
+date: '2009-02-15 17:49:11 +0100'
+date_gmt: '2009-02-15 22:49:11 +0100'
+categories:
+- Programming
+- Arrayzing
+tags:
+- JavaScript
+- mutators
+- arrays
+- accessors
+comments: []
+---
+<p>What does Arrayzing provide that a normal Array doesn't?  I hope to answer that question in my series of posts <em>Arrayzing vs. Array</em>.  In today's installment, we'll take a look at what the get() and set() functions offer over an Array's traditional [] accessor.</p>
+<p><!--more--></p>
+<p>When using plain old JavaScript Array objects, a common operation is to access or modify elements.  For example:</p>
+<pre lang="javascript">
+var a = [1, 2, 3];
+var sum = a[0] + a[1] + a[2]; // = 6
+a[0] = 6;
+a.join(); // "6,2,3"
+</pre>
+<p>Arrayzing also supports the built-in [] accessor.  However, it should be noted there are limitations to accessing an Array in this manner, most notable amongst them being that we must always index from the left.  For example, imagine we wanted to access the last element.  Using a normal Array, we would have to do this:</p>
+<pre lang="javascript">
+var a = [1, 2, 3];
+a[a.length - 1] = 4; // a = [1, 2, 4];
+alert(a[a.length - 1]); // shows 4
+</pre>
+<p>Although this works, it's not the most convenient or elegant way to do it.  To address this problem, Arrayzing provides two new functions <strong>get()</strong> and <strong>set()</strong>.  These functions act essentially the same as the built-in [] accessors with an added benefit: we can index from the left <em>and</em> the right.  For example, to implement the above example using Arrayzing, we could instead do this:</p>
+<pre lang="javascript">
+var a = _(1, 2, 3);
+a.set$(-1, 4); // a = [1, 2, 4];
+alert(a.get(-1)); // shows 4
+</pre>
+<p><em>(Aside: If you're not familiar with the $ after set$(), check out this <a href="http://cdmckay.org/blog/2009/02/15/arrayzing-design-choices/">article</a>.  It means that the function is a mutator).</em></p>
+<p>What's more, all Arrayzing commands that take an index as an argument allow right-indexing.  What convenience!</p>
+<p>There is one further advantage of using set(): we can change an element in your zing (a zing is an Arrayzing array) without modifying the original array.  For example, if we wanted to replace an element in our zing but didn't want to modify the original array, we would do this:</p>
+<pre lang="javascript">
+var a = _(1, 2, 3);
+var b = a.set(0, 10); // not set$()
+a.str(); // returns "1,2,3"
+b.str(); // returns "10,2,3"
+</pre>
+<p>As you can see, Arrayzing provides a strict superset of the capabilities of a normal Array's accessors, allowing you to write cleaner, easier code.</p>

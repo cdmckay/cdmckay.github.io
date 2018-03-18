@@ -1,0 +1,183 @@
+---
+layout: post
+status: publish
+published: true
+title: The jQuery animate() step callback function
+author:
+  display_name: cdmckay
+  login: cdmckay
+  email: me@cdmckay.org
+  url: ''
+author_login: cdmckay
+author_email: me@cdmckay.org
+wordpress_id: 1189
+wordpress_url: http://cdmckay.org/blog/?p=1189
+date: '2010-03-01 11:32:59 +0100'
+date_gmt: '2010-03-01 16:32:59 +0100'
+categories:
+- Web Development
+- Programming
+- JavaScript
+tags:
+- jquery
+- JavaScript
+- animation
+comments:
+- id: 415
+  author: mav
+  author_email: a@a.pl
+  author_url: ''
+  date: '2010-04-20 03:10:50 +0200'
+  date_gmt: '2010-04-20 08:10:50 +0200'
+  content: Great! :)
+- id: 457
+  author: entr
+  author_email: like2code@gmail.com
+  author_url: ''
+  date: '2010-06-27 08:27:42 +0200'
+  date_gmt: '2010-06-27 13:27:42 +0200'
+  content: Very useful research! Helped a lot.
+- id: 461
+  author: Szczepan Hołyszewski
+  author_email: rulatir@wp.pl
+  author_url: ''
+  date: '2010-07-04 12:34:45 +0200'
+  date_gmt: '2010-07-04 17:34:45 +0200'
+  content: The pos attribute sweeps from 0.0 to 1.0 during the animation. I suppose
+    it some kind of a 't' value for interpolations but I don't know if it raw time
+    or already mapped through the easing function.
+- id: 462
+  author: cdmckay
+  author_email: me@cdmckay.org
+  author_url: ''
+  date: '2010-07-04 13:12:17 +0200'
+  date_gmt: '2010-07-04 18:12:17 +0200'
+  content: Thanks Szczepan, I've added that to the table.
+- id: 694
+  author: jQuery animate() &#8211; multiple selectors and variables, a unique animate()
+    call | Easy jQuery | Free Popular Tips Tricks Plugins API Javascript and Themes
+  author_email: ''
+  author_url: http://www.easyjquery.com/jquery-animate-multiple-selectors-and-variables-a-unique-animate-call/
+  date: '2012-06-11 03:32:06 +0200'
+  date_gmt: '2012-06-11 07:32:06 +0200'
+  content: "[...] best workaround is using the step callback function as suggested
+    here. Thanks to Nick Craver for the link.       Tagged: jquery, jQuery animation,
+    jquery-selectors, [...]"
+- id: 758
+  author: Extending jQuery Animate() Beyond Basic CSS Animation &laquo; Ben Knows
+    Code
+  author_email: ''
+  author_url: http://benknowscode.wordpress.com/2012/09/19/extending-jquery-animate-beyond-basic-css-animation/
+  date: '2012-09-19 08:27:41 +0200'
+  date_gmt: '2012-09-19 12:27:41 +0200'
+  content: "[...] http://cdmckay.org/blog/2010/03/01/the-jquery-animate-step-callback-function/
+    &#8211; Discusses the FX object properties and what they represent. [...]"
+- id: 2144
+  author: LewHowe
+  author_email: supremehover@gmail.com
+  author_url: ''
+  date: '2013-09-29 01:03:10 +0200'
+  date_gmt: '2013-09-29 05:03:10 +0200'
+  content: Amazing!Thanks!
+- id: 11187
+  author: jquery动画总结 &#8211; ThreeTree | 查问题
+  author_email: ''
+  author_url: http://www.chawenti.com/articles/31639.html
+  date: '2015-07-17 06:51:30 +0200'
+  date_gmt: '2015-07-17 10:51:30 +0200'
+  content: "[&#8230;] The jQuery animate() step callback function [&#8230;]"
+---
+<p>If you've ever needed to do more complex animations than fades and slides, then you've probably encountered the <a href="http://api.jquery.com/animate/">jQuery <code>animate</code> function</a>.  The <code>animate</code> function allows you quite a bit more flexibility than just using <code>fadeOut</code> or <code>slideDown</code>.  In fact, the oft-used fades and slides simply wrap calls to <code>animate</code>.</p>
+<p>If you've ever looked at the jQuery <code>animate</code> docs at <a href="http://api.jquery.com">api.jquery.com</a> you might have noticed that one of the optional arguments you can define is <code>step</code> which is defined as:</p>
+<blockquote><p>A function to be called after each step of the animation.</p></blockquote>
+<p>...and that's it.  If you search for "step" on the page, you won't see another mention of it.</p>
+<p><!--more--></p>
+<p>Fortunately, a quick search on Google for "jquery animate step" will yield <a href="http://docs.jquery.com/Release:jQuery_1.2/Effects">the jQuery 1.2 release notes</a> that sheds a bit of light <a href="http://docs.jquery.com/Release:jQuery_1.2/Effects#Extensible_Animations">on the step function</a>:</p>
+<blockquote><p>You can now extend jQuery animations with a function that is fired on every step of the animation that changes the style of the element being animated. It can be extended for specific css properties, or even to create a custom animation type.</p>
+<p>For example, you can pass in an extra step function to .animate() to perform actions like animation synchronization.</p></blockquote>
+<p>The release notes also contain a code sample:</p>
+<pre lang="javascript">$("#go").click(function(){
+    $(".block:first").animate({ left: 100 }, {
+      duration: 1000,
+      step: function(now, fx){
+        $(".block:gt(0)").css("left", now);
+      }
+    });
+});
+</pre>
+<p>So now we know the arguments <code>step</code> takes: <code>now</code> and <code>fx</code>.  We can also tell from the code that <code>now</code> contains the value being animated.  <code>fx</code>, however, is still a bit mystery.  We can solve that mystery by running the above code in <a href="http://getfirebug.com/">Firebug</a>, setting a break point when the step function is called, and then inspecting the <code>fx</code> and <code>now</code> objects.  Here are the results of that operation:</p>
+<table>
+<thead>
+<tr>
+<th colspan="3">The <code>fx</code> object</th>
+</tr>
+<tr>
+<th>Attribute</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>elem</td>
+<td>DOM Element</td>
+<td>The element being animated.</td>
+</tr>
+<tr>
+<td>end</td>
+<td>Number</td>
+<td>The value the animation will end at.</td>
+</tr>
+<tr>
+<td>now</td>
+<td>Number</td>
+<td>The value the animation is currently at.</td>
+</tr>
+<tr>
+<td>options</td>
+<td>Object</td>
+<td>Some animations options.</td>
+</tr>
+<tr>
+<td>options.curAnim</td>
+<td>Object</td>
+<td>Information about the current animation.  For example, if you passed <code>{ opacity: 0, top: "+=16" }</code> as the first parameter of <code>animate</code>, then they will be attributes of this object.</td>
+</tr>
+<tr>
+<td>options.duration</td>
+<td>Number</td>
+<td>The duration that you passed to <code>animate</code>.</td>
+</tr>
+<tr>
+<td>pos</td>
+<td>Number</td>
+<td>Sweeps from 0.0 to 1.0 during the animation. Sort of like a &lsquo;t&rsquo; value for interpolations.</td>
+</tr>
+<tr>
+<td>prop</td>
+<td>String</td>
+<td>The CSS property being varied (e.g. "opacity" or "top").</td>
+</tr>
+<tr>
+<td>start</td>
+<td>Number</td>
+<td>The starting value of the CSS property being animated.</td>
+</tr>
+<tr>
+<td>startTime</td>
+<td>Number</td>
+<td>The timestamp indicating what time the animation started.</td>
+</tr>
+<tr>
+<td>state</td>
+<td>Number</td>
+<td>Which step of the animation we're on.  For example, if you made an animation that was moving 100px to the right over 100ms, and jQuery moves elements every 10ms, then there would be 10 states.</td>
+</tr>
+<tr>
+<td>unit</td>
+<td>String</td>
+<td>The unit of the CSS value being animated (e.g. "px" or "em"), if applicable.</td>
+</tr>
+</tbody>
+</table>
+<p>There were a couple more attributes (most of them functions) that I did not include because I either didn't think they'd be useful or I didn't really know what they did.  If you need to know what those do, I suggest Firebugging up your code and taking a look yourself :)</p>

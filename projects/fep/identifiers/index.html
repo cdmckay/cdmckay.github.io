@@ -1,0 +1,44 @@
+---
+layout: page
+status: publish
+published: true
+title: Identifiers
+author:
+  display_name: cdmckay
+  login: cdmckay
+  email: me@cdmckay.org
+  url: ''
+author_login: cdmckay
+author_email: me@cdmckay.org
+wordpress_id: 1042
+wordpress_url: http://couchware.ca/blogs/cam/?page_id=1042
+date: '2009-10-16 17:36:38 +0200'
+date_gmt: '2009-10-16 22:36:38 +0200'
+categories:
+- Meta
+tags: []
+comments: []
+---
+<p>Identifiers are described by the following lexical definitions:</p>
+<pre lang="bnf">
+identifier ::=  (letter | "_" | "$") 
+                (letter | digit | "_" | "$")* 
+                (letter | digit | "_" | "$" | "!" | "?")?
+letter     ::=  lowercase | uppercase
+lowercase  ::=  "a"..."z"
+uppercase  ::=  "A"..."Z"
+digit      ::=  "0"..."9"
+</pre>
+<p>Unlike PHP, Fep identifiers may contain <code>$</code> and have <code>!</code> or <code>?</code> at the end of them.  This is to allow Fep users to write functions that signal that they are a predicates or mutators via their identifiers.</p>
+<p>For example:</p>
+<pre lang="php">
+def isShort?( str ) { return str.length <= 3; }
+isShort? "moo";  // returns true
+isShort? "meow"; // returns false
+
+def makeLowerCase!( ref str ) { return str = str.toUpper(); }
+var str = "moo";
+makeLowerCase! str ;
+println str;
+// Prints "MOO"
+</pre>

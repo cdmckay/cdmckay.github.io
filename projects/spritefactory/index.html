@@ -1,0 +1,62 @@
+---
+layout: page
+status: publish
+published: true
+title: SpriteFactory
+author:
+  display_name: cdmckay
+  login: cdmckay
+  email: me@cdmckay.org
+  url: ''
+author_login: cdmckay
+author_email: me@cdmckay.org
+wordpress_id: 1316
+wordpress_url: http://cdmckay.org/blog/?page_id=1316
+date: '2010-04-06 16:21:27 +0200'
+date_gmt: '2010-04-06 21:21:27 +0200'
+categories:
+- Meta
+tags: []
+comments: []
+---
+<p>SpriteFactory is a BSD licensed ActionScript 3 library that makes it easy to generate multiple sprites from a bitmap image (like a JPG, PNG or GIF) without needing to use multiple loaders.</p>
+<p>Here's how you use it if all your images are in the an "images" directory and you want their top-left corner to be at 0,0 in the sprite:</p>
+<pre lang="actionscript3">
+// The SpriteFactory constructor takes a directory as its 
+// argument. It looks in that directory for images. If you 
+// want to use the root directory as your bitmap directory, 
+// then just leave the first argument blank.
+var factory:SpriteFactory = new SpriteFactory("images");
+
+// The first argument is the id that you'll use
+// to generate sprites.
+factory.loadBitmap("player", "player.png");
+
+// Using the id you can generate as many
+// sprites as you want.
+var player1:Sprite = factory.newSprite("player");
+var player2:Sprite = factory.newSprite("player");
+</pre>
+<p>A lot of the time you want the origin of a sprite to be in the middle of the image or the bottom of it.  SpriteFactory can also handle that:</p>
+<pre lang="actionscript3">
+var factory:SpriteFactory = new SpriteFactory("images");
+
+// The first argument is the id that you'll use
+// to generate sprites.
+factory.loadBitmap("player", "player.png");
+factory.loadBitmap("tree", "tree.png");
+
+// Using the id you can generate as many
+// sprites as you want.
+var playerAlignment:int = 
+    SpriteFactory.HALIGN_CENTER | SpriteFactory.VALIGN_MIDDLE;
+var player1:Sprite = factory.newSprite("player", playerAlignment);
+var player2:Sprite = factory.newSprite("player", playerAlignment);
+
+var treeAlignment:int =
+    SpriteFactory.HALIGN_CENTER | SpriteFactory.VALIGN_TOP;
+var tree1:Sprite = factory.newSprite("tree", treeAlignment);
+var tree2:Sprite = factory.newSprite("tree", treeAlignment);
+</pre>
+<p>The available alignments are HALIGN_LEFT, HALIGN_CENTER and HALIGN_RIGHT for horizontal alignment and VALIGN_TOP, VALIGN_MIDDLE and VALIGN_BOTTOM for vertical alignment.</p>
+<p>Download &mdash; <a href="http://cdmckay.org/files/SpriteFactory.as">SpriteFactory.as</a></p>

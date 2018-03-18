@@ -1,0 +1,28 @@
+---
+layout: post
+status: publish
+published: true
+title: Finding out the size of localStorage
+author:
+  display_name: cdmckay
+  login: cdmckay
+  email: me@cdmckay.org
+  url: ''
+author_login: cdmckay
+author_email: me@cdmckay.org
+wordpress_id: 2295
+wordpress_url: http://cdmckay.org/blog/?p=2295
+date: '2014-09-12 11:58:34 +0200'
+date_gmt: '2014-09-12 15:58:34 +0200'
+categories:
+- Meta
+tags: []
+comments: []
+---
+<p>In the next update of <a href="http://www.process.st" target="_blank">Process Street</a> we are adding more caching to our front end JavaScript client (named <a href="https://en.wikipedia.org/wiki/Front_Street_(Toronto)" target="_blank">Front Street</a> after the street in Toronto) in an effort to make the experience of using our app as fast as possible.</p>
+<p>Front Street uses <a href="https://en.wikipedia.org/wiki/Web_storage" target="_blank">web storage</a> (specifically localStorage) to store persistent user data. To make the cache as effective as possible, it should be able to grow to use as much space as it can. However, we also store other information in localStorage, like user session information (the user's login token and list of teams, for example). That means if the cache grew to use all the localStorage space, the app couldn't function properly. Thus, we needed a way to detect the size of localStorage so we could partition localStorage between cache and session information.</p>
+<p><!--more--></p>
+<p>After a <a href="https://stackoverflow.com/questions/2989284/what-is-the-max-size-of-localstorage-values" target="_blank">cursory search on StackOverflow</a>, I found <a href="https://arty.name/localstorage.html" target="_blank">this page</a>, along with <a href="https://gist.github.com/cdmckay/9bffe931591358bbf68f" target="_blank">the script</a> they used.</p>
+<p>However, the code in that script seemed unnecessarily complicated. Instead, I decided to write my own script which is much simpler:</p>
+<p><script src="https://gist.github.com/cdmckay/13fededb6cc6756a435d.js"></script></p>
+<p>You can test the script with <a href="http://jsfiddle.net/53xcc4LL/" target="_blank">this JSFiddle</a>. The script will test setting increasingly larger strings of text until the browser throws and exception. At that point it'll clear out the test data and set a <code>size</code> key in localStorage storing the size in kilobytes. Using this script you can detect the total size of the localStorage and partition accordingly.</p>

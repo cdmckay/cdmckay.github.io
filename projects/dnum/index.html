@@ -1,0 +1,203 @@
+---
+layout: page
+status: publish
+published: true
+title: Dnum
+author:
+  display_name: cdmckay
+  login: cdmckay
+  email: me@cdmckay.org
+  url: ''
+author_login: cdmckay
+author_email: me@cdmckay.org
+wordpress_id: 900
+wordpress_url: http://couchware.ca/blogs/cam/?page_id=900
+date: '2009-09-10 01:28:00 +0200'
+date_gmt: '2009-09-10 06:28:00 +0200'
+categories:
+- Meta
+tags: []
+comments:
+- id: 390
+  author: Cameron McKay &raquo; The Enum inconsistencies
+  author_email: ''
+  author_url: http://couchware.ca/blogs/cam/2009/09/14/the-enum-inconsistencies/
+  date: '2009-09-14 01:25:33 +0200'
+  date_gmt: '2009-09-14 06:25:33 +0200'
+  content: "[...] these and other problems have been fixed in my Dnum library [...]"
+- id: 398
+  author: DotNetKicks.com
+  author_email: ''
+  author_url: http://www.dotnetkicks.com/csharp/Dnum
+  date: '2009-09-22 01:09:53 +0200'
+  date_gmt: '2009-09-22 06:09:53 +0200'
+  content: |-
+    <strong>Dnum...</strong>
+
+    You've been kicked (a good thing) - Trackback from DotNetKicks.com...
+---
+<p>Dnum is a static class for accessing enumeration values much like the built-in .NET Enum class. Unlike Enum, Dnum is type-safe, reducing the number of enum-related runtime errors and eliminating the need for tedious, error-prone and inelegant down-casts.</p>
+<p>Dnum also transparently supports the DescriptionAttribute attribute, which allows you to conveniently use spaces and other characters in your enumeration constants.</p>
+<p><a href="http://dnum.googlecode.com/files/Dnum-1.0.0-rc1.zip">Dnum 1.0.0-rc1</a> is available from the <a href="http://dnum.googlecode.com">Dnum Google Code</a> site.</p>
+<p>Dnum is <a href="http://www.gnu.org/licenses/lgpl.html">licensed under the GNU LGPL</a>.</p>
+<h3>Using Dnum with plain, old C# enums</h3>
+<p>Dnum offers all your favourite Enum class methods in a new, easy-to-digest format.  As a rule of thumb, everywhere you wrote </p>
+<pre lang="csharp">Enum.Method( typeof(EnumType), arg1, arg2, ..., argN )</pre>
+<p>replace that with </p>
+<pre lang="csharp">Dnum<EnumType>.Method( arg1, arg2, ..., argN )</pre>
+<p>You should also remember that the <code>ToObject</code> method of Enum has been replaced with <code>ToConstant</code> in Dnum.</p>
+<pre lang="csharp">
+enum Captain : byte { Kirk, Picard, Sisko, Janeway, Archer }
+
+/** Get an enum constant from a string. */
+
+// Enum
+Captain best = 
+    (Captain) Enum.Parse(Captain.GetType(), "Picard");
+
+// Dnum
+Captain best = Dnum<Captain>.Parse("Picard");
+
+/** Get an enum constant from an integral type. */
+
+// Enum
+Captain tyrant = (Captain) Enum.ToObject(Captain.GetType(), 3);
+
+// Dnum
+Captain tyrant = Dnum<Captain>.ToConstant(3);
+
+/** Type safety. */
+
+// This will compile but throw an exception at runtime.
+string bogus = Enum.GetName(Captain.GetType(), DateTime.Today);
+
+// The same code using Dnum will not compile, allowing you to 
+// catch the error at compile time.
+string bogus = Dnum<Captain>.GetName(DateTime.Today);
+
+/** No silent overflowing when converting to constant. */
+
+// Enum
+// This returns an instance of Captain.Kirk.
+Captain surprise = (Captain) Enum.ToObject(Captain.GetType(), 256);
+
+// Dnum
+// This throws an overflow exception.
+Captain surprise = Dnum<Captain>.ToConstant(256);
+</pre>
+<h3>Using Dnum with described enums</h3>
+<p>A <strong>described enum</strong> is the same a regular enum with a string attached to each constant.  Consider the following enum use case:</p>
+<pre lang="csharp">
+enum Color { Red, Blue, Green, Yellow }
+
+Console.Write("This program supports the following colors:");
+var colors = Dnum<Color>.GetNames().ToArray();
+Console.Write( String.Join( ",", colors ) );
+</pre>
+<p>In this case, we are using an enum to enumerate the colors supported by an application.  This works fine and dandy right up to the point where you want to support a color like "Light Blue".</p>
+<pre lang="csharp">
+enum Color { Red, LightBlue, Green, Yellow }
+
+Console.Write("This program supports the following colors:");
+var colors = Dnum<Color>.GetNames().ToArray();
+Console.Write( String.Join( ",", colors ) );
+</pre>
+<p>This code works, but it prints out "Red, LightBlue, Green Yellow" instead of a much more user-friendly "Red, Light Blue, Green, Yellow".</p>
+<p>How do we get around this?  You guessed it, we add a description attribute (that, conveniently, is built-in to the .NET framework):</p>
+<pre lang="csharp">
+enum Color 
+{ 
+  Red, 
+  [Description("Light Blue")] LightBlue, 
+  Green, 
+  Yellow 
+}
+
+Console.Write("This program supports the following colors:");
+var colors = Dnum<Color>.GetDescriptions().ToArray();
+Console.Write( String.Join( ",", colors ) );
+</pre>
+<p>This code now prints out "Red, Light Blue, Green, Yellow".  You'll notice we used <code>GetDescriptions</code> instead of <code>GetNames</code>.  This is because we want to get the description value if it's defined.  <code>GetDescriptions</code> will return the description of each constant in the enum.  If <code>GetDescriptions</code> doesn't find a <code>DescriptionAttribute</code>, it uses the string value of the constant instead.</p>
+<h3>Using Dnum to parse strings</h3>
+<p>There are 2 methods that Dnum provides for parsing strings into enum constants: <code>Parse</code> and <code>ParseDescription</code>.  Each method has a companion method withthe <code>Try</code> prefix, similar to the <code>Int32.TryParse</code> or <code>DateTime.TryParse</code> methods from the .NET framework library.</p>
+<p>The <code>Dnum.Parse</code> method works identically to the regular .NET <code>Enum.Parse</code>, so no new surprises there (other than the improved syntax).  Here's some examples of it in action:</p>
+<pre lang="csharp">
+enum Color 
+{ 
+  Red, 
+  [Description("Light Blue")] LightBlue, 
+  Green, 
+  Yellow 
+}
+
+Color red1 = Dnum<Color>.Parse("Red");
+Color red2 = Dnum<Color>.Parse("red", true /* Ignore case */);
+Color red3 = Dnum<Color>.Parse("0");
+// red1 == red2 == red3
+</pre>
+<p>Keep in mind that the <code>Dnum.Parse</code> method pays no attention to description attributes.</p>
+<pre lang="csharp">
+// Throws an exception.
+Color lightBlue1 = Dnum<Color>.Parse("Light Blue");
+
+// Works fine.
+Color lightBlue2 = Dnum<Color>.Parse("LightBlue");
+</pre>
+<p>In order to get an enum constant from a description, you must use the <code>Dnum.ParseDescription</code> method.</p>
+<p><code>ParseDescription</code> works a little differently than <code>Parse</code> since description attributes need not be unique, and can contain any character.  In most circumstances, these limitations will not be an issue, but they're still worth pointing out.</p>
+<p>Let's look at the uniqueness problem.  Consider the following code.</p>
+<pre lang="csharp">
+enum Produce
+{
+  [Description("Fruit")] Apple,
+  [Description("Vegetable")] Carrot,
+  [Description("Vegetable")] Cucumber,
+  [Description("Fruit")] Orange,
+  [Description("Vegetable")] Tomato
+}
+
+// What does this variable hold: Apple or Orange?
+var result = Dnum<Produce>.ParseDescription("Fruit");
+</pre>
+<p>Since description attributes are not unique, we have two matches for the "Fruit" description.  Which one will be returned?  Since you might want both, Dnum will return both of them, in the order that they appear in the enum.</p>
+<pre lang="csharp">
+var result = Dnum<Produce>.ParseDescription("Fruit");
+foreach (var fruit in result) Console.WriteLine(fruit);
+// Prints:
+//   Apple
+//   Orange
+
+// Get the first constant with the "Fruit" description.
+var apple = result.First();
+</pre>
+<p>Now, let's look at how <code>ParseDescription</code> works around the fact that description attributes can contain any character.  First, let's look at two things <code>Parse</code> can do that <code>ParseDescription</code> cannot.</p>
+<pre lang="csharp">
+[Flags] enum Alignment
+{
+  Top = 0,
+  Bottom = 1,
+  Left = 2,
+  Right = 4
+}
+
+// Parsing a string representation of a constant value.
+var top = Dnum<Alignment>.Parse("0");
+// == Alignment.Top
+
+// Parsing a string representation of two constants.
+var bottomLeft = Dnum<Alignment>.Parse("Bottom, Left");
+// == Alignment.Bottom | Alignment.Left
+</pre>
+<p>Why can't <code>ParseDescription</code> work in the case of parsing a string representation of a constant value?  It's due to the fact the string representation of a constant value can possibly a description.  For example, consider this case:</p>
+<pre lang="csharp">
+enum Number
+{
+  [Description("1")] One,
+  [Description("2")] Two,
+  [Description("3")] Three
+}
+
+// Should it contain Number.One or Number.Two?
+var one = Dnum<Number>.ParseDescription("1").First();
+</pre>
+<p>Because of this ambiguity (Number.Two has a constant value of 1 but Number.One has a description of "1"), <code>ParseDescription</code> always treats it's description argument as a description, regardless of whether it contains a numeric value or a comma.</p>

@@ -1,0 +1,85 @@
+---
+layout: page
+status: publish
+published: true
+title: Fep
+author:
+  display_name: cdmckay
+  login: cdmckay
+  email: me@cdmckay.org
+  url: ''
+author_login: cdmckay
+author_email: me@cdmckay.org
+wordpress_id: 1017
+wordpress_url: http://couchware.ca/blogs/cam/?page_id=1017
+date: '2009-10-16 00:13:43 +0200'
+date_gmt: '2009-10-16 05:13:43 +0200'
+categories:
+- Meta
+tags: []
+comments:
+- id: 402
+  author: Cameron McKay &raquo; Fep Section
+  author_email: ''
+  author_url: http://couchware.ca/blogs/cam/2009/10/16/fep-section/
+  date: '2009-10-16 01:06:46 +0200'
+  date_gmt: '2009-10-16 06:06:46 +0200'
+  content: "[...] Fep [...]"
+---
+<p>Fep is a new programming language that uses PHP as its virtual machine.  Fep aims to provide a less noisy syntax, a more consistent programming API (based on Microsoft's .NET framework), and interop with existing PHP code.</p>
+<p>For more information on specific aspects of Fep, see the relevant subsections:</p>
+<ul>
+<li><a href="http://cdmckay.org/blog/fep/identifiers">Identifiers</a></li>
+<li><a href="http://cdmckay.org/blog/fep/comparisons">Comparisons</a></li>
+<li><a href="http://cdmckay.org/blog/fep/anonymous-functions">Anonymous Functions</a></li>
+</ul>
+<p>Fep code will be parsed and compiled into PHP code in a predictable manner.  For example, consider the following Fep code.</p>
+<pre lang="php">
+// Fep
+var list = [ "apple", "orange", "pineapple" ];
+println list.length;
+
+var dict = { "apple": "juicy", 0: "zero" };
+println dict.keys()[0];
+
+// Compiled Fep (PHP code)
+// NList and NDict are part of Olivine, the PHP library that
+// Fep wraps for most of its functionality.
+require "Olivine/Framework.php";
+Olivine::import("System");
+Olivine::import("System.Collections");
+use \System\Console;
+
+$list = _list( "apple", "orange", "pineapple" );
+Console::writeLine( $list->length );
+
+$dict = _dict( "apple", "juicy", 0, "zero" );
+Console::writeLine( $dict->keys()[0] );
+</pre>
+<h3>Olivine</h3>
+<p>The Olivine PHP Framework is the foundation of Fep.  Olivine is a Java/.NET inspired PHP library that Fep wraps to implement its data structures and standard API.</p>
+<h3>Interop</h3>
+<p>Since Fep translates into PHP in a predictable manner, you can call PHP libraries seamlessly.  For example, consider this code:</p>
+<pre lang="php">
+// ExampleLibrary/Ex.php
+function add( $x, $y, $z )
+{
+    return $x + $y + $z;
+}
+
+// ExUser.fep
+require ExampleLibrary.Ex;
+var (x, y, z) = [1, 2, 3];
+var result = PHP::add( x, y, z );
+println result;
+
+// Compiled Fep
+require "Olivine/Framework.php";
+require "ExampleLibrary/Ex.php";
+Olivine::import("System");
+use \System\Console;
+
+list($x, $y, $z) = array(1, 2, 3);
+$result = add( $x, $y, $z );
+Console::writeLine( $result );
+</pre>

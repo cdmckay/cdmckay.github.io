@@ -1,0 +1,193 @@
+---
+layout: post
+status: publish
+published: true
+title: How to put spaces in your NHibernate enums
+author:
+  display_name: cdmckay
+  login: cdmckay
+  email: me@cdmckay.org
+  url: ''
+author_login: cdmckay
+author_email: me@cdmckay.org
+wordpress_id: 770
+wordpress_url: http://couchware.ca/blogs/cam/?p=770
+date: '2009-07-12 21:33:25 +0200'
+date_gmt: '2009-07-13 01:33:25 +0200'
+categories:
+- Programming
+- ".NET"
+tags:
+- c#
+- nhibernate
+- enum
+- database
+comments:
+- id: 378
+  author: Cameron McKay &raquo; Why your custom EnumStringType might not be working
+  author_email: ''
+  author_url: http://couchware.ca/blogs/cam/2009/07/14/why-your-custom-enumstringtype-might-not-be-working/
+  date: '2009-07-14 20:02:23 +0200'
+  date_gmt: '2009-07-15 01:02:23 +0200'
+  content: "[...] I recently spent a couple hours yesterday to fix a problem I was
+    having with my custom EnumStringType (see this post). [...]"
+- id: 689
+  author: Why your custom EnumStringType might not be working &raquo; Cameron McKay
+  author_email: ''
+  author_url: http://cdmckay.org/blog/2009/07/14/why-your-custom-enumstringtype-might-not-be-working/
+  date: '2012-02-13 21:38:52 +0100'
+  date_gmt: '2012-02-14 02:38:52 +0100'
+  content: "[...] I recently spent a couple hours yesterday to fix a problem I was
+    having with my custom EnumStringType (see this post). [...]"
+---
+<p>NHibernate lets you map C# enums to database columns.  This can be quite convenient in cases where you have a database column for something like gender.  To map them, you follow the procedure outlined <a href="http://codebetter.com/blogs/jeremy.miller/archive/2006/02/20/138732.aspx">here</a>.</p>
+<p>That works all fine and dandy, as long as the strings you want to store in the database are valid C# identifiers.</p>
+<p><!--more--></p>
+<p>What do I mean?  Well, consider an enum of something like shipping countries.  Imagine we're only shipping to Canada and the USA.  That's easy enough:</p>
+<pre lang="csharp">// Country.cs
+public enum Country
+{
+  Canada,
+  USA
+}
+</pre>
+<p>Now imagine that after we write that code, we find out the customer hates <a href="http://en.wikipedia.org/wiki/Three-letter_acronym">TLA</a>s and wants the database entry to contain "United States of America".  When we go to the enum to change it, we realize we're screwed.  You can't have spaces in a C# identifier!</p>
+<pre lang="csharp">// Country.cs
+public enum Country
+{
+  Canada,
+  United States of America // Compile error!
+}
+</pre>
+<p>Fortunately, the ever-flexible NHibernate can handle this case using the procedure outlined <a href="http://softwareblog.morlok.net/2009/07/02/mapping-enums-to-custom-strings-in-nhibernate/">here</a>.</p>
+<p>Let's apply this procedure to the shipping locations example.  Recall that C# was not happy with us putting spaces in our enum members.  How can we make that code compile?  Well, an underscore is a valid part of a C# identifier, and it's kinda like a space, so let's try that:</p>
+<pre lang="csharp">// Country.cs
+public enum Country
+{
+  Canada,
+  United_States_of_America // C# is happy!
+}
+</pre>
+<p>Next, we need to derive our <code>EnumStringType</code> class so that NHibernate will store the string value of the enum instead of the integer value:</p>
+<pre lang="csharp">// CountryEnumStringType.cs
+class CountryEnumStringType : NHibernate.Type.EnumStringType
+{
+  // The 30 is the size of the field in the DB.
+  public CountryEnumStringType()
+      : base(typeof (Country), 30)
+  {
+  }
+  ...
+}
+</pre>
+<p>Cool, cool, so far so good.  This is about how much we'd need to do if we had no spaces to worry about.  Unfortunately, if we used these two classes we made as is, the database would contain "United_States_of_America" instead of "United States of America".  And that's no good...  so how do we get around that?</p>
+<p>Why, we need to override the <code>GetValue</code> and <code>GetInstance</code> methods, of course!</p>
+<p>Let's <a href="https://nhibernate.svn.sourceforge.net/svnroot/nhibernate/trunk/nhibernate/">plunk open the NHibernate source code</a> and see what they have there now, to use as a guide.  Ahh, <a href="https://nhibernate.svn.sourceforge.net/svnroot/nhibernate/trunk/nhibernate/src/NHibernate/Type/EnumStringType.cs">there she is</a>:</p>
+<pre lang="csharp">public virtual object GetInstance(object code)
+{
+  //code is an named constants defined for the enumeration.
+  try
+  {
+    return StringToObject(code as string);
+  }
+  catch (ArgumentException ae)
+  {
+    throw new HibernateException(
+      string.Format("Can't Parse {0} as {1}",
+      code, ReturnedClass.Name), ae);
+  }
+}
+
+public virtual object GetValue(object code)
+{
+  //code is an enum instance.
+  return code == null ? string.Empty : code.ToString();
+}
+</pre>
+<p>The comments aren't the greatest, but we can figure out what's going on.  <code>GetInstance</code> converts a string in an enum instance, and <code>GetValue</code> converts an enum to a string.</p>
+<p>With that in mind, let's get to work.  First, let's put in some stubs in our <code>CountryEnumStringType</code> class:</p>
+<pre lang="csharp">// CountryEnumStringType.cs
+class CountryEnumStringType : NHibernate.Type.EnumStringType
+{
+  // The 30 is the size of the field in the DB.
+  public CountryEnumStringType()
+      : base(typeof (Location), 30)
+  {
+  }
+
+  ///
+  /// Converts a string to an enum instance.
+  ///
+  public override object GetInstance(object code)
+  {
+
+  }
+
+  ///
+  /// Converts a enum instance to a string.
+  ///
+  public override object GetValue(object code)
+  {
+
+  }
+}
+</pre>
+<p>Sweet.  Now, our basic strategy here is this:</p>
+<ul>
+<li>when NHibernate asks for an enum instance (and passes a string), we want to replace spaces in the string with underscores, and then find the corresponding enum instance.</li>
+<li>when NHibernate asks for a string (and passes an enum instance), we want to convert the enum to a string, and then replace all underscores with spaces.</li>
+</ul>
+<p>First, we modify <code>GetInstance</code>:</p>
+<pre lang="csharp">///
+/// Converts a string to an enum instance.
+///
+public override object GetInstance(object code)
+{
+  // This is the string coming from the database, so it will
+  // have spaces in it that we need to turn into underscores.
+  var str = (string) code;
+
+  // If the string is null, just pass it on, no need to replace
+  // spaces with underscores.
+  if (string.IsNullOrEmpty(str)) return StringToObject(str);
+  else return StringToObject(str.Replace(" ", "_"));
+}
+</pre>
+<p>In case you're wondering where the hell <code>StringToObject</code> came from, and what it does, I can tell you this:</p>
+<ul>
+<li>It was used in the code for the <code>EnumStringType</code> class,</li>
+<li>its name implies that it's used to convert a string into an object,</li>
+<li>the context in which it is used supports the previous implication, and</li>
+<li>if you really want to know what it does, read the code for the <code>AbstractEnumType</code> <a href="https://nhibernate.svn.sourceforge.net/svnroot/nhibernate/trunk/nhibernate/src/NHibernate/Type/AbstractEnumType.cs">base class</a>.</li>
+</ul>
+<p>With that out of the way, let's move on to writing the code for the <code>GetValue</code> method.  In this case we're looking at converting an enum instance into a string (that will eventually be stored in the database):</p>
+<pre lang="csharp">///
+/// Converts a enum instance to a string.
+///
+public override object GetValue(object code)
+{
+  return code == null
+    ? string.Empty
+    : code.ToString().Replace('_', ' ');
+}
+</pre>
+<p>The <code>GetValue</code> is pretty straight forward.  We basically just tagged on the <code>Replace</code> method to replace all underscores with spaces.</p>
+<p>That should about do it.  To close, I'll give a sample usage of it:</p>
+<pre lang="csharp">// Order.cs
+public class Order
+{
+  public virtual long Id { get; set; }
+  ...
+  public virtual Country Country { get; set; }
+  ...
+}
+</pre>
+<p>Then this would be the mapping:</p>
+<pre lang="xml">&lt;!-- Order.hbm.xml --&gt;
+&lt;class name="Order" table="TblOrder"&gt;
+  ...
+  &lt;property name="Country"
+    type="WebApp.Domain.CountryEnumStringType, WebApp" /&gt;
+  ...
+&lt;/class&gt;
+</pre>

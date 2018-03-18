@@ -1,0 +1,38 @@
+---
+layout: page
+status: publish
+published: true
+title: Static Qualification
+author:
+  display_name: cdmckay
+  login: cdmckay
+  email: me@cdmckay.org
+  url: ''
+author_login: cdmckay
+author_email: me@cdmckay.org
+wordpress_id: 1067
+wordpress_url: http://couchware.ca/blogs/cam/?page_id=1067
+date: '2009-10-17 22:16:31 +0200'
+date_gmt: '2009-10-18 03:16:31 +0200'
+categories:
+- Meta
+tags: []
+comments: []
+---
+<p>In Fep classes, properties marked as <code>static</code> or <code>const</code> and methods marked as <code>static</code> are qualified using the <code>::</code> character.</p>
+<pre lang="php">
+public static class Math
+{
+    const var Pi = 3.14159;
+    const var E = 2.71;
+
+    static def sin( x )
+    {
+        ...
+    }
+}
+
+var radius = 10;
+var circumference = 2 * Constants::Pi * radius;
+var val = Math::sin 10;
+</pre>
