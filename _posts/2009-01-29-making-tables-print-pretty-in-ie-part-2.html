@@ -39,18 +39,18 @@ comments:
 <p><!--more--></p>
 <p>First, let's start with an example table:</p>
 <pre lang='html4strict'>
-<table id="example-table">
-  <thead>
-    <tr><th>First Name</th><th>Last Name</th><th>Client #</th></tr>
-  </thead>
-  <tbody>
-    <tr><td>Joe</td><td>Shmoe</td><td>123451</td></tr>
-    <tr><td>Joe</td><td>Shmoe</td><td>123451</td></tr>
-    <tr><td>Joe</td><td>Shmoe</td><td>123451</td></tr>
-    <tr><td>Joe</td><td>Shmoe</td><td>123451</td></tr>
-    <!-- Repeat these many times to make it go to a second page. -->
-  </tbody>
-</table>
+&lt;table id="example-table"&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;&lt;th&gt;First Name&lt;/th&gt;&lt;th&gt;Last Name&lt;/th&gt;&lt;th&gt;Client #&lt;/th&gt;&lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;&lt;td&gt;Joe&lt;/td&gt;&lt;td&gt;Shmoe&lt;/td&gt;&lt;td&gt;123451&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;Joe&lt;/td&gt;&lt;td&gt;Shmoe&lt;/td&gt;&lt;td&gt;123451&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;Joe&lt;/td&gt;&lt;td&gt;Shmoe&lt;/td&gt;&lt;td&gt;123451&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td&gt;Joe&lt;/td&gt;&lt;td&gt;Shmoe&lt;/td&gt;&lt;td&gt;123451&lt;/td&gt;&lt;/tr&gt;
+    &lt;!-- Repeat these many times to make it go to a second page. --&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
 </pre>
 <p>Add a stylesheet like this:</p>
 <pre lang="css">
@@ -66,26 +66,26 @@ comments:
 }
 </pre>
 <p>If you repeat those rows enough times you can get the graphical glitch mentioned above.  Now, to fix it, what we'll do is add a <code>
-<div></code> tag to every cell and then make it provide the side borders.</p>
+&lt;div&gt;</code> tag to every cell and then make it provide the side borders.</p>
 <p>So first, we'll modify the table as follows:</p>
 <pre lang='html4strict'>
-<table id="example-table">
-  <thead>
-    <tr><th>First Name</th><th>Last Name</th><th>Client #</th></tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><div class="cell">Joe</div></td>
-      <td><div class="cell">Shmoe</div></td>
-      <td class="last-col"><div class="cell">123451</div></td>
-    </tr>    
-    <!-- Repeat this many times to make it go to a second page. -->
-  </tbody>
-</table>
+&lt;table id="example-table"&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;&lt;th&gt;First Name&lt;/th&gt;&lt;th&gt;Last Name&lt;/th&gt;&lt;th&gt;Client #&lt;/th&gt;&lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;div class="cell"&gt;Joe&lt;/div&gt;&lt;/td&gt;
+      &lt;td&gt;&lt;div class="cell"&gt;Shmoe&lt;/div&gt;&lt;/td&gt;
+      &lt;td class="last-col"&gt;&lt;div class="cell"&gt;123451&lt;/div&gt;&lt;/td&gt;
+    &lt;/tr&gt;    
+    &lt;!-- Repeat this many times to make it go to a second page. --&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
 </pre>
 <p>What we've done here is added a <code>
-<div></code> to each cell and given these <code>
-<div></code>'s a class called <code>cell</code>.  This is so we can do stuff to them in our CSS stylesheet.  We've also given the last cell in each row the class <code>last-col</code>.  This is so we can identify the last column of each row.  The reasoning for this will be explained shortly.</p>
+&lt;div&gt;</code> to each cell and given these <code>
+&lt;div&gt;</code>'s a class called <code>cell</code>.  This is so we can do stuff to them in our CSS stylesheet.  We've also given the last cell in each row the class <code>last-col</code>.  This is so we can identify the last column of each row.  The reasoning for this will be explained shortly.</p>
 <p>Now, as I've said, our goal here is to replace the <code>table</code>-provided vertical borders (the | ones) with the <code>div</code>-provided ones.  So we need to modify the stylesheet to reflect that:</p>
 <pre lang="css">
 #example-table
