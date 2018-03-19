@@ -55,7 +55,8 @@ comments:
   date: '2014-12-04 04:11:43 +0100'
   date_gmt: '2014-12-04 09:11:43 +0100'
   content: Very nice blog. i have seen in your solutions in stack over flow very nice
-    answers.thanks
+    answers.thanks   
+redirect_from: /blog/about 
 ---
 
 I am currently the CTO of [Process Street](https://www.process.st){:target="_blank"}, a company I co-founded in 2014.

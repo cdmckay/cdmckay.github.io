@@ -31,8 +31,14 @@ markdown: kramdown
 theme: minima
 plugins:
   - jekyll-feed
-  - jekyll-redirect-from
   - jekyll-paginate
+  - jekyll-redirect-from
+
+safe: true
+whitelist:
+  - jekyll-paginate
+  - jekyll-redirect-from
+  - jekyll-seo-tag
 
 # Minima settings
 header_pages:

@@ -24,6 +24,7 @@ categories:
 - Play
 tags: []
 comments: []
+redirect_from: /blog/2015/06/24/how-to-add-support-for-posting-multipart-forms-to-the-play-scala-ws-library
 ---
 <p>For <a href="https://process.st" target="_blank">Process Street</a>'s <a href="http://yammer.com" target="_blank">Yammer</a> integration, I needed to post file attachments to their API using <a href="https://www.playframework.com/documentation/2.3.x/ScalaWS" target="_blank">the Play Scala WS library</a>.</p>
 <p>However, it turns out <a href="https://github.com/playframework/playframework/issues/902" target="_blank">that WS does not yet support uploading files</a> using multipart/form-data and POST. There are <a href="https://stackoverflow.com/questions/10890362/play-2-0-how-to-post-multipartformdata-using-ws-url-or-ws-wsrequest" target="_blank">several</a> <a href="https://stackoverflow.com/questions/14322217/scala-play-framework-post-file" target="_blank">workarounds</a> on the 'net, but they all involve getting the underlying Ning Java client and doing thing manually.</p>
