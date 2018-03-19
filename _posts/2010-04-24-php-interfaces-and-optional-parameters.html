@@ -61,6 +61,7 @@ comments:
     If I understand you correctly, you are saying that you have an issue with the fact that one can include an optional parameter in their implementation of compareTo($object).
 
     Encapsulation is not violated here.  This is because the interface is still fully implemented.  The interface only demands that the implementer respond to the call compareTo($object).  Thus, people should only expect that call to work.
+redirect_from: /blog/2010/04/24/php-interfaces-and-optional-parameters
 ---
 <p>Interfaces in object-oriented languages like <a href="http://java.sun.com/docs/books/tutorial/java/IandI/createinterface.html">Java</a>, <a href="http://msdn.microsoft.com/en-us/library/ms173156.aspx">C#</a> and <a href="http://php.net/manual/en/language.oop5.interfaces.php">PHP</a> are useful language constructs for ensuring that objects will respond to certain methods.  However, unlike Java and C# (<a href="http://msdn.microsoft.com/en-us/library/dd264739.aspx">until recently</a>), <a href="http://php.net/manual/en/functions.arguments.php">PHP has optional parameters</a>.  As it turns out, this feature has an interesting (and a little bit unexpected) effect on how we can implement interfaces in PHP.</p>
 <p><!--more--></p>

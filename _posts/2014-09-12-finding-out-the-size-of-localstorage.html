@@ -18,6 +18,7 @@ categories:
 - Meta
 tags: []
 comments: []
+redirect_from: /blog/2014/09/12/finding-out-the-size-of-localstorage
 ---
 <p>In the next update of <a href="http://www.process.st" target="_blank">Process Street</a> we are adding more caching to our front end JavaScript client (named <a href="https://en.wikipedia.org/wiki/Front_Street_(Toronto)" target="_blank">Front Street</a> after the street in Toronto) in an effort to make the experience of using our app as fast as possible.</p>
 <p>Front Street uses <a href="https://en.wikipedia.org/wiki/Web_storage" target="_blank">web storage</a> (specifically localStorage) to store persistent user data. To make the cache as effective as possible, it should be able to grow to use as much space as it can. However, we also store other information in localStorage, like user session information (the user's login token and list of teams, for example). That means if the cache grew to use all the localStorage space, the app couldn't function properly. Thus, we needed a way to detect the size of localStorage so we could partition localStorage between cache and session information.</p>
