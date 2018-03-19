@@ -22,7 +22,7 @@ categories:
 - Play 2
 tags: []
 comments: []
-redirect_from: /blog/2014/09/02/forcing-https-in-a-play-2-scala-app
+redirect_from: /blog/2014/09/02/forcing-https-in-a-play-2-scala-app/
 ---
 <p>At <a href="http://process.st">Process Street</a> we've been developing a new app called <a href="http://mailthe.me" target="_blank">MailTheme</a> that, like the <a href="http://process.st">Process Street</a> app, it uses the <a href="http://playframework.com" target="_blank">Play Framework</a>.</p>
 <p>Unlike Process Street, MailTheme will be running on <a href="https://cloud.google.com/" target="_blank">Google Cloud</a> and, for the time being, won't be behind a load balancer or proxy. As such, I needed to make all HTTP requests auto-redirect to HTTPS via Play. This turned out to be more difficult than I first imagined, as Play prior to version 2.3 has no way to detect whether or not the incoming request is over SSL.</p>

@@ -113,7 +113,7 @@ comments:
   date_gmt: '2017-12-31 03:10:24 +0100'
   content: "[&#8230;] was recently a fork of JDOM for java 5 called coffeeDOM. You
     should check it [&#8230;]"
-redirect_from: /blog/2011/05/20/introducing-coffeedom-a-jdom-fork-for-java-5
+redirect_from: /blog/2011/05/20/introducing-coffeedom-a-jdom-fork-for-java-5/
 ---
 <p>When it comes time to work with XML in Java, the first thing I usually do is go to <a href="http://jdom.org">the JDOM website</a> to check for a Java 5 update.  Unfortunately, I am always disappointed.  There has not been a major JDOM release in over 6 years and, <a href="http://www.jdom.org/pipermail/jdom-interest/2005-August/014982.html">if the JDOM mailing list is to be believed</a>, no Java 5 version is planned.  As a result, I have decided to take my own initiative and make <a href="http://coffeedom.googlecode.com">CoffeeDOM</a>, a JDOM fork with Java 5 support.</p>
 <p>CoffeeDOM is intended as a natural evolution for JDOM developers.  As such, there have been minimal changes to the API.  CoffeeDOM adds support for Java 5 features like generics, enums, and covariant method return types, and reduces the amount of boilerplate required by making previously checked exceptions (like JDOMException) unchecked.  In this article, I will briefly go over these changes.</p>

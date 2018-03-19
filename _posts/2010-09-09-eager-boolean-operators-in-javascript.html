@@ -140,7 +140,7 @@ comments:
   date_gmt: '2010-09-13 17:08:57 +0200'
   content: "@SeanJA: Whoops.  You're correct, that function should return opposite
     truth values.  I'll fix it now."
-redirect_from: /blog/2010/09/09/eager-boolean-operators-in-javascript
+redirect_from: /blog/2010/09/09/eager-boolean-operators-in-javascript/
 ---
 <p>In most programming languages like Java, JavaScript, C and C#, the boolean operators <code>&&</code> and <code>||</code> perform <a href="http://en.wikipedia.org/wiki/Short-circuit_evaluation">short-circuited evaluation</a>. Essentially, this means that a program, when evaluating boolean operators, will only evaluate as many arguments as is necessary to determine the value of a boolean expression.  Sometimes, however, this is not the behaviour we want.</p>
 <p>In this article we will look at how to implement non-short-circuited or "eager" versions of the JavaScript boolean operators <code>&&</code> and <code>||</code>.</p>

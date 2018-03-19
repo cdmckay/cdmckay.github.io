@@ -40,7 +40,7 @@ comments:
   content: "@Anuj:  You'll want to get the value of the multi-valued cookie into a
     JavaScript object, change the one value, then use the function described in this
     article to set it in the browser."
-redirect_from: /blog/2012/02/12/creating-asp-net-httpcookie-compatible-multi-valued-cookies-in-javascript
+redirect_from: /blog/2012/02/12/creating-asp-net-httpcookie-compatible-multi-valued-cookies-in-javascript/
 ---
 <p>Cookies are ubiquitous on the web.  They're used to store usernames, login tokens, shopping cart contents, and so on.  In libraries, cookies are typically modeled as name-value pairs.  An API consumer requests a cookie using a known name (e.g. <code>$.cookie('user')</code> in jQuery with the Cookie plugin) and the library returns a string (e.g. <code>alice</code>).  Sometimes, however, just plain old name-value pairs aren't enough.  In this article, we will take a look at how to bake multi-valued cookies in JavaScript that are compatible with the <a href="http://msdn.microsoft.com/en-us/library/system.web.httpcookie.values.aspx">Values</a> property of ASP.NET's <a href="http://msdn.microsoft.com/en-us/library/system.web.httpcookie.aspx">HttpCookie</a> class.</p>
 <p><!--more--></p>

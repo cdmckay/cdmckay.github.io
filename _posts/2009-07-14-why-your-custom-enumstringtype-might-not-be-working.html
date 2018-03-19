@@ -26,7 +26,7 @@ comments:
   date: '2009-07-25 19:01:20 +0200'
   date_gmt: '2009-07-26 00:01:20 +0200'
   content: You saved another sucker's life ;-)
-redirect_from: /blog/2009/07/14/why-your-custom-enumstringtype-might-not-be-working
+redirect_from: /blog/2009/07/14/why-your-custom-enumstringtype-might-not-be-working/
 ---
 <p>I recently spent a couple hours yesterday to fix a problem I was having with my custom <code>EnumStringType</code> (see <a href="{{ '/how-to-put-spaces-in-your-nhibernate-enums' | relative_url }}">this post</a>).</p>
 <p>Basically, what was happening was when my repository was making a call to <code>ICriteria<FooType>.List()</code>, which in turn called the <code>Set</code> method of <code>EnumStringType</code>, it was always passing in a lowercase string instead of an enum instance.  </p>
