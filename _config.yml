@@ -26,6 +26,10 @@ excerpt_separator: <!--more-->
 permalink: /:title
 paginate: 10
 
+# Disqus for comments
+disqus:
+  shortname: cdmckay
+
 # Build settings
 markdown: kramdown
 theme: minima
