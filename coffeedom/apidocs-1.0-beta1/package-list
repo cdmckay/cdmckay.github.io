@@ -1,0 +1,8 @@
+org.cdmckay.coffeedom
+org.cdmckay.coffeedom.adapters
+org.cdmckay.coffeedom.filter
+org.cdmckay.coffeedom.input
+org.cdmckay.coffeedom.output
+org.cdmckay.coffeedom.transform
+org.cdmckay.coffeedom.xpath
+org.cdmckay.coffeedom.xpath.jaxen

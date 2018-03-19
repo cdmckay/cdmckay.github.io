@@ -249,7 +249,7 @@ $doug->punch($fred);
 <li><del datetime="2010-04-23T19:52:15+00:00">Ignores inheritance.  This particular implementation does not follow the inheritance chain to see if any parent classes have extension methods for a given method call.  This could be easily remedied with a bit of code.</del> See the update below.</li>
 </ul>
 <h3>Source</h3>
-<p>The source code I have written in this article is public domain, and you are free to do what you will with it. <a href="http://cdmckay.org/files/Extensible.zip">Here is the source file.</a></p>
+<p>The source code I have written in this article is public domain, and you are free to do what you will with it. <a href="{{ '/files/Extensible.zip' | relative_url }}">Here is the source file.</a></p>
 <h3>Update</h3>
 <p>I've updated the code so that <code>methodDispatcher</code> will search the inheritance chain for a suitable extension method.  This behaviour is illustrated by this example:</p>
 <pre lang="php">

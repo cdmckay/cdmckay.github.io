@@ -116,7 +116,7 @@ comments:
 ---
 <p>When it comes time to work with XML in Java, the first thing I usually do is go to <a href="http://jdom.org">the JDOM website</a> to check for a Java 5 update.  Unfortunately, I am always disappointed.  There has not been a major JDOM release in over 6 years and, <a href="http://www.jdom.org/pipermail/jdom-interest/2005-August/014982.html">if the JDOM mailing list is to be believed</a>, no Java 5 version is planned.  As a result, I have decided to take my own initiative and make <a href="http://coffeedom.googlecode.com">CoffeeDOM</a>, a JDOM fork with Java 5 support.</p>
 <p>CoffeeDOM is intended as a natural evolution for JDOM developers.  As such, there have been minimal changes to the API.  CoffeeDOM adds support for Java 5 features like generics, enums, and covariant method return types, and reduces the amount of boilerplate required by making previously checked exceptions (like JDOMException) unchecked.  In this article, I will briefly go over these changes.</p>
-<p><em>(If you don't want to bother with the article, you can skip right to the <a href="http://coffeedom.googlecode.com/">Google Code page</a> or <a href="http://cdmckay.org/coffeedom/apidocs/">browse the Javadoc API documentation</a>.)</em></p>
+<p><em>(If you don't want to bother with the article, you can skip right to the <a href="http://coffeedom.googlecode.com/">Google Code page</a> or <a href="{{ '/coffeedom/apidocs/' | relative_url }}">browse the Javadoc API documentation</a>.)</em></p>
 <p><!--more--></p>
 <h3>Generic collections</h3>
 <p>JDOM makes heavy use of the <a href="http://download.oracle.com/javase/tutorial/collections/index.html">Java Collections Framework</a>, principally Lists and Iterators.  Thus, in JDOM, to get a list of all child elements of an element, we do the following:</p>
@@ -244,5 +244,5 @@ try {
 </dependency>
 </pre>
 <h3>Learn more</h3>
-<p>As CoffeeDOM is brand new, there isn't a whole lot of documentation available beyond <a href="http://cdmckay.org/coffeedom/apidocs/">the Javadoc reference</a> and this article.  However, since CoffeeDOM shares a similar API to JDOM, any JDOM tutorial can make a good starting point.  See <a href="http://www.jdom.org/downloads/docs.html">the JDOM documentation page</a> for links to several tutorials that can get you started.</p>
+<p>As CoffeeDOM is brand new, there isn't a whole lot of documentation available beyond <a href="{{ '/coffeedom/apidocs/' | relative_url }}">the Javadoc reference</a> and this article.  However, since CoffeeDOM shares a similar API to JDOM, any JDOM tutorial can make a good starting point.  See <a href="http://www.jdom.org/downloads/docs.html">the JDOM documentation page</a> for links to several tutorials that can get you started.</p>
 <p>If code samples are your thing, the CoffeeDOM Mercurial repository has a <a href="http://code.google.com/p/coffeedom/source/browse/#hg%2FCoffeeDOM-samples">CoffeeDOM-samples</a> project that contains all the JDOM sample projects updated for CoffeeDOM.</p>

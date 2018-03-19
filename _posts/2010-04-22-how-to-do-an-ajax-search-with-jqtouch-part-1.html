@@ -189,7 +189,7 @@ comments:
 <li>on line 5-7, we have the content of this page.  Basically, we are telling jQTouch that we want a list of rounded buttons, one of which is "Search".  The <code>#search</code> href in the anchor tag tells jQTouch what page we want to load when that button is clicked.</li>
 </ul>
 <p>Before I move on, let's look at a screenshot of what we have so far: </p>
-<p><a href="http://cdmckay.org/blog/wp-content/blogs.dir/2/files/2010/04/home.jpg"><img src="http://cdmckay.org/blog/wp-content/blogs.dir/2/files/2010/04/home.jpg" alt="" title="home" width="320" height="480" class="aligncenter size-full wp-image-1408" /></a></p>
+<p><a href="{{ '/wp-content/blogs.dir/2/files/2010/04/home.jpg' | relative_url }}"><img src="{{ '/wp-content/blogs.dir/2/files/2010/04/home.jpg' | relative_url }}" alt="" title="home" width="320" height="480" class="aligncenter size-full wp-image-1408" /></a></p>
 <p>Not too shabby considering we've written all of 8 lines of HTML to make that happen!  Unfortunately, as you've probably noticed, clicking the Search button does nothing but make it turn green.</p>
 <h3>The Search Page</h3>
 <p>Let's hook up the Search button from the previous page to a search page.  This will be where we enter our search text.  Here's the code for the search page (it goes right after the code in the last listing):</p>
@@ -214,7 +214,7 @@ comments:
 <li>on lines 9-11, we have another unordered list of buttons, this time using a different visual class "edgetoedge".  In this list we have one item, a separator (class "sep"), that we use to label the list as our results.  Later on, in part 2, we'll place our search results in this list.</li>
 </ul>
 <p>After we add this code to our <code>index.html</code> file, let's reload the web page in our iPhone or iPad and try clicking the Search button again.  You'll see it brings you to a screen like this:</p>
-<p><a href="http://cdmckay.org/blog/wp-content/blogs.dir/2/files/2010/04/search.jpg"><img src="http://cdmckay.org/blog/wp-content/blogs.dir/2/files/2010/04/search.jpg" alt="" title="search" width="320" height="480" class="aligncenter size-full wp-image-1409" /></a></p>
+<p><a href="{{ '/wp-content/blogs.dir/2/files/2010/04/search.jpg' | relative_url }}"><img src="{{ '/wp-content/blogs.dir/2/files/2010/04/search.jpg' | relative_url }}" alt="" title="search" width="320" height="480" class="aligncenter size-full wp-image-1409" /></a></p>
 <p>You'll also notice that if you click the "Back" button at the top, it'll bring you back to the "home" page.</p>
 <h3>Conclusion</h3>
 <p>In this tutorial we made a jQTouch UI that looks like an iPhone app.  We touched on a few jQTouch concepts:</p>
@@ -228,4 +228,4 @@ comments:
 <h3>What Now?</h3>
 <p>With respect to the UI, we're done.  All that remains to be done now is to write a PHP script that we'll query with an jQuery AJAX call.  <a href="{{ '/how-to-do-an-ajax-search-with-jqtouch-part-2' | relative_url }}">This is covered in part 2 of this tutorial</a>.</p>
 <h3>Source</h3>
-<p>The source code I have written in this article is public domain, and you are free to do what you will with it.  Here is <a href="http://cdmckay.org/files/jqtouch-ajax-search.zip">a zip of the source, along with the required jQTouch source</a>.  It should work pretty much right out of the box.</p>
+<p>The source code I have written in this article is public domain, and you are free to do what you will with it.  Here is <a href="{{ '/files/jqtouch-ajax-search.zip' | relative_url }}">a zip of the source, along with the required jQTouch source</a>.  It should work pretty much right out of the box.</p>

@@ -1,0 +1,510 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project version="2.0.0a12" title="Pajama">
+  <file path="pajama.php" hash="eee8a0f214b2a3d51dee54d032247ab9" package="Pajama">
+    <docblock line="2">
+      <description>A PHP model validator compatible with the jQuery Validation plugin that allows for shared validation
+rules (in JSON) between JavaScript and PHP.</description>
+      <long-description/>
+      <tag line="2" name="package" description="Pajama"/>
+    </docblock>
+    <class final="true" abstract="false" namespace="Pajama" line="13" package="Default">
+      <extends/>
+      <name>Validator</name>
+      <full_name>\Pajama\Validator</full_name>
+      <docblock line="10">
+        <description>A class for validating array models, typically the &lt;code&gt;$_POST&lt;/code&gt; or &lt;code&gt;$_GET&lt;/code&gt; superglobals.</description>
+        <long-description/>
+      </docblock>
+      <property final="false" static="false" visibility="private" line="18" namespace="Pajama" package="Default">
+        <name>$model</name>
+        <default/>
+        <docblock line="15">
+          <description/>
+          <long-description/>
+          <tag line="15" name="var" description="The model being validated." type="array">
+            <type by_reference="false">array</type>
+          </tag>
+        </docblock>
+      </property>
+      <property final="false" static="false" visibility="private" line="23" namespace="Pajama" package="Default">
+        <name>$rules</name>
+        <default/>
+        <docblock line="20">
+          <description/>
+          <long-description/>
+          <tag line="20" name="var" description="The normalized rules for this instance." type="array">
+            <type by_reference="false">array</type>
+          </tag>
+        </docblock>
+      </property>
+      <property final="false" static="false" visibility="private" line="28" namespace="Pajama" package="Default">
+        <name>$context</name>
+        <default/>
+        <docblock line="25">
+          <description/>
+          <long-description/>
+          <tag line="25" name="var" description="A reference to the context for this instance." type="\Pajama\ValidatorContext">
+            <type by_reference="false">\Pajama\ValidatorContext</type>
+          </tag>
+        </docblock>
+      </property>
+      <property final="false" static="true" visibility="private" line="33" namespace="Pajama" package="Default">
+        <name>$methods</name>
+        <default>array()</default>
+        <docblock line="30">
+          <description/>
+          <long-description/>
+          <tag line="30" name="var" description="An array containing all the validation methods." type="array">
+            <type by_reference="false">array</type>
+          </tag>
+        </docblock>
+      </property>
+      <method final="false" abstract="false" static="false" visibility="private" namespace="Pajama" line="41" package="Default">
+        <name>__construct</name>
+        <full_name>__construct</full_name>
+        <docblock line="35">
+          <description>Creates a new Validator instance.</description>
+          <long-description/>
+          <tag line="35" name="param" description="The model to validate." type="array" variable="$model">
+            <type by_reference="false">array</type>
+          </tag>
+          <tag line="35" name="param" description="The rules the model is validated against." type="array" variable="$rules">
+            <type by_reference="false">array</type>
+          </tag>
+        </docblock>
+        <argument line="41">
+          <name>$model</name>
+          <default/>
+          <type/>
+        </argument>
+        <argument line="41">
+          <name>$rules</name>
+          <default/>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="true" visibility="private" namespace="Pajama" line="55" package="Default">
+        <name>flatten</name>
+        <full_name>flatten</full_name>
+        <docblock line="47">
+          <description>Flatten an array, appending all sub-array keys into the top-level name.</description>
+          <long-description>&lt;p&gt;For example, &lt;code&gt;$a['foo']['bar'] = 'baz'&lt;/code&gt; becomes &lt;code&gt;$a['foo[bar]'] = 'baz'&lt;/code&gt;.&lt;/p&gt;</long-description>
+          <tag line="47" name="param" description="" type="array" variable="$model">
+            <type by_reference="false">array</type>
+          </tag>
+          <tag line="47" name="return" description="" type="array">
+            <type by_reference="false">array</type>
+          </tag>
+        </docblock>
+        <argument line="55">
+          <name>$model</name>
+          <default/>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="true" visibility="public" namespace="Pajama" line="112" package="Default">
+        <name>validate</name>
+        <full_name>validate</full_name>
+        <docblock line="72">
+          <description>Validates the model, returning a reusable Validator object in the process.</description>
+          <long-description>&lt;p&gt;Example (using callbacks):&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Validator::validate(array(
+    'model' =&gt; $_POST,
+    'rules' =&gt; array(...),
+    'validHandler' =&gt; function() {
+        // Model validated.
+    },
+    'invalidHandler' =&gt; function() {
+        // Model failed validation.
+    },
+));
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Example (using methods):&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$validator = Validator::validate(array(
+    'model' =&gt; $_POST,
+    'rules' =&gt; array(...),
+));
+if ($validator-&gt;model()) {
+    // Model validated.
+} else {
+    // Model failed validation.
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Possible options include:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;b&gt;model&lt;/b&gt; (required) The model to validate.&lt;/li&gt;
+&lt;li&gt;&lt;b&gt;rules&lt;/b&gt; (required) The rules the model is validated against.&lt;/li&gt;
+&lt;li&gt;&lt;b&gt;validHandler&lt;/b&gt; A callable that gets called if the model is valid.&lt;/li&gt;
+&lt;li&gt;&lt;b&gt;invalidHandler&lt;/b&gt; A callable that gets called if the model fails validation.&lt;/li&gt;
+&lt;/ul&gt;</long-description>
+          <tag line="72" name="param" description="An array of options." type="array" variable="$options">
+            <type by_reference="false">array</type>
+          </tag>
+          <tag line="72" name="return" description="An reusable Validator instance." type="\Pajama\Validator">
+            <type by_reference="false">\Pajama\Validator</type>
+          </tag>
+        </docblock>
+        <argument line="112">
+          <name>$options</name>
+          <default/>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="private" namespace="Pajama" line="133" package="Default">
+        <name>normalizeRules</name>
+        <full_name>normalizeRules</full_name>
+        <docblock line="127">
+          <description>Normalizes a rule array, removing all rules that are false.</description>
+          <long-description/>
+          <tag line="127" name="param" description="" type="array" variable="$rules">
+            <type by_reference="false">array</type>
+          </tag>
+          <tag line="127" name="return" description="" type="array">
+            <type by_reference="false">array</type>
+          </tag>
+        </docblock>
+        <argument line="133">
+          <name>$rules</name>
+          <default/>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="private" namespace="Pajama" line="152" package="Default">
+        <name>normalizeRule</name>
+        <full_name>normalizeRule</full_name>
+        <docblock line="146">
+          <description>Normalizes a rule, converting string rules into their array equivalents.</description>
+          <long-description/>
+          <tag line="146" name="param" description="" type="array|string" variable="$value">
+            <type by_reference="false">array</type>
+            <type by_reference="false">string</type>
+          </tag>
+          <tag line="146" name="return" description="" type="array">
+            <type by_reference="false">array</type>
+          </tag>
+        </docblock>
+        <argument line="152">
+          <name>$value</name>
+          <default/>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="Pajama" line="180" package="Default">
+        <name>field</name>
+        <full_name>field</full_name>
+        <docblock line="164">
+          <description>Validates a single field.</description>
+          <long-description>&lt;p&gt;This is the rough equivalent of the 'element' method in the jQuery Validation plugin.&lt;/p&gt;
+
+&lt;p&gt;Example:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$validator = Validator::validate(array(...));
+if ($validator-&gt;field('first_name')) {
+    // The 'first_name' field is valid.
+}
+&lt;/code&gt;&lt;/pre&gt;</long-description>
+          <tag line="164" name="param" description="The name of the field to validate." type="string" variable="$name">
+            <type by_reference="false">string</type>
+          </tag>
+          <tag line="164" name="return" description="True if valid, false otherwise." type="bool">
+            <type by_reference="false">bool</type>
+          </tag>
+        </docblock>
+        <argument line="180">
+          <name>$name</name>
+          <default/>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="Pajama" line="207" package="Default">
+        <name>model</name>
+        <full_name>model</full_name>
+        <docblock line="192">
+          <description>Validates the model.</description>
+          <long-description>&lt;p&gt;This is the rough equivalent of the 'form' method in the jQuery Validation plugin.&lt;/p&gt;
+
+&lt;p&gt;Example:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$validator = Validator::validate(array(...));
+if ($validator-&gt;model()) {
+    // Model validated.
+}
+&lt;/code&gt;&lt;/pre&gt;</long-description>
+          <tag line="192" name="return" description="True if the model is valid, false otherwise." type="bool">
+            <type by_reference="false">bool</type>
+          </tag>
+        </docblock>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="Pajama" line="229" package="Default">
+        <name>invalidFields</name>
+        <full_name>invalidFields</full_name>
+        <docblock line="216">
+          <description>Returns an associative array of all fields in the model that failed validation.</description>
+          <long-description>&lt;p&gt;Example:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$validator = Validator::validate(array(...));
+foreach ($validator-&gt;invalidFields() as $name =&gt; $value) {
+    error_log($name . ' did not validate.');
+}
+&lt;/code&gt;&lt;/pre&gt;</long-description>
+          <tag line="216" name="return" description="An associative array of all invalid fields." type="array">
+            <type by_reference="false">array</type>
+          </tag>
+        </docblock>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="Pajama" line="250" package="Default">
+        <name>numberOfInvalidFields</name>
+        <full_name>numberOfInvalidFields</full_name>
+        <docblock line="239">
+          <description>Returns the number of fields that failed validation.</description>
+          <long-description>&lt;p&gt;Example:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$validator = Validator::validate(array(...));
+error_log($validator-&gt;numberOfInvalidFields() . ' failed validation.');
+&lt;/code&gt;&lt;/pre&gt;</long-description>
+          <tag line="239" name="return" description="The number of fields that failed validation." type="int">
+            <type by_reference="false">int</type>
+          </tag>
+        </docblock>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="Pajama" line="259" package="Default">
+        <name>getModel</name>
+        <full_name>getModel</full_name>
+        <docblock line="254">
+          <description>Returns the flattened model the Validator was constructed with.</description>
+          <long-description/>
+          <tag line="254" name="return" description="The flattened model." type="array">
+            <type by_reference="false">array</type>
+          </tag>
+        </docblock>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="Pajama" line="268" package="Default">
+        <name>getRules</name>
+        <full_name>getRules</full_name>
+        <docblock line="263">
+          <description>Returns the normalized rules the Validator was constructed with.</description>
+          <long-description/>
+          <tag line="263" name="return" description="The normalized rules." type="array">
+            <type by_reference="false">array</type>
+          </tag>
+        </docblock>
+      </method>
+      <method final="false" abstract="false" static="true" visibility="public" namespace="Pajama" line="277" package="Default">
+        <name>getMethods</name>
+        <full_name>getMethods</full_name>
+        <docblock line="272">
+          <description>Returns the array of validation methods.</description>
+          <long-description/>
+          <tag line="272" name="return" description="The array containing all the validation methods." type="array">
+            <type by_reference="false">array</type>
+          </tag>
+        </docblock>
+      </method>
+      <method final="false" abstract="false" static="true" visibility="public" namespace="Pajama" line="294" package="Default">
+        <name>addMethod</name>
+        <full_name>addMethod</full_name>
+        <docblock line="281">
+          <description>Adds a new validation method.</description>
+          <long-description>&lt;p&gt;Example:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Validator::addMethod('alphanumeric', function(ValidatorContext $context, $value) {
+    return $context-&gt;optional($value) || ctype_alnum($value);
+});
+&lt;/code&gt;&lt;/pre&gt;</long-description>
+          <tag line="281" name="param" description="The name of the method, i.e. 'range' or 'creditcard'." type="string" variable="$method_name">
+            <type by_reference="false">string</type>
+          </tag>
+          <tag line="281" name="param" description="The validation method, typically an anonymous function." type="callable" variable="$method">
+            <type by_reference="false">callable</type>
+          </tag>
+        </docblock>
+        <argument line="294">
+          <name>$method_name</name>
+          <default/>
+          <type/>
+        </argument>
+        <argument line="294">
+          <name>$method</name>
+          <default/>
+          <type/>
+        </argument>
+      </method>
+    </class>
+    <class final="true" abstract="false" namespace="Pajama" line="303" package="Default">
+      <extends/>
+      <name>ValidatorContext</name>
+      <full_name>\Pajama\ValidatorContext</full_name>
+      <docblock line="300">
+        <description>Provided to each validation method to provide useful methods and validation context information.</description>
+        <long-description/>
+      </docblock>
+      <property final="false" static="false" visibility="private" line="308" namespace="Pajama" package="Default">
+        <name>$validator</name>
+        <default/>
+        <docblock line="305">
+          <description/>
+          <long-description/>
+          <tag line="305" name="var" description="The Validator instance that this context is being provided for." type="\Pajama\Validator">
+            <type by_reference="false">\Pajama\Validator</type>
+          </tag>
+        </docblock>
+      </property>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="Pajama" line="315" package="Default">
+        <name>__construct</name>
+        <full_name>__construct</full_name>
+        <docblock line="310">
+          <description>Creates a new ValidatorContext instance for a given Validator.</description>
+          <long-description/>
+          <tag line="310" name="param" description="" type="\Pajama\Validator" variable="$validator">
+            <type by_reference="false">\Pajama\Validator</type>
+          </tag>
+        </docblock>
+        <argument line="315">
+          <name>$validator</name>
+          <default/>
+          <type>\Pajama\Validator</type>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="Pajama" line="332" package="Default">
+        <name>optional</name>
+        <full_name>optional</full_name>
+        <docblock line="319">
+          <description>Tests whether the given value is null or an empty string.</description>
+          <long-description>&lt;p&gt;Example:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Validator::addMethod('example', function($context, $value) {
+    return $context-&gt;optional($value) || ...;
+}
+&lt;/code&gt;&lt;/pre&gt;</long-description>
+          <tag line="319" name="param" description="The value to test." type="string" variable="$value">
+            <type by_reference="false">string</type>
+          </tag>
+          <tag line="319" name="return" description="True if the value is null or an empty string, false otherwise." type="bool">
+            <type by_reference="false">bool</type>
+          </tag>
+        </docblock>
+        <argument line="332">
+          <name>$value</name>
+          <default/>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="Pajama" line="362" package="Default">
+        <name>parseSelector</name>
+        <full_name>parseSelector</full_name>
+        <docblock line="336">
+          <description>Parses a Pajama-compatible selector into two parts.</description>
+          <long-description>&lt;p&gt;A Pajama-compatible selector has the format:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;#foo&lt;/li&gt;
+&lt;li&gt;#foo:bar&lt;/li&gt;
+&lt;li&gt;[name=foo]&lt;/li&gt;
+&lt;li&gt;[name=foo]:bar&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The two parts are:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;b&gt;name&lt;/b&gt; The field name in the selector.&lt;/li&gt;
+&lt;li&gt;&lt;b&gt;pseudo-class&lt;/b&gt; The pseudo-class portion of the selector.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Example:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$context = ...;
+$parts = $context-&gt;parseSelector('[name=foo]:checked]');
+// $parts['name'] === 'foo'
+// $parts['pseudo-class'] === 'checked'
+&lt;/code&gt;&lt;/pre&gt;</long-description>
+          <tag line="336" name="param" description="A Pajama-compatible selector." type="string" variable="$selector">
+            <type by_reference="false">string</type>
+          </tag>
+          <tag line="336" name="return" description="An array containing the two parts of the selector or null if the selector could not be parsed." type="array|null">
+            <type by_reference="false">array</type>
+            <type by_reference="false">null</type>
+          </tag>
+        </docblock>
+        <argument line="362">
+          <name>$selector</name>
+          <default/>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="Pajama" line="386" package="Default">
+        <name>resolve</name>
+        <full_name>resolve</full_name>
+        <docblock line="375">
+          <description>Resolves the param into a boolean value.</description>
+          <long-description>&lt;ul&gt;
+&lt;li&gt;If the &lt;b&gt;param&lt;/b&gt; is a boolean, it will be returned untouched.&lt;/li&gt;
+&lt;li&gt;If the &lt;b&gt;param&lt;/b&gt; is a string, it will be parsed as a Pajama-compatible selector.&lt;/li&gt;
+&lt;li&gt;If the &lt;b&gt;param&lt;/b&gt; is a callable, it will be called with the passed &lt;b&gt;value&lt;/b&gt;.&lt;/li&gt;
+&lt;/ul&gt;</long-description>
+          <tag line="375" name="param" description="The value to be passed to the param if it is a callable." type="string" variable="$value">
+            <type by_reference="false">string</type>
+          </tag>
+          <tag line="375" name="param" description="The parameter to resolve." type="bool|string|callable" variable="$param">
+            <type by_reference="false">bool</type>
+            <type by_reference="false">string</type>
+            <type by_reference="false">callable</type>
+          </tag>
+          <tag line="375" name="return" description="" type="bool">
+            <type by_reference="false">bool</type>
+          </tag>
+        </docblock>
+        <argument line="386">
+          <name>$value</name>
+          <default/>
+          <type/>
+        </argument>
+        <argument line="386">
+          <name>$param</name>
+          <default/>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="private" namespace="Pajama" line="404" package="Default">
+        <name>resolveExpression</name>
+        <full_name>resolveExpression</full_name>
+        <docblock line="398">
+          <description>Resolve a Pajama-compatible selector expression based on the model values.</description>
+          <long-description/>
+          <tag line="398" name="param" description="" type="string" variable="$expression">
+            <type by_reference="false">string</type>
+          </tag>
+          <tag line="398" name="return" description="" type="bool">
+            <type by_reference="false">bool</type>
+          </tag>
+        </docblock>
+        <argument line="404">
+          <name>$expression</name>
+          <default/>
+          <type/>
+        </argument>
+      </method>
+      <method final="false" abstract="false" static="false" visibility="public" namespace="Pajama" line="442" package="Default">
+        <name>getValidator</name>
+        <full_name>getValidator</full_name>
+        <docblock line="437">
+          <description>Returns the Validator instance associated with this context.</description>
+          <long-description/>
+          <tag line="437" name="return" description="" type="\Pajama\Validator">
+            <type by_reference="false">\Pajama\Validator</type>
+          </tag>
+        </docblock>
+      </method>
+    </class>
+  </file>
+  <package name="Default" full_name="Default"/>
+  <package name="Pajama" full_name="Pajama"/>
+  <namespace name="Pajama" full_name="Pajama"/>
+  <marker count="0">todo</marker>
+  <marker count="0">fixme</marker>
+  <deprecated count="0"/>
+</project>

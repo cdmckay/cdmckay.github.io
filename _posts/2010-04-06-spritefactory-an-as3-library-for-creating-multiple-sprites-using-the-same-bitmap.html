@@ -24,7 +24,7 @@ tags: []
 comments: []
 ---
 <p>While working on Flash sidescroller stuff I noticed that there was no easy way (that I could find) to create multiple sprites from a single bitmap (something you'd do when doing a tile-based graphics layout).</p>
-<p>Sooo... <a href="http://cdmckay.org/blog/projects/spritefactory">I made my own simple library called SpriteFactory</a>.</p>
+<p>Sooo... <a href="{{ '/projects/spritefactory' | relative_url }}">I made my own simple library called SpriteFactory</a>.</p>
 <p>Here's some example usage:</p>
 <pre lang="actionscript3">
 var factory:SpriteFactory = new SpriteFactory("assets/sprites");
@@ -32,4 +32,4 @@ factory.loadBitmap("grass", "block-grass.png");
 var grass1:Sprite = factory.newSprite("grass");
 var grass2:Sprite = factory.newSprite("grass");
 </pre>
-<p><a href="http://cdmckay.org/blog/projects/spritefactory">Check out the project page for more information.</a></p>
+<p><a href="{{ '/projects/spritefactory' | relative_url }}">Check out the project page for more information.</a></p>

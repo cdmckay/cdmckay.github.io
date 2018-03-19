@@ -1,0 +1,8 @@
+[25-Mar-2013 11:50:28] A route must be specified
+[25-Mar-2013 12:09:19] A route must be specified
+[25-Mar-2013 12:09:50] A route must be specified
+[25-Mar-2013 12:11:27] PHP Fatal error:  Uncaught exception 'Exception' with message 'Not implemented' in /home/dsbghdfe/public_html/tilecraft/endpoint.php:42
+Stack trace:
+#0 /home/dsbghdfe/public_html/tilecraft/endpoint.php(18): routeDefault('44e8fc96-fb88-4...')
+#1 {main}
+  thrown in /home/dsbghdfe/public_html/tilecraft/endpoint.php on line 42

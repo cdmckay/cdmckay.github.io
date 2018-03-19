@@ -95,79 +95,79 @@ comments:
 <h3>The Code</h3>
 <p>The first thing anyone needs to do when consuming a WSDL service with PHP is to create a new client object.  By creating a client object, PHP basically reads the server's WSDL file and determines which functions are available to us.  A SoapClient is created using the following code:</p>
 <pre lang="php" escaped='true' line='1'>
-<?php
+&lt;?php
   // The path to the WSDL web service.
   $wsdl = "http://path/to/webservice.wsdl";
 
   // The connection options.
-  $options = array('features' => 
+  $options = array('features' =&gt; 
     SOAP_USE_XSI_ARRAY_TYPE + SOAP_SINGLE_ELEMENT_ARRAYS);
 
   // Create a new SoapClient.
   $client = new SoapClient($wsdl, $options);
-  echo "SoapClient creation successful<br>\n";
-?>
+  echo "SoapClient creation successful&lt;br&gt;\n";
+?&gt;
 </pre>
 <p>So what's going on at line 7?  Those two features are basically used to make the SoapClient act as we'd expect.  For example, if you don't include the SOAP_USE_XSI_ARRAY_TYPE feature, then you'll find you get a lot of casting exceptions when dealing with a Java-based webservice that uses any complex data structures.  If you don't include the SOAP_USE_XSI_ARRAY_TYPE feature, then PHP will turn 1-element arrays return types into objects, which is not what you want 90% of the time and often gives confusing results.</p>
 <p>Now let's actually consume a web service.  Let's pretend we're using the J2EE service provided by this <a href="http://java.sun.com/developer/technicalArticles/J2EE/j2ee_ws/">article</a>.  Here are the contents of the WSDL file from that article:</p>
 <pre lang="xml" escaped="true" line="1">
-<?xml version="1.0" encoding="UTF-8"?>
-<definitions name="MyFirstService" targetNamespace="urn:Foo" xmlns:tns="urn:Foo"
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;definitions name="MyFirstService" targetNamespace="urn:Foo" xmlns:tns="urn:Foo"
     xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
-  <types/>
-  <message name="MathFace_add">
-    <part name="int_1" type="xsd:int"/>
-    <part name="int_2" type="xsd:int"/></message>
-  <message name="MathFace_addResponse">
-    <part name="result" type="xsd:int"/></message>
-  <portType name="MathFace">
-    <operation name="add" parameterOrder="int_1 int_2">
-      <input message="tns:MathFace_add"/>
-      <output message="tns:MathFace_addResponse"/>
-    </operation>
-  </portType>
-  <binding name="MathFaceBinding" type="tns:MathFace">
-    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="rpc"/>
-    <operation name="add">
-      <soap:operation soapAction=""/>
-      <input>
-        <soap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-		    use="encoded" namespace="urn:Foo"/>
-      </input>
-      <output>
-        <soap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-		    use="encoded" namespace="urn:Foo"/>
-      </output>
-    </operation>
-  </binding>
-  <service name="MyFirstService">
-    <port name="MathFacePort" binding="tns:MathFaceBinding">
-      <soap:address location="http://localhost:8080/math-service/math"/>
-    </port>
-  </service>
-</definitions>
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"&gt;
+  &lt;types/&gt;
+  &lt;message name="MathFace_add"&gt;
+    &lt;part name="int_1" type="xsd:int"/&gt;
+    &lt;part name="int_2" type="xsd:int"/&gt;&lt;/message&gt;
+  &lt;message name="MathFace_addResponse"&gt;
+    &lt;part name="result" type="xsd:int"/&gt;&lt;/message&gt;
+  &lt;portType name="MathFace"&gt;
+    &lt;operation name="add" parameterOrder="int_1 int_2"&gt;
+      &lt;input message="tns:MathFace_add"/&gt;
+      &lt;output message="tns:MathFace_addResponse"/&gt;
+    &lt;/operation&gt;
+  &lt;/portType&gt;
+  &lt;binding name="MathFaceBinding" type="tns:MathFace"&gt;
+    &lt;soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="rpc"/&gt;
+    &lt;operation name="add"&gt;
+      &lt;soap:operation soapAction=""/&gt;
+      &lt;input&gt;
+        &lt;soap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
+		    use="encoded" namespace="urn:Foo"/&gt;
+      &lt;/input&gt;
+      &lt;output&gt;
+        &lt;soap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
+		    use="encoded" namespace="urn:Foo"/&gt;
+      &lt;/output&gt;
+    &lt;/operation&gt;
+  &lt;/binding&gt;
+  &lt;service name="MyFirstService"&gt;
+    &lt;port name="MathFacePort" binding="tns:MathFaceBinding"&gt;
+      &lt;soap:address location="http://localhost:8080/math-service/math"/&gt;
+    &lt;/port&gt;
+  &lt;/service&gt;
+&lt;/definitions&gt;
 </pre>
 <p>What can we tell about the web service by looking at this file?  Well the first thing you should notice is lines 12-14.  In those lines, the web service defines an operation ("add") that takes two arguments ("int_1 int_2").  As a result, we know that the web service exposes an add operation that takes two integer arguments.  Let's use that knowledge to invoke the add operation in PHP using the SOAP module:</p>
 <pre lang="php" escaped='true' line='1'>
-<?php
+&lt;?php
   // The path to the WSDL web service.
   $wsdl = "http://localhost:8080/math-service/math?wsdl";
 
   // The connection options.
-  $options = array('features' => 
+  $options = array('features' =&gt;
     SOAP_USE_XSI_ARRAY_TYPE + SOAP_SINGLE_ELEMENT_ARRAYS);
 
   // Create a new SoapClient.
   $client = new SoapClient($wsdl, $options);
-  echo "SoapClient creation successful<br>\n";
+  echo "SoapClient creation successful&lt;br&gt;\n";
 
   // Call the add operation.
   $response = $client->add(2, 2);
 
   // This should print 4.
-  echo $response . "<br>\n";
-?>
+  echo $response . "&lt;br&gt;\n";
+?&gt;
 </pre>
 <p>How'd the PHP object $client know to have an add method?  It simply read the WSDL file the same way we did, and realized that the web service exposed that operation.</p>
 <p>As you can see, consuming a J2EE web service from a PHP client is not too complicated.  Once you understand the rudiments of a WSDL file and the PHP SOAP module, calling remote functions becomes a snap.</p>
