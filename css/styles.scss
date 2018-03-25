@@ -40,12 +40,19 @@ img {
 
 }
 
-.post-navigation a {
+.post-navigation {
 
-  color: #ccc;
+  font-size: 14px;
+  margin-top: 20px;
 
-  &:visited {
-    color: #bbb;
+  a {
+
+    color: #ccc;
+
+    &:visited {
+      color: #bbb;
+    }
+
   }
 
 }
