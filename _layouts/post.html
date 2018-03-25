@@ -16,9 +16,39 @@ layout: default
     {{ content }}
   </div>
 
-  {%- if site.disqus.shortname -%}
+  {%- if page.comments.size > 0 -%}
+  <section class="comments">
+    <h3 class="comments-title">{{ page.comments | size | pluralize: 'comment', 'comments' }} comments</h3>
+    {% for comment in page.comments %}
+    <article class="comment">
+      <header class="comment-header">
+        <span class="comment-author">{{ comment.author }}</span>
+        <time title="{{ comment.date }}" class="comment-date">
+          {{ comment.date | date: "%b '%y" }}
+        </time>
+      </header>
+      <p class="comment-content">{{ comment.content | strip_html | escape }}</p>
+    </article>
+    {% endfor %}
+  </section>
+  {%- elsif site.disqus.shortname -%}
     {%- include disqus_comments.html -%}
   {%- endif -%}
 
   <a class="u-url" href="{{ page.url | relative_url }}" hidden></a>
+
+  <div class="post-navigation">
+    {% if page.next.url %}
+    <a class="post-navigation-next" href="{{ page.next.url }}" title="{{ page.next.title }}">
+      &laquo; Newer Post
+    </a>
+    {% endif %}
+    {% if page.previous.url %}
+    <a class="post-navigation-previous" href="{{ page.previous.url }}" title="{{ page.previous.title }}">
+      Older Post &raquo;
+    </a>
+    {% endif %}
+    <div class="clearfix"></div>
+  </div>
+
 </article>

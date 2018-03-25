@@ -39,3 +39,57 @@ img {
   }
 
 }
+
+.post-navigation a {
+
+  color: #ccc;
+
+  &:visited {
+    color: #bbb;
+  }
+
+}
+
+.post-navigation-previous {
+  float: right;
+}
+
+.comments {
+
+  margin-bottom: 30px;
+
+  .comments-title {
+    font-weight: bold;
+  }
+
+}
+
+.comment {
+
+  font-size: 14px;
+  margin-bottom: 20px;
+
+  .comment-header {
+    margin-bottom: 5px;
+  }
+
+  .comment-author {
+    color: #999;
+  }
+
+  .comment-date {
+    color: #ccc;
+    float: right;
+  }
+
+  .comment-content {
+    white-space: pre-wrap;
+  }
+
+}
+
+.clearfix::after {
+  clear: both;
+  content: "";
+  display: block;
+}
