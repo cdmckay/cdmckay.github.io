@@ -27,7 +27,9 @@ layout: default
           {{ comment.date | date: "%b '%y" }}
         </time>
       </header>
-      <p class="comment-content">{{ comment.content }}</p>
+      <div class="comment-content">
+        {{ comment.content }}
+      </div>
     </article>
     {% endfor %}
   </section>
