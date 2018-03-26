@@ -26,6 +26,9 @@ excerpt_separator: <!--more-->
 permalink: /:title
 paginate: 10
 
+# Google Analytics
+google_analytics: UA-7505226-3
+
 # Disqus for comments
 disqus:
   shortname: cdmckay
@@ -52,11 +55,12 @@ header_pages:
 # Exclude from processing.
 # The following items will not be processed, by default. Create a custom list
 # to override the default setting.
-# exclude:
-#   - Gemfile
-#   - Gemfile.lock
-#   - node_modules
-#   - vendor/bundle/
-#   - vendor/cache/
-#   - vendor/gems/
-#   - vendor/ruby/
+exclude:
+  - .idea/
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - vendor/bundle/
+  - vendor/cache/
+  - vendor/gems/
+  - vendor/ruby/

@@ -86,12 +86,12 @@ comments:
   date_gmt: '2011-05-03 22:03:26 +0200'
   content: "@Mohammed Elsherif: \r\n\r\nI was referring to the case where the interface
     method has a generic parameter, such as:\r\n\r\n<pre lang=\"csharp\">\r\ninterface
-    Foo \r\n{\r\n    void FooMethod<T>(T t);\r\n}\r\n</pre>\r\n\r\nThe type parameter
+    Foo \r\n{\r\n    void FooMethod&lt;T&gt;(T t);\r\n}\r\n</pre>\r\n\r\nThe type parameter
     T here belongs to the method FooMethod. The nearest we can get with a delegate
-    is the equivalent of\r\n\r\n<pre lang=\"csharp\">\r\ninterface Foo<T>\r\n{\r\n
+    is the equivalent of\r\n\r\n<pre lang=\"csharp\">\r\ninterface Foo&lt;T&gt;\r\n{\r\n
     \   void FooMethod(T t);\r\n}\r\n</pre>\r\n\r\nwhere the generic parameter belongs
     to the type. The delegate would be:\r\n\r\n<pre lang=\"csharp\">\r\ndelegate void
-    FooMethod<T>(T t);\r\n</pre>\r\n\r\nThe delegate type can be instantiated for
+    FooMethod&lt;T&gt;(T t);\r\n</pre>\r\n\r\nThe delegate type can be instantiated for
     a particular T, but an interface implementation of Foo requires the method to
     accept any T.\r\n\r\n<em>(cdmckay: I tried to re-add the generics as I understood
     them.)</em>\r\n"
@@ -222,7 +222,7 @@ comments:
     In 1 class, It cannot implement 2 interfaces extend from same interface, even with generic
     Unlike C#, we can reuse 1 function for 2 interface, or event make it explicitly implement
     Sometimes I just want make 1 listener class, which can listen many asynchronous callback and manage many things at the same times
-    But because it "Asynchronous<I>" so I only able to make many class
+    But because it "Asynchronous&lt;I&gt;" so I only able to make many class
 
     And you know, new object, new footprint
     Sucks performance
