@@ -6,15 +6,12 @@
 }
 
 .site-header img {
-
   border-radius: 50%;
   float: left;
   margin: 6px 10px 6px 0;
-
 }
 
 img {
-
   border-radius: 2px;
   border: 1px #333 solid;
 
@@ -27,34 +24,29 @@ img {
     display: block;
     margin: 0 auto;
   }
-
 }
 
 .post-read-more-link {
-
   color: #ccc;
+  display: block;
+  margin-top: 15px;
 
   &:visited {
     color: #bbb;
   }
-
 }
 
 .post-navigation {
-
   font-size: 14px;
   margin-top: 20px;
 
   a {
-
     color: #ccc;
 
     &:visited {
       color: #bbb;
     }
-
   }
-
 }
 
 .post-navigation-previous {
@@ -62,17 +54,14 @@ img {
 }
 
 .comments {
-
   margin-bottom: 30px;
 
   .comments-title {
     font-weight: bold;
   }
-
 }
 
 .comment {
-
   font-size: 14px;
   margin-bottom: 20px;
 
@@ -92,7 +81,6 @@ img {
   .comment-content {
     white-space: pre-wrap;
   }
-
 }
 
 .clearfix::after {
