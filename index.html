@@ -19,9 +19,9 @@ layout: default
         <a class="post-read-more-link" href="{{ post.url | relative_url }}"
           >Read more
           <span class="post-comments">
-            {% if post.comments %} ({{ post.comments.size | default: 0 }} {% if
-            post.comments.size == 1 %} comment{% else %} comments{% endif %}) {%
-            endif %}
+            {% if post.comments and post.comments.size > 0 %} ({{
+            post.comments.size | default: 0 }} {% if post.comments.size == 1 %}
+            comment{% else %} comments{% endif %}) {% endif %}
           </span></a
         >
       </p>
