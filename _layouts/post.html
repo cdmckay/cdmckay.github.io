@@ -35,6 +35,7 @@ layout: default
     <article class="comment">
       <header class="comment-header">
         <span class="comment-author">{{ comment.author }}</span>
+        <strong>{{ comment.title }}</strong>
         <time title="{{ comment.date }}" class="comment-date">
           {{ comment.date | date: "%b '%y" }}
         </time>

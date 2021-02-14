@@ -3,41 +3,50 @@ layout: default
 ---
 
 <div class="home">
+  <ul class="post-list">
+    {% for post in paginator.posts %}
+    <li>
+      <span class="post-meta">{{ post.date | date: "%b %-d, %Y" }}</span>
 
-    <ul class="post-list">
-        {% for post in paginator.posts %}
-        <li>
-            <span class="post-meta">{{ post.date | date: "%b %-d, %Y" }}</span>
+      <h3>
+        <a class="post-link" href="{{ post.url | relative_url }}">
+          {{ post.title | escape }}
+        </a>
+      </h3>
+      {%- if site.show_excerpts -%}
+      <div class="post-excerpt">{{ post.excerpt }}</div>
+      <p>
+        <a class="post-read-more-link" href="{{ post.url | relative_url }}"
+          >Read more
+          <span class="post-comments">
+            {% if post.comments %} ({{ post.comments.size | default: 0 }} {% if
+            post.comments.size == 1 %} comment{% else %} comments{% endif %}) {%
+            endif %}
+          </span></a
+        >
+      </p>
+      {%- endif -%}
+    </li>
+    {% endfor %}
 
-            <h3>
-                <a class="post-link" href="{{ post.url | relative_url }}">
-                    {{ post.title | escape }}
-                </a>
-            </h3>
-            {%- if site.show_excerpts -%}
-            <div class="post-excerpt">
-                {{ post.excerpt }}
-            </div>
-            <p>
-                <a class="post-read-more-link" href="{{ post.url | relative_url }}">Read more</a>
-            </p>
-            {%- endif -%}
-        </li>
-        {% endfor %}
+    <div class="pagination">
+      {% if paginator.previous_page %}
+      <a href="{{ paginator.previous_page_path }}" class="previous"
+        >&laquo; Previous</a
+      >
+      {% endif %}
 
-        <div class="pagination">
-            {% if paginator.previous_page %}
-            <a href="{{ paginator.previous_page_path }}" class="previous">&laquo; Previous</a>
-            {% endif %}
+      <span class="page_number"
+        >Page: {{ paginator.page }} of {{ paginator.total_pages }}</span
+      >
 
-            <span class="page_number">Page: {{ paginator.page }} of {{ paginator.total_pages }}</span>
+      {% if paginator.next_page %}
+      <a href="{{ paginator.next_page_path }}" class="next">Next &raquo;</a>
+      {% endif %}
+    </div>
+  </ul>
 
-            {% if paginator.next_page %}
-            <a href="{{ paginator.next_page_path }}" class="next">Next &raquo;</a>
-            {% endif %}
-        </div>
-    </ul>
-
-    <p class="rss-subscribe">subscribe <a href="{{ '/feed.xml' | relative_url }}">via RSS</a></p>
-
+  <p class="rss-subscribe">
+    subscribe <a href="{{ '/feed.xml' | relative_url }}">via RSS</a>
+  </p>
 </div>
