@@ -2,6 +2,7 @@
 layout: post
 title: "The Future"
 date: 2005-06-08 01:00:00
+comments:
 ---
 
 The future. Ah, the future. We're always looking towards it, sometimes with dread, sometimes with anticipation, sometimes not for long. But we all have one, and many times we influence the future of others. And it seems every once and a while I have to give it more than the usual passing thought. What is in the future for me? What am I really going to be doing exactly a year from now? Will I be in a good mood? Will I be in a relationship? Will all the significant people in my life be alive? Will I have new friends?

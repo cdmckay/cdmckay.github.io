@@ -2,6 +2,7 @@
 layout: post
 title: "Loose Ends"
 date: 2005-05-30 14:32:00
+comments:
 ---
 
 Well, I'm now officially an engineer. This past weekend was spent in Kingston indulging in hedonistic practices such as smoking copious amounts of marijuana, drinking beer and eating whatever my stoner mind desired. Oh yeah, and I was convocated too.
