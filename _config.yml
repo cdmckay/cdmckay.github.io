@@ -26,6 +26,11 @@ excerpt_separator: <!--more-->
 permalink: /:title
 paginate: 10
 
+algolia:
+  application_id: "8SWIT7VNGI"
+  index_name: "posts"
+  nodes_to_index: "p,blockquote,li,pre"
+
 # Google Analytics
 google_analytics: UA-7505226-3
 
