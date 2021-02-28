@@ -2,6 +2,7 @@
 layout: post
 title: "Revelations"
 date: 2004-01-18 14:43:00
+comments: []
 ---
 
 Everytime I think I'm close to being sure about how a girl feels towards me, I always find that I actually have no idea. Normally I'd explain, but I don't care to tell right now for specifically the reason as I don't know where I stand at all. Ah well, the world still turns.

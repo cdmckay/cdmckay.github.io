@@ -2,6 +2,7 @@
 layout: post
 title: "Happiness"
 date: 2004-11-11 23:48:00
+comments: []
 ---
 
 Happiness. Seems to be a struggle for a friend of mine lately. She seemed frustrated and unhappy, and told me she almost wished she could never second guessed herself, and that she could be ignorant and just be happy with what she had. An example she used was people of faith, who just believed what their faith said without question. She told me they seemed happy.

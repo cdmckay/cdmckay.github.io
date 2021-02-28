@@ -2,6 +2,19 @@
 layout: post
 title: "First Exam... completed"
 date: 2002-12-05 17:49:00
+comments:
+  - author: ushapanda
+    date: 2004-01-22 10:00 am (UTC)
+    content: |-
+      well, look what I found.
+
+      It's all Eve's fault.
+  - author: mckayc
+    date: 2004-01-22 12:37 pm (UTC)
+    content: All you had to do was search for Cameron McKay.
+  - author: ushapanda
+    date: 2004-01-23 07:07 am (UTC)
+    content: but I wouldn't have thought of doing that at all.
 ---
 
 Well, I just got back from my first exam (the algebra one I mentionned last entry) and I have a good feeling about it. I'm quite certain that I passed and I guessing I got an 80-85% on it, which is good, as that'll boost my mark in that course significantly.

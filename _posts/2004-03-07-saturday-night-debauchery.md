@@ -2,6 +2,12 @@
 layout: post
 title: "Saturday Night Debauchery"
 date: 2004-03-07 18:55:00
+comments:
+  - author: tiemann
+    date: 2004-03-12 06:00 am (UTC)
+    title: Tasty tidbits of intellectual feastings?
+    content: |-
+      According to some of my books, everything I've ever felt or thought I knew has been categorized already. It's weird. I wonder if I should take it as a guideline of how to continue. I'm being too vague, but I have a test in a few hours so that's all I'll write. In a social sense, to be truly altruistic might be considered to be a sign of absolute non-jack assery.
 ---
 
 Well that was quite a weekend. Tiemann, Wyner, Griff, Patten and Kwan came up to Kingston and, as per usual, much debauchery ensued. One might say <i>Saturday Night Debauchery</i>. But anyway, ended up going to the Plaza for the first time in my life and, well, I've re-affirmed why I don't go. First of all, the women aren't attractive. Secondly, I always feel like I shouldn't be looking when the girls start spreading their legs in whatnot. I mean, you're in a social place (a bar) and in any other social situation it's often considered impolite to look at a girl's cootch. Finally, it's totally degrading. I mean, this women is moving in sexual ways and spread eagling and stuff for a bunch of dirtbags just for money. I don't know, it just seems really gross. But then again, I'm not the type that frequents such establishments. At the same time, I'm not say we ban it or anything. It just not for me. As long as the girls aren't being coerced or treated really horribly, there's no real reason why it should be illegal.

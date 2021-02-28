@@ -2,6 +2,15 @@
 layout: post
 title: "The Kingston Farscape"
 date: 2004-05-04 02:28:00
+comments:
+  - author: tau_ceti
+    date: 2004-05-04 07:29 am (UTC)
+    content: |-
+      Third last paragraph:
+
+      Hilarious.
+
+      My cereal has turned to mush and I blame you.
 ---
 
 Well, I'm back in Kingston living with Mr. Gregs and Ankur. So far it's been pretty good, but it's far different living with two people than it is living with five. It's so much quieter and tame. On the other hand, I suppose it's quite conducive to doing work. But what's the fun in that?

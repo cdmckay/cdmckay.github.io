@@ -2,6 +2,7 @@
 layout: post
 title: "Daytona Beach"
 date: 2005-03-01 16:23:00
+comments: []
 ---
 
 <I>This is an entry from February 20th, 2005 from the car:</I>

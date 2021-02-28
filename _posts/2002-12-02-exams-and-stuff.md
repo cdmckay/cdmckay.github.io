@@ -2,6 +2,10 @@
 layout: post
 title: "Exams and Stuff"
 date: 2002-12-02 20:14:00
+comments:
+  - author: tiemann
+    date: 2002-12-03 06:44 am (UTC)
+    content: Who da man? I da man. Booya. cha cha cha. shit, I have to leave for an exam now. Dang. Going even crazier.
 ---
 
 Well, I guess this begins the first page of my government profile which I may or may not one day regret writing. But I guess there's not much I can about that but not write a journal... and I'm not about to do that. And no, I'm not going to tell you my reasoning.

@@ -2,6 +2,7 @@
 layout: post
 title: "McGill Justice"
 date: 2003-06-06 02:25:00
+comments: []
 ---
 
 Hmmm... today was mighty uneventful. Well, not completely. I had my father (the lawyer) look over my contract with Digital Ideas, Inc. today to see if it was nice and kosher. It was except for a few paragraphs which I promptly changed and fired back to Wayne. Other than that, I did about two point five hours of programming, fired that off to David and that essentially highlights my day... or does it?

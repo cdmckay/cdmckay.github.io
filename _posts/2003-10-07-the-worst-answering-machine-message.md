@@ -2,6 +2,11 @@
 layout: post
 title: "The Worst Answering Machine Message"
 date: 2003-10-07 22:19:00
+comments:
+  - author: tiemann
+    date: 2003-10-19 07:34 am (UTC)
+    title: "Re: BTW"
+    content: Well what were the numbers? You can't block those out. What if I wanted to stalk you?
 ---
 
 I think I just possibly left the worst answering machine message in my life a couple of moments ago. Now I know why I hate those fucking machines. Never leaving a message again! Wow, though.

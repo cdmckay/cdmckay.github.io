@@ -2,6 +2,7 @@
 layout: post
 title: "Feeling Sick"
 date: 2003-11-24 16:28:00
+comments: []
 ---
 
 I'm feeling pretty sick. Yesterday I woke up feeling horrible (physically not mentally) and things only got worse as the day went on. By the night, I was shivering and my skin was completely goosebumped. As if that wasn't enough I had a dehabilitating headache and was burning up. Wonderful day it was. Finally, I was forced to pop some of Farron's Neo-Citrin to knock me out, although the sleep was feverish and patchy at best. This morning I woke up drenched in sweat but thankfully felt much better.

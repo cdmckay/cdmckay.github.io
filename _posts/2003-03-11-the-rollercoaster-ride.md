@@ -2,6 +2,7 @@
 layout: post
 title: "The Rollercoaster Ride"
 date: 2003-03-11 21:24:00
+comments: []
 ---
 
 Well, I suppose it's the time of the month (year?) that I update my journal. My life has been really interesting and all over the place lately. I'm not going to go into any detail since I'm not a huge fan of broadcasting my life to the masses.

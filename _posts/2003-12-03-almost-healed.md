@@ -2,6 +2,13 @@
 layout: post
 title: "Almost Healed"
 date: 2003-12-03 19:15:00
+comments:
+  - author: tiemann
+    date: 2003-12-07 09:49 am (UTC)
+    title: Me?
+    content: |-
+      couldn't be.
+      sometimes all you want to do is quote lyrics. But they never feel the same in review. A journal isn't there for intellectual competition. Last night we were at coreys house for leafs game. but his uncles were there so I had to sit on a table. good ol' corey.
 ---
 
 Well I'm almost completely healed these days. My gums are still slightly pained but nothing I can't handle. I can eat almost everything I did before I was sick and I'm sleeping fine (that is, without the aid of six ACCs.) I think the most interesting thing that came out of being as sick as I was for that week, other than the realization that being terminally ill would be really really depressing, was that for the first time since who knows when I wasn't obsessed with girls. That's right. I was in so much pain that I couldn't even think about girls. And I <b>always</b> think about girls. What's even better, is that I don't miss it. I don't care. It's not that I don't want a girlfriend and that I'll avoid it. That's not it at all. It's just that I'm not going to be crazy about it. It's a strangely liberated feeling.
