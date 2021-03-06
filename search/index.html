@@ -1,0 +1,63 @@
+---
+layout: default
+status: publish
+published: true
+title: Search
+---
+
+<div id="search-box">
+  <!-- SearchBox widget will appear here -->
+</div>
+
+<div id="hits">
+  <!-- Hits widget will appear here -->
+</div>
+
+<script>
+  const searchClient = algoliasearch(
+    "8SWIT7VNGI",
+    "4d376ec387f665e269e53abe822ec5a2"
+  );
+  const search = instantsearch({
+    indexName: "posts",
+    searchClient,
+  });
+  search.addWidget(
+    instantsearch.widgets.searchBox({
+      autofocus: true,
+      container: "#search-box",
+      placeholder: "Search",
+    })
+  );
+  search.addWidget(
+    instantsearch.widgets.hits({
+      container: "#hits",
+      templates: {
+        empty: "<p style='margin-top: 20px;'>No results.</p>",
+        item(hit) {
+          return `
+            <article>
+                <h3>
+                    <a class="post-link" href="${hit.url}">
+                        ${instantsearch.highlight({
+                          attribute: "title",
+                          highlightedTagName: "mark",
+                          hit,
+                        })}
+                    </a>
+                </h3>
+                <p>
+                    ${instantsearch.snippet({
+                      attribute: "content",
+                      highlightedTagName: "mark",
+                      hit,
+                    })}
+                </p>
+            </article>
+          `;
+        },
+      },
+    })
+  );
+  search.start();
+</script>

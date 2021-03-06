@@ -54,6 +54,7 @@ whitelist:
 
 # Minima settings
 header_pages:
+  - search/index.html
   - about/index.md
   - projects/index.html
 
