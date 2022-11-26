@@ -278,12 +278,12 @@ PLATFORMS
 DEPENDENCIES
   github-pages
   jekyll-algolia (~> 1.0)
-  jekyll-feed (~> 0.6)
+  jekyll-feed (~> 0.12)
   jekyll-paginate
   jekyll-redirect-from
   minima (~> 2.0)
   tzinfo-data
-  webrick
+  webrick (~> 1.7)
 
 BUNDLED WITH
    2.3.26

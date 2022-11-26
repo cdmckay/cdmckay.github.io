@@ -16,11 +16,14 @@
 title: Cameron McKay
 email: me@cdmckay.org
 description: >- # this means to ignore newlines until "baseurl:"
-  I'm Cameron McKay: a programmer, writer, traveller and entrepreneur.
+  I'm Cameron McKay: a computer programmer and traveller.
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "http://cdmckay.org" # the base hostname & protocol for your site, e.g. http://example.com
-twitter_username: cdmckay
 github_username: cdmckay
+mastodon:
+  - instance: mastodon.social
+    username: cdmckay
+twitter_username: cdmckay
 show_excerpts: true
 excerpt_separator: <!--more-->
 permalink: /:title
